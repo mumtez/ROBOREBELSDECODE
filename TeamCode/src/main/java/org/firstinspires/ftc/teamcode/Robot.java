@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import java.util.List;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 public class Robot {
@@ -24,6 +25,7 @@ public class Robot {
   public IMU imu;
 
   public Outtake outtake;
+  public Intake intake;
 
   private AllianceColor allianceColor;  //0 red 1 blue
 

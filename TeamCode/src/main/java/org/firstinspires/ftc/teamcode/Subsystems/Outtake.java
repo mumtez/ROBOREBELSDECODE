@@ -31,7 +31,7 @@ public class Outtake {
   // --- Constructor ---
   public Outtake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
-    flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
+    intkae = hardwareMap.get(DcMotorEx.class, "flywheel");
     flywheel.setDirection(flywheelMotorDirection);
     flywheel.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     flywheel.setMode(RunMode.RUN_WITHOUT_ENCODER);
