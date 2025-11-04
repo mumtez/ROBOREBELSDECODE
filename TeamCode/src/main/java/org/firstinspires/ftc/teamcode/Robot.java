@@ -15,7 +15,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import java.util.List;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
-public class robot {
+public class Robot {
   public enum AllianceColor {
     RED, BLUE
   }
@@ -27,11 +27,11 @@ public class robot {
 
   private AllianceColor allianceColor;  //0 red 1 blue
 
-  public robot(LinearOpMode opMode) {
+  public Robot(LinearOpMode opMode) {
     this(opMode, AllianceColor.RED);
   }
 
-  public robot(LinearOpMode opMode, AllianceColor allianceColor) {
+  public Robot(LinearOpMode opMode, AllianceColor allianceColor) {
     this.allianceColor = allianceColor;
 
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -41,6 +41,7 @@ public class robot {
     for (LynxModule hub : allHubs) {
       hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
     }
+
     fl = hardwareMap.dcMotor.get("fl");
     fr = hardwareMap.dcMotor.get("fr");
     bl = hardwareMap.dcMotor.get("bl");
@@ -63,22 +64,25 @@ public class robot {
 
     imu = hardwareMap.get(IMU.class, "imu");
     IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-        LogoFacingDirection.RIGHT,
+        LogoFacingDirection.RIGHT, // TODO: check directions
         UsbFacingDirection.UP));
     imu.initialize(parameters);
     opMode.telemetry.addData("IMU Initialized", true);
     opMode.telemetry.update();
+
+    // Init Subsystems
     outtake = new Outtake(opMode);
   }
   public void initAuton() {
-    // when start auto will do this
+    // TODO: when start auto will do this
   }
+
   public AllianceColor getAllianceColor() {
     return this.allianceColor;
   }
 
   public void updateAutoControls() {
     follower.update();
-    outtake.updatePID();
+    outtake.updatePIDControl();
   }
 }

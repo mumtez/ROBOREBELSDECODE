@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 public class Outtake {
 
@@ -15,6 +16,8 @@ public class Outtake {
   public static double kP = 0.0008;
   public static double kI = 0.0001;
   public static double kD = 0.00025;
+
+  public static Direction flywheelMotorDirection = Direction.FORWARD;
 
   // --- Variables ---
   private double targetVelocity = 0; // ticks/sec
@@ -29,15 +32,19 @@ public class Outtake {
   public Outtake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
     flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
-    flywheel.setDirection(Direction.FORWARD);
+    flywheel.setDirection(flywheelMotorDirection);
     flywheel.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     flywheel.setMode(RunMode.RUN_WITHOUT_ENCODER);
     timer.reset();
   }
 
+  public void setPower(double pow) {
+    this.flywheel.setPower(pow);
+  }
+
   // --- Set target velocity ---
   public void setTargetVelocity(double targetTicksPerSec) {
-    targetVelocity = targetTicksPerSec;
+    targetVelocity = Math.max(targetTicksPerSec, 0);
     integralSum = 0;
     lastError = 0;
     timer.reset();
@@ -49,7 +56,7 @@ public class Outtake {
     timer.reset();
     if (dt == 0) return 0;
 
-    double currentVelocity = flywheel.getVelocity(); // ticks/sec
+    double currentVelocity = this.getCurrentVelocity(); // ticks/sec
     double error = targetVelocity - currentVelocity;
 
     // PID calculations
@@ -60,9 +67,9 @@ public class Outtake {
     double output = (kP * error) + (kI * integralSum) + (kD * derivative);
 
     // limit power range
-    output = Math.max(-1.0, Math.min(1.0, output));
+    output = Range.clip(output, 0.0, 1.0);
 
-    flywheel.setPower(output);
+    this.setPower(output);
     return output;
   }
 
