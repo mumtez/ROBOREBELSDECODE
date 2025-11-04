@@ -79,6 +79,6 @@ public class robot {
 
   public void updateAutoControls() {
     follower.update();
-    outtake.updatePID();
+    outtake.updatePIDControl();
   }
 }
