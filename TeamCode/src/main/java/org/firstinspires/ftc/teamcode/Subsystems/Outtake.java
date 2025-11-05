@@ -20,9 +20,8 @@ public class Outtake {
   public static double kI = 0.000;
   public static double kD = 0.000;
 
-  public static double SHOOT_POS =0.7;
-
-  public static double SHOOT_BASE =0.95;
+  public static double SHOOT_POS = 0.7;
+  public static double SHOOT_BASE = 0.95;
 
   public static Direction flywheelMotorDirection = Direction.REVERSE;
 
@@ -58,23 +57,27 @@ public class Outtake {
     lastError = 0;
     timer.reset();
   }
-  public void setShoot(){
+
+  public void setShoot() {
     flapper.setPosition(SHOOT_POS);
   }
-  public void setBase(){
+
+  public void setBase() {
     flapper.setPosition(SHOOT_BASE);
   }
-  public void setServoPos(double pos){
+
+  public void setServoPos(double pos) {
     flapper.setPosition(pos);
   }
-
 
 
   // --- Main PID update loop ---
   public double updatePIDControl() {
     double dt = timer.seconds();
     timer.reset();
-    if (dt == 0) return 0;
+    if (dt == 0) {
+      return 0;
+    }
 
     double currentVelocity = this.getCurrentVelocity(); // ticks/sec
     double error = targetVelocity - currentVelocity;
@@ -96,19 +99,16 @@ public class Outtake {
   public double getCurrentVelocity() {
     return flywheel.getVelocity();
   }
-  public boolean atSpeed(double speed){
-    if (this.getCurrentVelocity() >= speed) {
-      return true;
-    }
-    return false;
-  }
+
   public boolean atTarget() {
     return atTarget(5);
   }
+
   public boolean atTarget(double threshold) {
     return Math.abs(this.getCurrentVelocity() - this.targetVelocity) < threshold;
   }
-  public double getTargetVelocity(){
+
+  public double getTargetVelocity() {
     return this.targetVelocity;
   }
 

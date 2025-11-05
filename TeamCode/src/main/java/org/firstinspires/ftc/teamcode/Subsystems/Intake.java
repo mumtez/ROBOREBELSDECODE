@@ -11,10 +11,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @Configurable
 public class Intake {
+
   public static Direction intakeMotorDirection = Direction.FORWARD;
   public static Direction intakeMotorAltDirection = Direction.REVERSE;
   public final DcMotor intakeMotor;
   public final DcMotor intakeMotorAlt;
+
   public Intake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
     intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
@@ -27,7 +29,7 @@ public class Intake {
     intakeMotorAlt.setMode(RunMode.RUN_WITHOUT_ENCODER);
   }
 
-  public void setPower(double pow){
+  public void setPower(double pow) {
     intakeMotor.setPower(pow);
     intakeMotorAlt.setPower(pow);
   }

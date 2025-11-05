@@ -7,11 +7,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
+
 @Configurable
 public class BaseTeleop {
-  public enum ModeState {
-    INTAKING, SHOOTER_SPINUP, READY
-  }
+
   final Robot robot;
   final LinearOpMode opMode;
   final Telemetry telemetry;
@@ -21,20 +20,21 @@ public class BaseTeleop {
   public static int medSpeed = 1500;
   public static int farSpeed = 1700;
 
-
-
   Gamepad gamepad1 = new Gamepad();
   Gamepad gamepad2 = new Gamepad();
+
   public BaseTeleop(LinearOpMode opMode, Robot robot, double headingOffset) {
     this.opMode = opMode;
     this.telemetry = opMode.telemetry;
     this.robot = robot;
     this.headingOffset = Math.toRadians(headingOffset);
   }
+
   private void updateGamepads() {
     gamepad1.copy(this.opMode.gamepad1);
     gamepad2.copy(this.opMode.gamepad2);
   }
+
   public void run() {
     // --- INIT ---
 
@@ -43,17 +43,18 @@ public class BaseTeleop {
       telemetry.addData("ALLIANCE COLOR", robot.getAllianceColor());
       telemetry.update();
     }
+
     // --- START ---
     stateTimer.reset();
 
     while (opMode.opModeIsActive()) {
+      updateGamepads();
 
       if (gamepad1.left_bumper) {
         robot.imu.resetYaw();
         this.headingOffset = 0;
       }
       // Field Centric Drive
-
       double y = -gamepad1.left_stick_y;
       double x = gamepad1.left_stick_x;
       double rx = gamepad1.right_stick_x;
@@ -75,31 +76,32 @@ public class BaseTeleop {
       robot.br.setPower(backRightPower);
       robot.bl.setPower(backLeftPower);
 
-      robot.intake.setPower(gamepad1.right_trigger- gamepad1.left_trigger);
+      // INTAKE
+      robot.intake.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
 
-      if (gamepad1.a ){
+      // SHOOTER
+      if (gamepad2.a) {
         robot.outtake.setTargetVelocity(medSpeed);
-      }
-      if (gamepad1.dpad_down ){
+      } else if (gamepad2.dpad_down) {
         robot.outtake.setTargetVelocity(150);
-      }
-      if (gamepad1.b ){
+      } else if (gamepad2.b) {
         robot.outtake.setTargetVelocity(0);
       }
-      if (gamepad1.triangle){
+
+      if (gamepad2.triangle) {
         robot.outtake.setShoot();
-      }
-      if (gamepad1.square){
+      } else if (gamepad2.square) {
         robot.outtake.setBase();
       }
 
       robot.outtake.updatePIDControl();
+
+      // TELEMETRY
       updateTelemetry();
-      updateGamepads();
     }
   }
-  public void updateTelemetry() {
 
+  public void updateTelemetry() {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
 

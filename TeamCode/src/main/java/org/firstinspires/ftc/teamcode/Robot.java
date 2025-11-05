@@ -17,9 +17,11 @@ import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 public class Robot {
+
   public enum AllianceColor {
     RED, BLUE
   }
+
   public Follower follower;
   public DcMotor fr, fl, br, bl;
   public IMU imu;
@@ -27,7 +29,7 @@ public class Robot {
   public Outtake outtake;
   public Intake intake;
 
-  private AllianceColor allianceColor;  //0 red 1 blue
+  private AllianceColor allianceColor;
 
   public Robot(LinearOpMode opMode) {
     this(opMode, AllianceColor.RED);
@@ -76,6 +78,7 @@ public class Robot {
     outtake = new Outtake(opMode);
     intake = new Intake(opMode);
   }
+
   public void initAuton() {
     // TODO: when start auto will do this
   }
