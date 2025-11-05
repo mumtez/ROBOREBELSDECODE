@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
-
+@Configurable
 public class BaseTeleop {
   public enum ModeState {
     INTAKING, SHOOTER_SPINUP, READY
@@ -17,7 +18,8 @@ public class BaseTeleop {
   double headingOffset;
   final ElapsedTime stateTimer = new ElapsedTime();
 
-  public static int medSpeed = 1400;
+  public static int medSpeed = 1500;
+  public static int farSpeed = 1700;
 
 
 
