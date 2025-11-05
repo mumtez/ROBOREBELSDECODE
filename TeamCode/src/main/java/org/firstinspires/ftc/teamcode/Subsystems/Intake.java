@@ -10,15 +10,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.Servo;
 
 @Configurable
 public class Intake {
 
   private static final double DIST_THRESHOLD_CM = 3;
-  private static final float GREEN_THRESHOLD = .2f;
+  private static final float GREEN_THRESHOLD = .025f;
 
-  private static final float RED_THRESHOLD = .2f;
+  private static final float RED_THRESHOLD = .014f;
 
   private static final float BLUE_THRESHOLD = .2f;
 
@@ -34,12 +33,10 @@ public class Intake {
 
   public final NormalizedColorSensor colorSensor;
 
-  public final Servo rgb;
 
   public Intake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
-    rgb = hardwareMap.servo.get("rgb");
-    rgb.setPosition(0);
+
     intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
     intakeMotorAlt = hardwareMap.get(DcMotorEx.class, "intakealt");
     colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
@@ -66,12 +63,15 @@ public class Intake {
     if (colorSensor.getNormalizedColors().green > GREEN_THRESHOLD
         && colorSensor.getNormalizedColors().red < RED_THRESHOLD) {
       ballColor = BallColor.GREEN;
+
     } else if (colorSensor.getNormalizedColors().green < GREEN_THRESHOLD
         && colorSensor.getNormalizedColors().red > RED_THRESHOLD) {
       ballColor = BallColor.PURPLE;
+
     } else if (colorSensor.getNormalizedColors().green < GREEN_THRESHOLD
         && colorSensor.getNormalizedColors().red < RED_THRESHOLD) {
       ballColor = BallColor.NONE;
+
     }
   }
 

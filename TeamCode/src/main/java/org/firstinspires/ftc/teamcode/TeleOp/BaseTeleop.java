@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 @Configurable
 public class BaseTeleop {
@@ -45,7 +46,6 @@ public class BaseTeleop {
     robot.stateTimer.reset();
     while (opMode.opModeIsActive()) {
       updateGamepads();
-      robot.updateBall();
       robot.intake.updateSampleColor();
 
       if (gamepad1.left_bumper) {
@@ -74,9 +74,6 @@ public class BaseTeleop {
       robot.br.setPower(backRightPower);
       robot.bl.setPower(backLeftPower);
 
-      // INTAKE
-      robot.intake.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
-
       // SHOOTER WITH NO AUTOMATED METHODS
       /*
       if (gamepad2.a) {
@@ -87,8 +84,30 @@ public class BaseTeleop {
         robot.outtake.setTargetVelocity(0);
       } */
 
-      if (gamepad2.triangle) {
+      if (gamepad1.triangle) {
         robot.outtake.setShoot();
+      } else {
+        robot.outtake.setBase();
+      }
+      if (gamepad1.dpad_right) {
+        robot.outtake.setTargetVelocity(Outtake.farSpeed);
+      }
+      if (gamepad1.dpad_left) {
+        robot.outtake.setTargetVelocity(Outtake.medSpeed);
+      }
+      if (gamepad1.dpad_up) {
+        robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
+      }
+      if (gamepad1.dpad_down) {
+        robot.outtake.stop();
+      }
+      // INTAKE
+      if (gamepad1.right_trigger != 0 || gamepad1.left_trigger != 0) {
+        robot.intake.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
+      } else if (gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0) {
+        robot.intake.setPowerVertical(gamepad2.right_trigger - gamepad2.left_trigger);
+      } else {
+        robot.intake.setPower(0);
       }
 
       robot.outtake.updatePIDControl();
@@ -103,6 +122,7 @@ public class BaseTeleop {
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("Red Thresh", robot.intake.colorSensor.getNormalizedColors().red);
     telemetry.addData("Green Thresh", robot.intake.colorSensor.getNormalizedColors().green);
+    telemetry.addData("State", robot.getState());
 
     telemetry.update();
   }

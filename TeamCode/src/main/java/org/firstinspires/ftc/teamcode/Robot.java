@@ -15,7 +15,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-import org.firstinspires.ftc.teamcode.Subsystems.Intake.BallColor;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 public class Robot {
@@ -45,42 +44,10 @@ public class Robot {
     this(opMode, AllianceColor.RED);
   }
 
-  public void updateBall() {
-    switch (state) {
-      case INTAKING:
-        if (this.intake.getColor() != BallColor.NONE) {
-          state = ModeState.BALLIN;
-          stateTimer.reset();
-        }
-        break;
-      case BALLIN:
-        this.outtake.setTargetVelocity(Outtake.farSpeed);
-        if (this.outtake.atTarget()) {
-          state = ModeState.SHOOT;
-          stateTimer.reset();
-        }
-        break;
-      case SHOOT:
-        if (this.intake.getColor() == BallColor.NONE) {
-          outtake.setBase();
-          intake.setPower(1);
-          state = ModeState.SPUNUP;
-          stateTimer.reset();
-        }
-        break;
-      case SPUNUP:
-        if (this.intake.getColor() != BallColor.NONE) {
-          intake.setPower(0);
-          state = ModeState.BALLIN;
-          stateTimer.reset();
-        } else if (stateTimer.milliseconds() > 500) {
-          outtake.setTargetVelocity(0);
-          state = ModeState.INTAKING;
-          stateTimer.reset();
-        }
-        break;
-    }
+  public ModeState getState() {
+    return state;
   }
+
 
   public Robot(LinearOpMode opMode, AllianceColor allianceColor) {
     this.allianceColor = allianceColor;
@@ -93,10 +60,10 @@ public class Robot {
       hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
     }
 
-    fl = hardwareMap.dcMotor.get("bl");
-    fr = hardwareMap.dcMotor.get("br");
-    bl = hardwareMap.dcMotor.get("fl");
-    br = hardwareMap.dcMotor.get("fr"); //TODO FIX TS
+    bl = hardwareMap.dcMotor.get("bl");
+    br = hardwareMap.dcMotor.get("br");
+    fl = hardwareMap.dcMotor.get("fl");
+    fr = hardwareMap.dcMotor.get("fr");
 
     fl.setDirection(Direction.REVERSE);
     fr.setDirection(Direction.FORWARD);
@@ -115,7 +82,7 @@ public class Robot {
 
     imu = hardwareMap.get(IMU.class, "imu");
     IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-        LogoFacingDirection.RIGHT, // TODO: check directions
+        LogoFacingDirection.RIGHT,
         UsbFacingDirection.UP));
     imu.initialize(parameters);
     opMode.telemetry.addData("IMU Initialized", true);

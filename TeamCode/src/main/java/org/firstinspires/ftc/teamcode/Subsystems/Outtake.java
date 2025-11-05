@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -16,9 +17,11 @@ public class Outtake {
 
   // --- PID constants (tune in Panels) ---
 
-  public static int medSpeed = 1500;
+  public static int medSpeed = 1600;
   public static int farSpeed = 1700;
-  public static double kP = 0.02;
+
+  public static int cycleSpeed = 300;
+  public static double kP = 0.023;
   public static double kI = 0.000;
   public static double kD = 0.000;
 
@@ -36,11 +39,13 @@ public class Outtake {
   // --- Hardware ---
   public DcMotorEx flywheel;
   public ServoImplEx flapper;
-
+  public final Servo rgb;
 
   // --- Constructor ---
   public Outtake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
+    rgb = hardwareMap.servo.get("rgb");
+    rgb.setPosition(0);
     flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
     flywheel.setDirection(flywheelMotorDirection);
     flywheel.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
@@ -76,6 +81,11 @@ public class Outtake {
 
   // --- Main PID update loop ---
   public double updatePIDControl() {
+    if (this.atTarget() && targetVelocity != 0) {
+      rgb.setPosition(.5);
+    } else {
+      rgb.setPosition(.3);
+    }
     double dt = timer.seconds();
     timer.reset();
     if (dt == 0) {
@@ -104,11 +114,15 @@ public class Outtake {
   }
 
   public boolean atTarget() {
-    return atTarget(5);
+    return atTarget(60);
   }
 
   public boolean atTarget(double threshold) {
     return Math.abs(this.getCurrentVelocity() - this.targetVelocity) < threshold;
+  }
+
+  public boolean atTargetSpecified(double threshold, double target) {
+    return Math.abs(this.getCurrentVelocity() - target) < threshold;
   }
 
   public double getTargetVelocity() {
