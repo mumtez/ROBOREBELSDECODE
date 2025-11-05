@@ -44,10 +44,10 @@ public class Robot {
       hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
     }
 
-    fl = hardwareMap.dcMotor.get("fl");
-    fr = hardwareMap.dcMotor.get("fr");
-    bl = hardwareMap.dcMotor.get("bl");
-    br = hardwareMap.dcMotor.get("br");
+    fl = hardwareMap.dcMotor.get("bl");
+    fr = hardwareMap.dcMotor.get("br");
+    bl = hardwareMap.dcMotor.get("fl");
+    br = hardwareMap.dcMotor.get("fr");
 
     fl.setDirection(Direction.REVERSE);
     fr.setDirection(Direction.FORWARD);
@@ -74,6 +74,7 @@ public class Robot {
 
     // Init Subsystems
     outtake = new Outtake(opMode);
+    intake = new Intake(opMode);
   }
   public void initAuton() {
     // TODO: when start auto will do this

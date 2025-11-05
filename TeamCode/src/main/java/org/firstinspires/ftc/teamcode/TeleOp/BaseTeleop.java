@@ -17,6 +17,8 @@ public class BaseTeleop {
   double headingOffset;
   final ElapsedTime stateTimer = new ElapsedTime();
 
+  public static int medSpeed = 1400;
+
 
 
   Gamepad gamepad1 = new Gamepad();
@@ -27,7 +29,10 @@ public class BaseTeleop {
     this.robot = robot;
     this.headingOffset = Math.toRadians(headingOffset);
   }
-
+  private void updateGamepads() {
+    gamepad1.copy(this.opMode.gamepad1);
+    gamepad2.copy(this.opMode.gamepad2);
+  }
   public void run() {
     // --- INIT ---
 
@@ -68,7 +73,27 @@ public class BaseTeleop {
       robot.br.setPower(backRightPower);
       robot.bl.setPower(backLeftPower);
 
+      robot.intake.setPower(gamepad1.right_trigger- gamepad1.left_trigger);
+
+      if (gamepad1.a ){
+        robot.outtake.setTargetVelocity(medSpeed);
+      }
+      if (gamepad1.dpad_down ){
+        robot.outtake.setTargetVelocity(150);
+      }
+      if (gamepad1.b ){
+        robot.outtake.setTargetVelocity(0);
+      }
+      if (gamepad1.triangle){
+        robot.outtake.setShoot();
+      }
+      if (gamepad1.square){
+        robot.outtake.setBase();
+      }
+
+      robot.outtake.updatePIDControl();
       updateTelemetry();
+      updateGamepads();
     }
   }
   public void updateTelemetry() {

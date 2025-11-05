@@ -1,23 +1,30 @@
 
 package org.firstinspires.ftc.teamcode.Subsystems;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
+@Configurable
 public class Outtake {
 
   // --- PID constants (tune in Panels) ---
-  public static double kP = 0.0008;
-  public static double kI = 0.0001;
-  public static double kD = 0.00025;
+  public static double kP = 0.02;
+  public static double kI = 0.000;
+  public static double kD = 0.000;
 
-  public static Direction flywheelMotorDirection = Direction.FORWARD;
+  public static double SHOOT_POS =0;
+
+  public static double SHOOT_BASE =0;
+
+  public static Direction flywheelMotorDirection = Direction.REVERSE;
 
   // --- Variables ---
   private double targetVelocity = 0; // ticks/sec
@@ -27,6 +34,7 @@ public class Outtake {
 
   // --- Hardware ---
   public DcMotorEx flywheel;
+  public ServoImplEx flapper;
 
   // --- Constructor ---
   public Outtake(LinearOpMode opMode) {
@@ -35,6 +43,7 @@ public class Outtake {
     flywheel.setDirection(flywheelMotorDirection);
     flywheel.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     flywheel.setMode(RunMode.RUN_WITHOUT_ENCODER);
+    flapper = hardwareMap.get(ServoImplEx.class, "flapper");
     timer.reset();
   }
 
@@ -49,6 +58,17 @@ public class Outtake {
     lastError = 0;
     timer.reset();
   }
+  public void setShoot(){
+    flapper.setPosition(SHOOT_POS);
+  }
+  public void setBase(){
+    flapper.setPosition(SHOOT_BASE);
+  }
+  public void setServoPos(double pos){
+    flapper.setPosition(pos);
+  }
+
+
 
   // --- Main PID update loop ---
   public double updatePIDControl() {
