@@ -20,9 +20,9 @@ public class Outtake {
   public static double kI = 0.000;
   public static double kD = 0.000;
 
-  public static double SHOOT_POS =0;
+  public static double SHOOT_POS =0.7;
 
-  public static double SHOOT_BASE =0;
+  public static double SHOOT_BASE =0.95;
 
   public static Direction flywheelMotorDirection = Direction.REVERSE;
 
