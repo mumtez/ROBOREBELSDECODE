@@ -12,8 +12,10 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake.BallColor;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 public class Robot {
@@ -21,6 +23,14 @@ public class Robot {
   public enum AllianceColor {
     RED, BLUE
   }
+
+  public final ElapsedTime stateTimer = new ElapsedTime();
+
+  public enum ModeState {
+    INTAKING, BALLIN, SHOOT, SPUNUP
+  }
+
+  ModeState state = ModeState.INTAKING;
 
   public Follower follower;
   public DcMotor fr, fl, br, bl;
@@ -33,6 +43,43 @@ public class Robot {
 
   public Robot(LinearOpMode opMode) {
     this(opMode, AllianceColor.RED);
+  }
+
+  public void updateBall() {
+    switch (state) {
+      case INTAKING:
+        if (this.intake.getColor() != BallColor.NONE) {
+          state = ModeState.BALLIN;
+          stateTimer.reset();
+        }
+        break;
+      case BALLIN:
+        this.outtake.setTargetVelocity(Outtake.farSpeed);
+        if (this.outtake.atTarget()) {
+          state = ModeState.SHOOT;
+          stateTimer.reset();
+        }
+        break;
+      case SHOOT:
+        if (this.intake.getColor() == BallColor.NONE) {
+          outtake.setBase();
+          intake.setPower(1);
+          state = ModeState.SPUNUP;
+          stateTimer.reset();
+        }
+        break;
+      case SPUNUP:
+        if (this.intake.getColor() != BallColor.NONE) {
+          intake.setPower(0);
+          state = ModeState.BALLIN;
+          stateTimer.reset();
+        } else if (stateTimer.milliseconds() > 500) {
+          outtake.setTargetVelocity(0);
+          state = ModeState.INTAKING;
+          stateTimer.reset();
+        }
+        break;
+    }
   }
 
   public Robot(LinearOpMode opMode, AllianceColor allianceColor) {
@@ -49,7 +96,7 @@ public class Robot {
     fl = hardwareMap.dcMotor.get("bl");
     fr = hardwareMap.dcMotor.get("br");
     bl = hardwareMap.dcMotor.get("fl");
-    br = hardwareMap.dcMotor.get("fr");
+    br = hardwareMap.dcMotor.get("fr"); //TODO FIX TS
 
     fl.setDirection(Direction.REVERSE);
     fr.setDirection(Direction.FORWARD);

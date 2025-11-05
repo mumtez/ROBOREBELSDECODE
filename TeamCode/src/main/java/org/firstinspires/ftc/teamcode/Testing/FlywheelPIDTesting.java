@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Testing;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -9,6 +11,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 @Configurable
 public class FlywheelPIDTesting extends LinearOpMode {
 
+  private final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
   public static int TARGET = 0;
 
   @Override
@@ -23,6 +26,10 @@ public class FlywheelPIDTesting extends LinearOpMode {
       }
 
       double pow = robot.outtake.updatePIDControl();
+
+      panelsTelemetry.addData("TARGET", TARGET);
+      panelsTelemetry.addData("REFERENCE", robot.outtake.getCurrentVelocity());
+      panelsTelemetry.addData("ERROR", robot.outtake.getCurrentVelocity() - TARGET);
 
       telemetry.addData("TARGET", TARGET);
       telemetry.addData("REFERENCE", robot.outtake.getCurrentVelocity());

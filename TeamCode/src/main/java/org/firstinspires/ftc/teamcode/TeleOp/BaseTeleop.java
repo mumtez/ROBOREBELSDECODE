@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -15,10 +14,7 @@ public class BaseTeleop {
   final LinearOpMode opMode;
   final Telemetry telemetry;
   double headingOffset;
-  final ElapsedTime stateTimer = new ElapsedTime();
 
-  public static int medSpeed = 1500;
-  public static int farSpeed = 1700;
 
   Gamepad gamepad1 = new Gamepad();
   Gamepad gamepad2 = new Gamepad();
@@ -35,6 +31,7 @@ public class BaseTeleop {
     gamepad2.copy(this.opMode.gamepad2);
   }
 
+
   public void run() {
     // --- INIT ---
 
@@ -45,10 +42,11 @@ public class BaseTeleop {
     }
 
     // --- START ---
-    stateTimer.reset();
-
+    robot.stateTimer.reset();
     while (opMode.opModeIsActive()) {
       updateGamepads();
+      robot.updateBall();
+      robot.intake.updateSampleColor();
 
       if (gamepad1.left_bumper) {
         robot.imu.resetYaw();
@@ -79,19 +77,18 @@ public class BaseTeleop {
       // INTAKE
       robot.intake.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
 
-      // SHOOTER
+      // SHOOTER WITH NO AUTOMATED METHODS
+      /*
       if (gamepad2.a) {
-        robot.outtake.setTargetVelocity(medSpeed);
+        robot.outtake.setTargetVelocity(Outtake.medSpeed);
       } else if (gamepad2.dpad_down) {
         robot.outtake.setTargetVelocity(150);
       } else if (gamepad2.b) {
         robot.outtake.setTargetVelocity(0);
-      }
+      } */
 
       if (gamepad2.triangle) {
         robot.outtake.setShoot();
-      } else if (gamepad2.square) {
-        robot.outtake.setBase();
       }
 
       robot.outtake.updatePIDControl();
@@ -104,6 +101,7 @@ public class BaseTeleop {
   public void updateTelemetry() {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
+    telemetry.addData("Colors", robot.intake.getColors());
 
     telemetry.update();
   }
