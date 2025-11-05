@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Configurable
 public class Intake {
@@ -31,14 +31,15 @@ public class Intake {
   public final DcMotor intakeMotor;
   public final DcMotor intakeMotorAlt;
   private BallColor ballColor = BallColor.NONE;
-  private NormalizedRGBA colors;
-  private double dist;
 
   public final NormalizedColorSensor colorSensor;
 
+  public final Servo rgb;
 
   public Intake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
+    rgb = hardwareMap.servo.get("rgb");
+    rgb.setPosition(0);
     intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
     intakeMotorAlt = hardwareMap.get(DcMotorEx.class, "intakealt");
     colorSensor = hardwareMap.get(RevColorSensorV3.class, "color");
@@ -60,10 +61,6 @@ public class Intake {
     intakeMotorAlt.setPower(-pow);
   }
 
-
-  public NormalizedRGBA getColors() {
-    return colorSensor.getNormalizedColors();
-  }
 
   public void updateSampleColor() {
     if (colorSensor.getNormalizedColors().green > GREEN_THRESHOLD

@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -37,13 +36,11 @@ public class Outtake {
   // --- Hardware ---
   public DcMotorEx flywheel;
   public ServoImplEx flapper;
-  public final Servo rgb;
+
 
   // --- Constructor ---
   public Outtake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
-    rgb = hardwareMap.servo.get("rgb");
-    rgb.setPosition(0);
     flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
     flywheel.setDirection(flywheelMotorDirection);
     flywheel.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);

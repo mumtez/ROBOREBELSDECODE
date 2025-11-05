@@ -101,7 +101,8 @@ public class BaseTeleop {
   public void updateTelemetry() {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
-    telemetry.addData("Colors", robot.intake.getColors());
+    telemetry.addData("Red Thresh", robot.intake.colorSensor.getNormalizedColors().red);
+    telemetry.addData("Green Thresh", robot.intake.colorSensor.getNormalizedColors().green);
 
     telemetry.update();
   }
