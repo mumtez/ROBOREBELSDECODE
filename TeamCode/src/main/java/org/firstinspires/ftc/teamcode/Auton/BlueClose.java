@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Robot.AllianceColor;
 
-@Autonomous(name = "BLUE BUCKET", group = "PEDRO")
+@Autonomous(name = "BLUE CLOSE", group = "BLUE")
 public class BlueClose extends LinearOpMode {
 
   @Override

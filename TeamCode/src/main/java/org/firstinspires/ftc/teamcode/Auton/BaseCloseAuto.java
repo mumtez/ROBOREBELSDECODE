@@ -17,20 +17,25 @@ import org.opencv.core.Point;
 @Configurable
 public class BaseCloseAuto {
 
+  // TODO: implement limelight
   public Limelight3A limelight;
+
   public static double[] START = {116, 131, 37};
   public static double[] SHOOT = {83, 83, 48};
-  public static double[] INTAKEONELEFT = {100, 83, 0};
-  public static double[] INTAKEONERIGHT = {100, 83, 0};
+  public static double[] INTAKE_ONE_LEFT = {100, 83, 0};
+  public static double[] INTAKE_ONE_RIGHT = {100, 83, 0};
 
-  public static double[] INTAKETWOLEFT = {100, 60, 0};
-  public static double[] INTAKETWORIGHT = {100, 60, 0};
+  public static double[] INTAKE_TWO_LEFT = {100, 60, 0};
+  public static double[] INTAKE_TWO_RIGHT = {100, 60, 0};
 
+  public static int OUTTAKE_SERVO_UP_MS = 500;
+  public static int OUTTAKE_SERVO_DOWN_MS = 700;
+
+  // TODO: implement intakeThreeShootThree, park
   PathChain
       shootPreLoad,
-      intakeOneShootOne,
-      intakeTwoShootTwo,
-      intakeThreeShootThree;
+      intakeOneShootOne, intakeTwoShootTwo, intakeThreeShootThree,
+      park;
   private int pathState = 0;
 
   private final Timer pathTimer = new Timer();
@@ -61,46 +66,35 @@ public class BaseCloseAuto {
   public void buildPaths() {
     shootPreLoad = robot.follower
         .pathBuilder()
-        .addPath(
-            new BezierLine(poseFromArr(START), poseFromArr(SHOOT))
-        )
+        .addPath(new BezierLine(poseFromArr(START), poseFromArr(SHOOT)))
         .setLinearHeadingInterpolation(Math.toRadians(START[2]), SHOOT[2])
         .build();
 
-    intakeOneShootOne = robot.follower
-        .pathBuilder()
-        .addPath(
-            new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKEONELEFT))
-        )
-        .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), INTAKEONELEFT[2])
+    intakeOneShootOne = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKE_ONE_LEFT)))
+        .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), INTAKE_ONE_LEFT[2])
         .addParametricCallback(.5, () -> robot.intake.setPower(1))
-        .addPath(
-            new BezierLine(poseFromArr(INTAKEONELEFT), poseFromArr(INTAKEONERIGHT))
-        )
-        .setConstantHeadingInterpolation(0).setVelocityConstraint(5)
-        .addPath(
-            new BezierLine(poseFromArr(INTAKEONERIGHT), poseFromArr(SHOOT))
-        )
-        .setLinearHeadingInterpolation(Math.toRadians(INTAKEONERIGHT[2]), SHOOT[2])
-        .build();
-    intakeTwoShootTwo = robot.follower
-        .pathBuilder()
-        .addPath(
-            new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKETWOLEFT))
-        )
-        .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), INTAKETWOLEFT[2])
-        .addParametricCallback(.5, () -> robot.intake.setPower(1))
-        .addPath(
-            new BezierLine(poseFromArr(INTAKETWOLEFT), poseFromArr(INTAKETWORIGHT))
-        )
-        .setConstantHeadingInterpolation(0).setVelocityConstraint(5)
-        .addPath(
-            new BezierLine(poseFromArr(INTAKETWORIGHT), poseFromArr(SHOOT))
-        )
-        .setLinearHeadingInterpolation(Math.toRadians(INTAKETWORIGHT[2]), SHOOT[2])
+
+        .addPath(new BezierLine(poseFromArr(INTAKE_ONE_LEFT), poseFromArr(INTAKE_ONE_RIGHT)))
+        .setConstantHeadingInterpolation(0)
+        .setVelocityConstraint(5)
+
+        .addPath(new BezierLine(poseFromArr(INTAKE_ONE_RIGHT), poseFromArr(SHOOT)))
+        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_ONE_RIGHT[2]), SHOOT[2])
         .build();
 
+    intakeTwoShootTwo = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKE_TWO_LEFT)))
+        .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), INTAKE_TWO_LEFT[2])
+        .addParametricCallback(.5, () -> robot.intake.setPower(1))
 
+        .addPath(new BezierLine(poseFromArr(INTAKE_TWO_LEFT), poseFromArr(INTAKE_TWO_RIGHT)))
+        .setConstantHeadingInterpolation(0)
+        .setVelocityConstraint(5)
+
+        .addPath(new BezierLine(poseFromArr(INTAKE_TWO_RIGHT), poseFromArr(SHOOT)))
+        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_TWO_RIGHT[2]), SHOOT[2])
+        .build();
   }
 
   public void autonomousPathUpdate() {
@@ -111,60 +105,65 @@ public class BaseCloseAuto {
         robot.follower.followPath(shootPreLoad);
         setPathState(1);
         break;
+
       case 1:
         if (!robot.follower.isBusy() && robot.outtake.atTarget()) {
-          setPathState(2);
+          shootThree(2, intakeOneShootOne);
         }
         break;
+
       case 2:
-        shootThree(3, intakeOneShootOne);
+        if (!robot.follower.isBusy() && robot.outtake.atTarget()) {
+          shootThree(3, intakeTwoShootTwo);
+        }
         break;
+
       case 3:
         if (!robot.follower.isBusy() && robot.outtake.atTarget()) {
-          setPathState(4);
+          shootThree(4, intakeThreeShootThree);
         }
         break;
-      case 4:
-        shootThree(5, intakeTwoShootTwo);
+
+        // TODO: implement
+//      case 4:
+//        if (!robot.follower.isBusy() && robot.outtake.atTarget()) {
+//          robot.follower.followPath(park);
+//        }
+//        break;
     }
   }
 
   public void shootThree(int pState, PathChain next) {
+    ElapsedTime shootTimer = new ElapsedTime();
     robot.intake.setPower(1);
-    robot.outtake.setShoot();
-    while (opMode.opModeIsActive() && pathTimer.getElapsedTime() < 500) {
-      // delay
-      robot.updateAutoControls();
-    }
+
+    shootAndWait(shootTimer);
+    reloadAndWait(shootTimer);
+    shootAndWait(shootTimer);
+    reloadAndWait(shootTimer);
+    shootAndWait(shootTimer);
+
     robot.outtake.setBase();
-    while (opMode.opModeIsActive() && pathTimer.getElapsedTime() < 1200 && !robot.outtake.atTarget()) {
-      // delay
-      robot.updateAutoControls();
-    }
-    robot.outtake.setShoot();
-    while (opMode.opModeIsActive() && pathTimer.getElapsedTime() < 1700) {
-      // delay
-      robot.updateAutoControls();
-    }
-    robot.outtake.setBase();
-    while (opMode.opModeIsActive() && pathTimer.getElapsedTime() < 2400 && !robot.outtake.atTarget()) {
-      // delay
-      robot.updateAutoControls();
-    }
-    robot.outtake.setShoot();
-    robot.intake.setPower(0);
-    while (opMode.opModeIsActive() && pathTimer.getElapsedTime() < 3000) {
-      // delay
-      robot.updateAutoControls();
-    }
-    robot.outtake.setBase();
-    while (opMode.opModeIsActive() && pathTimer.getElapsedTime() < 3700) {
-      // delay
-      robot.updateAutoControls();
-    }
     robot.follower.followPath(next);
     setPathState(pState);
+  }
 
+  private void shootAndWait(ElapsedTime shootTimer) {
+    shootTimer.reset();
+    robot.outtake.setShoot();
+    while (opMode.opModeIsActive() && shootTimer.milliseconds() < OUTTAKE_SERVO_UP_MS) {
+      // delay
+      robot.updateAutoControls();
+    }
+  }
+
+  private void reloadAndWait(ElapsedTime shootTimer) {
+    shootTimer.reset();
+    robot.outtake.setBase();
+    while (opMode.opModeIsActive() && shootTimer.milliseconds() < OUTTAKE_SERVO_DOWN_MS && !robot.outtake.atTarget()) {
+      // delay
+      robot.updateAutoControls();
+    }
   }
 
   public void run() {

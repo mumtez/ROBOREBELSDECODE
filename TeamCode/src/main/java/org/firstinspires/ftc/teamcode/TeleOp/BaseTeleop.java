@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -48,31 +49,7 @@ public class BaseTeleop {
       updateGamepads();
       robot.intake.updateSampleColor();
 
-      if (gamepad1.left_bumper) {
-        robot.imu.resetYaw();
-        this.headingOffset = 0;
-      }
-      // Field Centric Drive
-      double y = -gamepad1.left_stick_y;
-      double x = gamepad1.left_stick_x;
-      double rx = gamepad1.right_stick_x;
-
-      double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + this.headingOffset;
-
-      double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-      double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-      rotX = rotX * 1.1;  // Counteract imperfect strafing
-
-      double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-      double frontLeftPower = (rotY + rotX + rx) / denominator;
-      double backLeftPower = (rotY - rotX + rx) / denominator;
-      double frontRightPower = (rotY - rotX - rx) / denominator;
-      double backRightPower = (rotY + rotX - rx) / denominator;
-
-      robot.fr.setPower(frontRightPower);
-      robot.fl.setPower(frontLeftPower);
-      robot.br.setPower(backRightPower);
-      robot.bl.setPower(backLeftPower);
+      this.fieldCentricDrive();
 
       // SHOOTER WITH NO AUTOMATED METHODS
       /*
@@ -117,12 +94,46 @@ public class BaseTeleop {
     }
   }
 
-  public void updateTelemetry() {
+  private void fieldCentricDrive() {
+    if (gamepad1.left_bumper) {
+      robot.imu.resetYaw();
+      this.headingOffset = 0;
+    }
+    // Field Centric Drive
+    double y = -gamepad1.left_stick_y;
+    double x = gamepad1.left_stick_x;
+    double rx = gamepad1.right_stick_x;
+
+    double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + this.headingOffset;
+
+    double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+    double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+    rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+    double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+    double frontLeftPower = (rotY + rotX + rx) / denominator;
+    double backLeftPower = (rotY - rotX + rx) / denominator;
+    double frontRightPower = (rotY - rotX - rx) / denominator;
+    double backRightPower = (rotY + rotX - rx) / denominator;
+
+    robot.fr.setPower(frontRightPower);
+    robot.fl.setPower(frontLeftPower);
+    robot.br.setPower(backRightPower);
+    robot.bl.setPower(backLeftPower);
+  }
+
+  private void updateTelemetry() {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
-    telemetry.addData("Red Thresh", robot.intake.colorSensor.getNormalizedColors().red);
-    telemetry.addData("Green Thresh", robot.intake.colorSensor.getNormalizedColors().green);
-    telemetry.addData("State", robot.getState());
+    telemetry.addLine("=== SENSORS ===");
+    NormalizedRGBA cs1Colors = robot.intake.cs1.getNormalizedColors();
+    NormalizedRGBA cs2Colors = robot.intake.cs2.getNormalizedColors();
+    telemetry.addData("Red 1", cs1Colors.red);
+    telemetry.addData("Green 1", cs1Colors.green);
+    telemetry.addData("Dist CM 1", robot.intake.readDistance(robot.intake.cs1));
+    telemetry.addData("Red 2", cs2Colors.red);
+    telemetry.addData("Green 2", cs2Colors.green);
+    telemetry.addData("Dist CM 2", robot.intake.readDistance(robot.intake.cs2));
 
     telemetry.update();
   }
