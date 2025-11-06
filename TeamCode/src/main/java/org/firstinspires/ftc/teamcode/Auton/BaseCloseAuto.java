@@ -9,6 +9,8 @@ import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import java.util.Iterator;
+import java.util.List;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
@@ -22,22 +24,32 @@ public class BaseCloseAuto {
 
   public static double[] START = {116, 131, 37};
   public static double[] SHOOT = {86, 86, 46};
+
   public static double[] INTAKE_ONE_LEFT = {90, 85, 0};
   public static double[] INTAKE_ONE_RIGHT = {120, 85, 0};
 
   public static double[] INTAKE_TWO_LEFT = {90, 62, 0};
   public static double[] INTAKE_TWO_RIGHT = {120, 62, 0};
 
+  public static double[] INTAKE_THREE_LEFT = {90, 39, 0};
+  public static double[] INTAKE_THREE_RIGHT = {120, 39, 0};
+
   public static int OUTTAKE_SERVO_UP_MS = 500;
   public static int OUTTAKE_SERVO_DOWN_MS = 2000;
-  public static int velConst = 1;
+  public static double INTAKE_DRIVE_SPEED = 0.3;
 
-  // TODO: implement intakeThreeShootThree, park
+  // TODO: implement park
   PathChain
       shootPreLoad,
-      intakeOneShootOne, intakeTwoShootTwo, intakeThreeShootThree,
-      park;
-  private int pathState = 0;
+      preIntakePPG, intakePPG, shootPPG,
+      preIntakePGP, intakePGP, shootPGP,
+      preIntakeGPP, intakeGPP, shootGPP;
+
+  public enum PathState {
+    PRELOAD, PPG, PGP, GPP, STOP
+  }
+  private PathState pathState = PathState.PRELOAD;
+  private Iterator<PathState> pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP).iterator();
 
   private final Timer pathTimer = new Timer();
   final Robot robot;
@@ -50,85 +62,121 @@ public class BaseCloseAuto {
     this.robot = robot;
   }
 
-  public Point pointFromArr(double[] arr) {
+  Point pointFromArr(double[] arr) {
     return new Point(arr[0], arr[1]);
   }
 
-  public Pose poseFromArr(double[] arr) {
+  Pose poseFromArr(double[] arr) {
     return new Pose(arr[0], arr[1], Math.toRadians(arr[2]));
   }
 
-  public void setPathState(int pState) {
+  void setPathState(PathState pState) {
     pathState = pState;
     pathTimer.resetTimer();
   }
 
-  public void buildPaths() {
-    shootPreLoad = robot.follower
-        .pathBuilder()
+  void buildPaths() {
+    shootPreLoad = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(START), poseFromArr(SHOOT)))
         .setLinearHeadingInterpolation(Math.toRadians(START[2]), Math.toRadians(SHOOT[2]))
         .setTimeoutConstraint(500)
         .build();
 
-    intakeOneShootOne = robot.follower.pathBuilder()
+    preIntakePPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKE_ONE_LEFT)))
         .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), Math.toRadians(INTAKE_ONE_LEFT[2]))
+        .setTimeoutConstraint(500)
+        .build();
+    intakePPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_ONE_LEFT), poseFromArr(INTAKE_ONE_RIGHT)))
         .setConstantHeadingInterpolation(0)
-        .setVelocityConstraint(velConst)
+        .setTimeoutConstraint(500)
+        .build();
+    shootPPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_ONE_RIGHT), poseFromArr(SHOOT)))
         .setLinearHeadingInterpolation(Math.toRadians(INTAKE_ONE_RIGHT[2]), Math.toRadians(SHOOT[2]))
+        .setTimeoutConstraint(500)
         .build();
 
-    intakeTwoShootTwo = robot.follower.pathBuilder()
+    preIntakePGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKE_TWO_LEFT)))
         .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), Math.toRadians(INTAKE_TWO_LEFT[2]))
+        .build();
+    intakePGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_TWO_LEFT), poseFromArr(INTAKE_TWO_RIGHT)))
         .setConstantHeadingInterpolation(0)
-        .setVelocityConstraint(velConst)
+        .build();
+    shootPGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_TWO_RIGHT), poseFromArr(SHOOT)))
         .setLinearHeadingInterpolation(Math.toRadians(INTAKE_TWO_RIGHT[2]), Math.toRadians(SHOOT[2]))
+        .build();
+
+    preIntakeGPP = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKE_THREE_LEFT)))
+        .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), Math.toRadians(INTAKE_THREE_LEFT[2]))
+        .build();
+    intakeGPP = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArr(INTAKE_THREE_LEFT), poseFromArr(INTAKE_THREE_RIGHT)))
+        .setConstantHeadingInterpolation(0)
+        .build();
+    shootGPP = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArr(INTAKE_THREE_RIGHT), poseFromArr(SHOOT)))
+        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_THREE_RIGHT[2]), Math.toRadians(SHOOT[2]))
         .build();
   }
 
   public void autonomousPathUpdate() {
     switch (pathState) {
-      case 0:
-        robot.outtake.setBase();
-        robot.outtake.setTargetVelocity(Outtake.medSpeed);
-        robot.follower.followPath(shootPreLoad, true);
-        setPathState(1);
+      case PRELOAD:
+        shootThree(shootPreLoad);
+        setPathState(pathOrder.next());
         break;
 
-      case 1:
-        if (!robot.follower.isBusy() && robot.outtake.atTarget()) {
-          shootThree(2, intakeOneShootOne);
-        }
+      case PPG:
+        intakeThree(preIntakePPG, intakePPG);
+        shootThree(shootPPG);
+        setPathState(pathOrder.next());
         break;
 
-      case 2:
-        if (!robot.follower.isBusy() && robot.outtake.atTarget()) {
-          shootThree(3, intakeTwoShootTwo);
-        }
+      case PGP:
+        intakeThree(preIntakePGP, intakePGP);
+        shootThree(shootPGP);
+        setPathState(pathOrder.next());
         break;
 
-      case 3:
-        if (!robot.follower.isBusy() && robot.outtake.atTarget()) {
-          shootThree(4, intakeThreeShootThree);
-        }
+      case GPP:
+        intakeThree(preIntakeGPP, intakeGPP);
+        shootThree(shootGPP);
+        setPathState(pathOrder.next());
         break;
 
-      // TODO: implement
-//      case 4:
-//        if (!robot.follower.isBusy() && robot.outtake.atTarget()) {
-//          robot.follower.followPath(park);
-//        }
-//        break;
+      case STOP:
+        break;
     }
   }
 
-  public void shootThree(int pState, PathChain next) {
+  private void intakeThree(PathChain shootToIntake, PathChain intake) {
+    robot.follower.followPath(shootToIntake);
+    while (opMode.opModeIsActive() && robot.follower.isBusy()) {
+      robot.updateAutoControls();
+    }
+
+    robot.intake.setPower(1);
+    robot.follower.followPath(intake, INTAKE_DRIVE_SPEED, false);
+    while (opMode.opModeIsActive() && robot.follower.isBusy()) {
+      robot.updateAutoControls();
+    }
+  }
+
+  private void shootThree(PathChain intakeToShoot) {
+    robot.outtake.setTargetVelocity(Outtake.medSpeed);
+    robot.outtake.setBase();
+
+    robot.follower.followPath(intakeToShoot);
+    while (opMode.opModeIsActive() && (robot.follower.isBusy() || !robot.outtake.atTarget())) {
+      robot.updateAutoControls();
+    }
+
     ElapsedTime shootTimer = new ElapsedTime();
     robot.intake.setPower(1);
 
@@ -138,9 +186,9 @@ public class BaseCloseAuto {
     reloadAndWait(shootTimer);
     shootAndWait(shootTimer);
 
+    robot.intake.setPower(0);
+    robot.outtake.setTargetVelocity(0);
     robot.outtake.setBase();
-    robot.follower.followPath(next, .5, true); //TODO TEST
-    setPathState(pState);
   }
 
   private void shootAndWait(ElapsedTime shootTimer) {
@@ -157,8 +205,8 @@ public class BaseCloseAuto {
     robot.outtake.setBase();
 
     shootTimer.reset();
-    while (opMode.opModeIsActive() && (shootTimer.milliseconds() < OUTTAKE_SERVO_DOWN_MS
-        || !robot.outtake.atTarget())) {
+    while (opMode.opModeIsActive()
+        && (shootTimer.milliseconds() < OUTTAKE_SERVO_DOWN_MS || !robot.outtake.atTarget())) {
       // delay
       robot.updateAutoControls();
     }
@@ -177,6 +225,8 @@ public class BaseCloseAuto {
 
     // START
     robot.follower.setStartingPose(new Pose(START[0], START[1], Math.toRadians(START[2])));
+
+    // TODO: read camera with limelight and update pathOrder
 
     // LOOP
     while (this.opMode.opModeIsActive()) {
