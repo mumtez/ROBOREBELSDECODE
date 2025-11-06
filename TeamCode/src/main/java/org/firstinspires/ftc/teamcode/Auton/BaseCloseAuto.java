@@ -21,7 +21,7 @@ public class BaseCloseAuto {
   public Limelight3A limelight;
 
   public static double[] START = {116, 131, 37};
-  public static double[] SHOOT = {83, 83, 48};
+  public static double[] SHOOT = {86, 86, 40};
   public static double[] INTAKE_ONE_LEFT = {100, 83, 0};
   public static double[] INTAKE_ONE_RIGHT = {100, 83, 0};
 
@@ -29,7 +29,8 @@ public class BaseCloseAuto {
   public static double[] INTAKE_TWO_RIGHT = {100, 60, 0};
 
   public static int OUTTAKE_SERVO_UP_MS = 500;
-  public static int OUTTAKE_SERVO_DOWN_MS = 700;
+  public static int OUTTAKE_SERVO_DOWN_MS = 2000;
+  public static int velConst = 1;
 
   // TODO: implement intakeThreeShootThree, park
   PathChain
@@ -67,7 +68,7 @@ public class BaseCloseAuto {
     shootPreLoad = robot.follower
         .pathBuilder()
         .addPath(new BezierLine(poseFromArr(START), poseFromArr(SHOOT)))
-        .setLinearHeadingInterpolation(Math.toRadians(START[2]), SHOOT[2])
+        .setLinearHeadingInterpolation(Math.toRadians(START[2]), Math.toRadians(SHOOT[2]))
         .build();
 
     intakeOneShootOne = robot.follower.pathBuilder()
@@ -77,10 +78,10 @@ public class BaseCloseAuto {
 
         .addPath(new BezierLine(poseFromArr(INTAKE_ONE_LEFT), poseFromArr(INTAKE_ONE_RIGHT)))
         .setConstantHeadingInterpolation(0)
-        .setVelocityConstraint(5)
+        .setVelocityConstraint(velConst)
 
         .addPath(new BezierLine(poseFromArr(INTAKE_ONE_RIGHT), poseFromArr(SHOOT)))
-        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_ONE_RIGHT[2]), SHOOT[2])
+        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_ONE_RIGHT[2]), Math.toRadians(SHOOT[2]))
         .build();
 
     intakeTwoShootTwo = robot.follower.pathBuilder()
@@ -93,7 +94,7 @@ public class BaseCloseAuto {
         .setVelocityConstraint(5)
 
         .addPath(new BezierLine(poseFromArr(INTAKE_TWO_RIGHT), poseFromArr(SHOOT)))
-        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_TWO_RIGHT[2]), SHOOT[2])
+        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_TWO_RIGHT[2]), Math.toRadians(SHOOT[2]))
         .build();
   }
 
@@ -124,7 +125,7 @@ public class BaseCloseAuto {
         }
         break;
 
-        // TODO: implement
+      // TODO: implement
 //      case 4:
 //        if (!robot.follower.isBusy() && robot.outtake.atTarget()) {
 //          robot.follower.followPath(park);
@@ -158,8 +159,8 @@ public class BaseCloseAuto {
   }
 
   private void reloadAndWait(ElapsedTime shootTimer) {
-    shootTimer.reset();
     robot.outtake.setBase();
+    shootTimer.reset();
     while (opMode.opModeIsActive() && shootTimer.milliseconds() < OUTTAKE_SERVO_DOWN_MS && !robot.outtake.atTarget()) {
       // delay
       robot.updateAutoControls();
@@ -169,6 +170,7 @@ public class BaseCloseAuto {
   public void run() {
     buildPaths();
     robot.initAuton();
+    robot.follower.setStartingPose(new Pose(START[0], START[1], Math.toRadians(START[2])));
 
     // INIT LOOP
     while (this.opMode.opModeInInit()) {
