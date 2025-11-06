@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection;
@@ -33,6 +34,7 @@ public class Robot {
   ModeState state = ModeState.INTAKING;
 
   public Follower follower;
+  public Limelight3A limelight;
   public DcMotor fr, fl, br, bl;
   public IMU imu;
 
@@ -61,6 +63,11 @@ public class Robot {
     for (LynxModule hub : allHubs) {
       hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
     }
+    limelight = hardwareMap.get(Limelight3A.class, "limelight");
+
+    telemetry.setMsTransmissionInterval(11);
+
+    limelight.pipelineSwitch(0);
 
     bl = hardwareMap.dcMotor.get("bl");
     br = hardwareMap.dcMotor.get("br");

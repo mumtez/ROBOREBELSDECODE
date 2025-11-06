@@ -6,12 +6,13 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.Iterator;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.opencv.core.Point;
@@ -20,7 +21,6 @@ import org.opencv.core.Point;
 public class BaseCloseAuto {
 
   // TODO: implement limelight
-  public Limelight3A limelight;
 
   public static double[] START = {116, 131, 37};
   public static double[] SHOOT = {86, 86, 46};
@@ -48,8 +48,10 @@ public class BaseCloseAuto {
   public enum PathState {
     PRELOAD, PPG, PGP, GPP, STOP
   }
+
   private PathState pathState = PathState.PRELOAD;
-  private Iterator<PathState> pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP).iterator();
+  private Iterator<PathState> pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
+      .iterator();
 
   private final Timer pathTimer = new Timer();
   final Robot robot;
@@ -217,6 +219,8 @@ public class BaseCloseAuto {
     buildPaths();
     robot.initAuton();
 
+    robot.limelight.start();
+
     // INIT LOOP
     while (this.opMode.opModeInInit()) {
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
@@ -232,6 +236,16 @@ public class BaseCloseAuto {
     while (this.opMode.opModeIsActive()) {
       robot.updateAutoControls();
       autonomousPathUpdate();
+
+      LLResult result = robot.limelight.getLatestResult(); //TODO demo limeliht code actually have to put real logic
+      if (result != null) {
+        if (result.isValid()) {
+          Pose3D botpose = result.getBotpose();
+          telemetry.addData("tx", result.getTx());
+          telemetry.addData("ty", result.getTy());
+          telemetry.addData("Botpose", botpose.toString());
+        }
+      }
 
       telemetry.addData("Path State", pathState);
       telemetry.update();
