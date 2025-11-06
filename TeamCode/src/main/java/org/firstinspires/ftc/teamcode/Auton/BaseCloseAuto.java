@@ -83,6 +83,22 @@ public class BaseCloseAuto {
         )
         .setLinearHeadingInterpolation(Math.toRadians(INTAKEONERIGHT[2]), SHOOT[2])
         .build();
+    intakeTwoShootTwo = robot.follower
+        .pathBuilder()
+        .addPath(
+            new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKETWOLEFT))
+        )
+        .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), INTAKETWOLEFT[2])
+        .addParametricCallback(.5, () -> robot.intake.setPower(1))
+        .addPath(
+            new BezierLine(poseFromArr(INTAKETWOLEFT), poseFromArr(INTAKETWORIGHT))
+        )
+        .setConstantHeadingInterpolation(0).setVelocityConstraint(5)
+        .addPath(
+            new BezierLine(poseFromArr(INTAKETWORIGHT), poseFromArr(SHOOT))
+        )
+        .setLinearHeadingInterpolation(Math.toRadians(INTAKETWORIGHT[2]), SHOOT[2])
+        .build();
 
 
   }
@@ -151,5 +167,23 @@ public class BaseCloseAuto {
 
   }
 
+  public void run() {
+    buildPaths();
+    robot.initAuton();
+
+    // INIT LOOP
+    while (this.opMode.opModeInInit()) {
+      telemetry.addData("ALLIANCE", robot.getAllianceColor());
+      telemetry.update();
+    }
+
+    while (this.opMode.opModeIsActive()) {
+      robot.updateAutoControls();
+      autonomousPathUpdate();
+
+      telemetry.addData("Path State", pathState);
+      telemetry.update();
+    }
+  }
 
 }
