@@ -11,18 +11,17 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Configurable
 public class Intake {
+
   // Color Sensor tuning vars
   public static final float COLOR_GAIN = 2;
   public static final double DIST_THRESHOLD_CM = 3;
   public static final float GREEN_THRESHOLD = .025f;
   public static final float RED_THRESHOLD = .014f;
-
 
 
   public static Direction intakeMotorDirection = Direction.FORWARD;
@@ -33,7 +32,6 @@ public class Intake {
   // TODO: add second color sensor to robot config
   public final NormalizedColorSensor cs1, cs2;
   // TODO: add gobilda rgb to robot config
-  public final Servo rgb;
 
   private BallColor ballColor = BallColor.NONE;
 
@@ -60,8 +58,6 @@ public class Intake {
       ((SwitchableLight) cs2).enableLight(true);
     }
 
-    rgb = hardwareMap.servo.get("rgb");
-    rgb.setPosition(0);
   }
 
   public void setPower(double pow) {
@@ -81,7 +77,6 @@ public class Intake {
       this.ballColor = readBallColor(cs2);
     }
 
-    this.rgb.setPosition(this.ballColor.getRgbPos());
     return this.ballColor;
   }
 

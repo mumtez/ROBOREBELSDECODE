@@ -13,10 +13,7 @@ public class SensorTest extends LinearOpMode {
     Robot robot = new Robot(this);
     waitForStart();
     while (opModeIsActive()) {
-      telemetry.addData("INTAKE COLOR RED", robot.intake.colorSensor.getNormalizedColors().red);
-      telemetry.addData("INTAKE COLOR GREEN", robot.intake.colorSensor.getNormalizedColors().green);
-      telemetry.addData("INTAKE COLOR BLUE", robot.intake.colorSensor.getNormalizedColors().blue);
-      telemetry.addData("INTAKE COLOR ALPHA", robot.intake.colorSensor.getNormalizedColors().alpha);
+      telemetry.addData("INTAKE COLOR", robot.intake.updateSampleColor());
       telemetry.update();
     }
   }

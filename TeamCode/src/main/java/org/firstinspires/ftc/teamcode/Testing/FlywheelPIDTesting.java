@@ -26,10 +26,7 @@ public class FlywheelPIDTesting extends LinearOpMode {
       }
 
       double pow = robot.outtake.updatePIDControl();
-
-      panelsTelemetry.addData("TARGET", TARGET);
-      panelsTelemetry.addData("REFERENCE", robot.outtake.getCurrentVelocity());
-      panelsTelemetry.addData("ERROR", robot.outtake.getCurrentVelocity() - TARGET);
+      panelsTelemetry.update(telemetry);
 
       telemetry.addData("TARGET", TARGET);
       telemetry.addData("REFERENCE", robot.outtake.getCurrentVelocity());

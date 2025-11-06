@@ -45,7 +45,7 @@ public class Outtake {
   public Outtake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
     rgb = hardwareMap.servo.get("rgb");
-    rgb.setPosition(0);
+    rgb.setPosition(.5);
     flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
     flywheel.setDirection(flywheelMotorDirection);
     flywheel.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
@@ -86,6 +86,7 @@ public class Outtake {
     } else {
       rgb.setPosition(.3);
     }
+
     double dt = timer.seconds();
     timer.reset();
     if (dt == 0) {
@@ -121,9 +122,6 @@ public class Outtake {
     return Math.abs(this.getCurrentVelocity() - this.targetVelocity) < threshold;
   }
 
-  public boolean atTargetSpecified(double threshold, double target) {
-    return Math.abs(this.getCurrentVelocity() - target) < threshold;
-  }
 
   public double getTargetVelocity() {
     return this.targetVelocity;

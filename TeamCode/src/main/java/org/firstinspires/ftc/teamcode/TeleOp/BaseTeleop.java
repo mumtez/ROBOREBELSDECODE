@@ -61,18 +61,18 @@ public class BaseTeleop {
         robot.outtake.setTargetVelocity(0);
       } */
 
-      if (gamepad1.triangle) {
+      if (gamepad2.triangle) {
         robot.outtake.setShoot();
       } else {
         robot.outtake.setBase();
       }
-      if (gamepad1.dpad_right) {
+      if (gamepad2.dpad_up) {
         robot.outtake.setTargetVelocity(Outtake.farSpeed);
       }
-      if (gamepad1.dpad_left) {
+      if (gamepad2.dpad_down) {
         robot.outtake.setTargetVelocity(Outtake.medSpeed);
       }
-      if (gamepad1.dpad_up) {
+      if (gamepad2.dpad_right) {
         robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
       }
       if (gamepad1.dpad_down) {
@@ -82,7 +82,7 @@ public class BaseTeleop {
       if (gamepad1.right_trigger != 0 || gamepad1.left_trigger != 0) {
         robot.intake.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
       } else if (gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0) {
-        robot.intake.setPowerVertical(gamepad2.right_trigger - gamepad2.left_trigger);
+        robot.intake.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
       } else {
         robot.intake.setPower(0);
       }
@@ -125,6 +125,7 @@ public class BaseTeleop {
   private void updateTelemetry() {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
+    telemetry.addData("At Target", robot.outtake.atTarget());
     telemetry.addLine("=== SENSORS ===");
     NormalizedRGBA cs1Colors = robot.intake.cs1.getNormalizedColors();
     NormalizedRGBA cs2Colors = robot.intake.cs2.getNormalizedColors();
