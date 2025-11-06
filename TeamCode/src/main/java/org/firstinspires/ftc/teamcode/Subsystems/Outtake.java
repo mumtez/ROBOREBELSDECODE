@@ -17,8 +17,8 @@ public class Outtake {
 
   // --- PID constants (tune in Panels) ---
 
-  public static int medSpeed = 1550;
-  public static int farSpeed = 1700;
+  public static int medSpeed = 1320;
+  public static int farSpeed = 1620;
 
   public static int cycleSpeed = 350;
   public static double kP = 0.023;
@@ -81,7 +81,7 @@ public class Outtake {
 
   // --- Main PID update loop ---
   public double updatePIDControl() {
-    if (this.atTarget() && targetVelocity != 0) {
+    if (this.atTarget(40) && targetVelocity != 0) {
       rgb.setPosition(.5);
     } else {
       rgb.setPosition(.3);
