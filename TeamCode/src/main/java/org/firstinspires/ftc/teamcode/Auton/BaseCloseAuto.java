@@ -40,7 +40,6 @@ public class BaseCloseAuto {
   private int pathState = 0;
 
   private final Timer pathTimer = new Timer();
-  private final ElapsedTime intakeTimer = new ElapsedTime();
   final Robot robot;
   final LinearOpMode opMode;
   final Telemetry telemetry;
@@ -150,8 +149,9 @@ public class BaseCloseAuto {
   }
 
   private void shootAndWait(ElapsedTime shootTimer) {
-    shootTimer.reset();
     robot.outtake.setShoot();
+
+    shootTimer.reset();
     while (opMode.opModeIsActive() && shootTimer.milliseconds() < OUTTAKE_SERVO_UP_MS) {
       // delay
       robot.updateAutoControls();
@@ -160,17 +160,18 @@ public class BaseCloseAuto {
 
   private void reloadAndWait(ElapsedTime shootTimer) {
     robot.outtake.setBase();
+
     shootTimer.reset();
-    while (opMode.opModeIsActive() && shootTimer.milliseconds() < OUTTAKE_SERVO_DOWN_MS && !robot.outtake.atTarget()) {
+    while (opMode.opModeIsActive() && (shootTimer.milliseconds() < OUTTAKE_SERVO_DOWN_MS || !robot.outtake.atTarget())) {
       // delay
       robot.updateAutoControls();
     }
   }
 
   public void run() {
+    // INIT
     buildPaths();
     robot.initAuton();
-    robot.follower.setStartingPose(new Pose(START[0], START[1], Math.toRadians(START[2])));
 
     // INIT LOOP
     while (this.opMode.opModeInInit()) {
@@ -178,6 +179,10 @@ public class BaseCloseAuto {
       telemetry.update();
     }
 
+    // START
+    robot.follower.setStartingPose(new Pose(START[0], START[1], Math.toRadians(START[2])));
+
+    // LOOP
     while (this.opMode.opModeIsActive()) {
       robot.updateAutoControls();
       autonomousPathUpdate();
