@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 public class Robot {
 
@@ -53,6 +54,7 @@ public class Robot {
     this.allianceColor = allianceColor;
 
     HardwareMap hardwareMap = opMode.hardwareMap;
+    follower = Constants.createFollower(hardwareMap);
 
     // From https://gm0.org/en/latest/docs/software/tutorials/bulk-reads.html
     List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
