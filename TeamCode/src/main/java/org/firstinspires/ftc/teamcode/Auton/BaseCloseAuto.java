@@ -21,16 +21,16 @@ public class BaseCloseAuto {
   public Limelight3A limelight;
 
   public static double[] START = {116, 131, 37};
-  public static double[] SHOOT = {86, 86, 44};
-  public static double[] INTAKE_ONE_LEFT = {100, 83, 0};
-  public static double[] INTAKE_ONE_RIGHT = {100, 83, 0};
+  public static double[] SHOOT = {86, 86, 46};
+  public static double[] INTAKE_ONE_LEFT = {90, 85, 0};
+  public static double[] INTAKE_ONE_RIGHT = {120, 85, 0};
 
-  public static double[] INTAKE_TWO_LEFT = {100, 60, 0};
-  public static double[] INTAKE_TWO_RIGHT = {100, 60, 0};
+  public static double[] INTAKE_TWO_LEFT = {90, 62, 0};
+  public static double[] INTAKE_TWO_RIGHT = {120, 62, 0};
 
   public static int OUTTAKE_SERVO_UP_MS = 500;
   public static int OUTTAKE_SERVO_DOWN_MS = 2000;
-  public static int velConst = 40;
+  public static int velConst = 1;
 
   // TODO: implement intakeThreeShootThree, park
   PathChain
@@ -68,13 +68,14 @@ public class BaseCloseAuto {
         .pathBuilder()
         .addPath(new BezierLine(poseFromArr(START), poseFromArr(SHOOT)))
         .setLinearHeadingInterpolation(Math.toRadians(START[2]), Math.toRadians(SHOOT[2]))
+        .setTimeoutConstraint(500)
         .build();
 
     intakeOneShootOne = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKE_ONE_LEFT)))
         .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), Math.toRadians(INTAKE_ONE_LEFT[2]))
         .addPath(new BezierLine(poseFromArr(INTAKE_ONE_LEFT), poseFromArr(INTAKE_ONE_RIGHT)))
-        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_ONE_LEFT[2]), Math.toRadians(INTAKE_ONE_RIGHT[2]))
+        .setConstantHeadingInterpolation(0)
         .setVelocityConstraint(velConst)
         .addPath(new BezierLine(poseFromArr(INTAKE_ONE_RIGHT), poseFromArr(SHOOT)))
         .setLinearHeadingInterpolation(Math.toRadians(INTAKE_ONE_RIGHT[2]), Math.toRadians(SHOOT[2]))
@@ -83,12 +84,9 @@ public class BaseCloseAuto {
     intakeTwoShootTwo = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKE_TWO_LEFT)))
         .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), Math.toRadians(INTAKE_TWO_LEFT[2]))
-        .addParametricCallback(.5, () -> robot.intake.setPower(1))
-
         .addPath(new BezierLine(poseFromArr(INTAKE_TWO_LEFT), poseFromArr(INTAKE_TWO_RIGHT)))
         .setConstantHeadingInterpolation(0)
-        .setVelocityConstraint(5)
-
+        .setVelocityConstraint(velConst)
         .addPath(new BezierLine(poseFromArr(INTAKE_TWO_RIGHT), poseFromArr(SHOOT)))
         .setLinearHeadingInterpolation(Math.toRadians(INTAKE_TWO_RIGHT[2]), Math.toRadians(SHOOT[2]))
         .build();
@@ -99,7 +97,7 @@ public class BaseCloseAuto {
       case 0:
         robot.outtake.setBase();
         robot.outtake.setTargetVelocity(Outtake.medSpeed);
-        robot.follower.followPath(shootPreLoad);
+        robot.follower.followPath(shootPreLoad, true);
         setPathState(1);
         break;
 
@@ -141,7 +139,7 @@ public class BaseCloseAuto {
     shootAndWait(shootTimer);
 
     robot.outtake.setBase();
-    robot.follower.followPath(next);
+    robot.follower.followPath(next, .5, true); //TODO TEST
     setPathState(pState);
   }
 
