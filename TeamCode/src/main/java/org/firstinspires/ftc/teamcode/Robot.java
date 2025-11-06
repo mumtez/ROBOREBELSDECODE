@@ -95,6 +95,8 @@ public class Robot {
 
   public void initAuton() {
     // TODO: when start auto will do this
+    this.outtake.setBase();
+    
   }
 
   public AllianceColor getAllianceColor() {
