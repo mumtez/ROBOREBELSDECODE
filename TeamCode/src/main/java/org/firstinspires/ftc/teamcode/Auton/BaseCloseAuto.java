@@ -21,7 +21,7 @@ public class BaseCloseAuto {
   public Limelight3A limelight;
 
   public static double[] START = {116, 131, 37};
-  public static double[] SHOOT = {86, 86, 40};
+  public static double[] SHOOT = {86, 86, 44};
   public static double[] INTAKE_ONE_LEFT = {100, 83, 0};
   public static double[] INTAKE_ONE_RIGHT = {100, 83, 0};
 
@@ -30,7 +30,7 @@ public class BaseCloseAuto {
 
   public static int OUTTAKE_SERVO_UP_MS = 500;
   public static int OUTTAKE_SERVO_DOWN_MS = 2000;
-  public static int velConst = 1;
+  public static int velConst = 40;
 
   // TODO: implement intakeThreeShootThree, park
   PathChain
@@ -72,20 +72,17 @@ public class BaseCloseAuto {
 
     intakeOneShootOne = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKE_ONE_LEFT)))
-        .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), INTAKE_ONE_LEFT[2])
-        .addParametricCallback(.5, () -> robot.intake.setPower(1))
-
+        .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), Math.toRadians(INTAKE_ONE_LEFT[2]))
         .addPath(new BezierLine(poseFromArr(INTAKE_ONE_LEFT), poseFromArr(INTAKE_ONE_RIGHT)))
-        .setConstantHeadingInterpolation(0)
+        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_ONE_LEFT[2]), Math.toRadians(INTAKE_ONE_RIGHT[2]))
         .setVelocityConstraint(velConst)
-
         .addPath(new BezierLine(poseFromArr(INTAKE_ONE_RIGHT), poseFromArr(SHOOT)))
         .setLinearHeadingInterpolation(Math.toRadians(INTAKE_ONE_RIGHT[2]), Math.toRadians(SHOOT[2]))
         .build();
 
     intakeTwoShootTwo = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(SHOOT), poseFromArr(INTAKE_TWO_LEFT)))
-        .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), INTAKE_TWO_LEFT[2])
+        .setLinearHeadingInterpolation(Math.toRadians(SHOOT[2]), Math.toRadians(INTAKE_TWO_LEFT[2]))
         .addParametricCallback(.5, () -> robot.intake.setPower(1))
 
         .addPath(new BezierLine(poseFromArr(INTAKE_TWO_LEFT), poseFromArr(INTAKE_TWO_RIGHT)))
@@ -162,7 +159,8 @@ public class BaseCloseAuto {
     robot.outtake.setBase();
 
     shootTimer.reset();
-    while (opMode.opModeIsActive() && (shootTimer.milliseconds() < OUTTAKE_SERVO_DOWN_MS || !robot.outtake.atTarget())) {
+    while (opMode.opModeIsActive() && (shootTimer.milliseconds() < OUTTAKE_SERVO_DOWN_MS
+        || !robot.outtake.atTarget())) {
       // delay
       robot.updateAutoControls();
     }
