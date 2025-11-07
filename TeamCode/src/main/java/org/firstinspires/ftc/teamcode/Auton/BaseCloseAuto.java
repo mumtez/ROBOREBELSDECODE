@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Auton;
 
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
@@ -16,25 +17,33 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
+import org.opencv.core.Point;
 
 @Configurable
 public class BaseCloseAuto {
 
   public static double[] START_BLUE = {116, 131, 127}; // initial rotation 37
-  public static double[] SHOOT_BLUE = {86, 86, 46};
+  public static double[] SHOOT_BLUE = {80, 88, 41};
 
-  public static double[] INTAKE_PPG_START_BLUE = {90, 85, 0};
-  public static double[] INTAKE_PPG_END_BLUE = {120, 85, 0};
+  public static double[] INTAKE_PPG_START_BLUE = {83, 88, 0};
+  public static double[] INTAKE_PPG_END_BLUE = {118, 88, 0};
 
-  public static double[] INTAKE_PGP_START_BLUE = {90, 62, 0};
-  public static double[] INTAKE_PGP_END_BLUE = {120, 62, 0};
+  public static double[] SHOOT_CONTROl = {72, 48, 0};
 
-  public static double[] INTAKE_GPP_START_BLUE = {90, 39, 0};
-  public static double[] INTAKE_GPP_END_BLUE = {120, 39, 0};
+
+  public static double[] INTAKE_PGP_START_BLUE = {86, 64, 0};
+  public static double[] INTAKE_PGP_END_BLUE = {112, 64, 0};
+
+
+  public static double[] INTAKE_GPP_START_BLUE = {88, 41, 0};
+  public static double[] INTAKE_GPP_END_BLUE = {110, 41, 0};
+
 
   public static int OUTTAKE_SERVO_UP_MS = 500;
   public static int OUTTAKE_SERVO_DOWN_MS = 1000;
   public static double INTAKE_DRIVE_SPEED = 0.3;
+
+  public int currentTag = 21;
 
   // TODO: implement park
   PathChain
@@ -68,6 +77,10 @@ public class BaseCloseAuto {
   void setPathState(PathState pState) {
     pathState = pState;
     pathTimer.resetTimer();
+  }
+
+  public Point pointFromArr(double[] arr) {
+    return new Point(arr[0], arr[1]);
   }
 
   void buildPaths() {
@@ -108,7 +121,7 @@ public class BaseCloseAuto {
         .setTimeoutConstraint(500)
         .build();
     shootPGP = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArr(INTAKE_PGP_END_BLUE), poseFromArr(SHOOT_BLUE)))
+        .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_BLUE), poseFromArr(SHOOT_CONTROl), poseFromArr(SHOOT_BLUE)))
         .setLinearHeadingInterpolation(Math.toRadians(INTAKE_PGP_END_BLUE[2]), Math.toRadians(SHOOT_BLUE[2]))
         .setTimeoutConstraint(500)
         .build();
@@ -125,7 +138,7 @@ public class BaseCloseAuto {
         .setTimeoutConstraint(500)
         .build();
     shootGPP = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArr(INTAKE_GPP_END_BLUE), poseFromArr(SHOOT_BLUE)))
+        .addPath(new BezierCurve(poseFromArr(INTAKE_GPP_END_BLUE), poseFromArr(SHOOT_CONTROl), poseFromArr(SHOOT_BLUE)))
         .setLinearHeadingInterpolation(poseFromArr(INTAKE_GPP_END_BLUE).getHeading(),
             poseFromArr(SHOOT_BLUE).getHeading())
         .setTimeoutConstraint(500)
@@ -238,11 +251,9 @@ public class BaseCloseAuto {
       if (result != null) {
         if (result.isValid()) {
           Pose3D botpose = result.getBotpose();
-          telemetry.addData("tx", result.getTx());
-          telemetry.addData("ty", result.getTy());
-          telemetry.addData("Botpose", botpose.toString());
           for (FiducialResult fiducial : fiducials) {
             int id = fiducial.getFiducialId(); // The ID number of the fiducial
+            currentTag = id;
             telemetry.addData("Tag ", id);
           }
         }
@@ -253,8 +264,18 @@ public class BaseCloseAuto {
     robot.follower.setStartingPose(poseFromArr(START_BLUE));
 
     // TODO: read camera with limelight and update pathOrder
-    pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
-        .iterator();
+    if (currentTag == 21) {
+      pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP)
+          .iterator();
+    }
+    if (currentTag == 22) {
+      pathOrder = List.of(PathState.PGP, PathState.GPP, PathState.PPG, PathState.STOP)
+          .iterator();
+    }
+    if (currentTag == 23) {
+      pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
+          .iterator();
+    }
 
     // LOOP
     while (this.opMode.opModeIsActive()) {

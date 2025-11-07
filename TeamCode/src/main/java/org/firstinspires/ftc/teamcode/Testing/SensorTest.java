@@ -16,6 +16,7 @@ public class SensorTest extends LinearOpMode {
   public void runOpMode() throws InterruptedException {
     Robot robot = new Robot(this);
     waitForStart();
+    robot.limelight.start();
     while (opModeIsActive()) {
       LLResult result = robot.limelight.getLatestResult(); //TODO demo limelight code actually have to put real logic
       List<FiducialResult> fiducials = result.getFiducialResults();
