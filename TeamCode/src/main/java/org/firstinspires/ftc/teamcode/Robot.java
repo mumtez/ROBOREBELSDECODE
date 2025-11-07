@@ -65,7 +65,7 @@ public class Robot {
     }
     limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
-    telemetry.setMsTransmissionInterval(11);
+    opMode.telemetry.setMsTransmissionInterval(11);
 
     limelight.pipelineSwitch(0);
 
