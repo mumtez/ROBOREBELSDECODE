@@ -247,14 +247,14 @@ public class BaseCloseAuto {
           }
         }
       }
-      pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
-          .iterator();
     }
 
     // START
     robot.follower.setStartingPose(poseFromArr(START_BLUE));
 
     // TODO: read camera with limelight and update pathOrder
+    pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
+        .iterator();
 
     // LOOP
     while (this.opMode.opModeIsActive()) {
