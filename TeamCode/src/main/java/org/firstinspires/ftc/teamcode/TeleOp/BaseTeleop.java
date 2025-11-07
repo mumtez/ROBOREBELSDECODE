@@ -17,7 +17,6 @@ public class BaseTeleop {
   final Telemetry telemetry;
   double headingOffset;
 
-
   Gamepad gamepad1 = new Gamepad();
   Gamepad gamepad2 = new Gamepad();
 
@@ -123,6 +122,7 @@ public class BaseTeleop {
   }
 
   private void updateTelemetry() {
+    // TODO: do not re-read sensor values for telemetry. Cache values from updateSampleColor, etc if necessary
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());

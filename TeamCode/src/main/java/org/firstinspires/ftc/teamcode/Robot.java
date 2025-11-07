@@ -21,10 +21,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 public class Robot {
 
-  public enum AllianceColor {
-    RED, BLUE
-  }
-
   public final ElapsedTime stateTimer = new ElapsedTime();
 
   public enum ModeState {
@@ -41,7 +37,7 @@ public class Robot {
   public Outtake outtake;
   public Intake intake;
 
-  private AllianceColor allianceColor;
+  private final AllianceColor allianceColor;
 
   public Robot(LinearOpMode opMode) {
     this(opMode, AllianceColor.RED);
@@ -50,7 +46,6 @@ public class Robot {
   public ModeState getState() {
     return state;
   }
-
 
   public Robot(LinearOpMode opMode, AllianceColor allianceColor) {
     this.allianceColor = allianceColor;
