@@ -20,7 +20,7 @@ public class Outtake {
   public static int medSpeed = 1320;
   public static int farSpeed = 1620;
 
-  public static int cycleSpeed = 350;
+  public static int cycleSpeed = 500;
   public static double kP = 0.023;
   public static double kI = 0.000;
   public static double kD = 0.000;

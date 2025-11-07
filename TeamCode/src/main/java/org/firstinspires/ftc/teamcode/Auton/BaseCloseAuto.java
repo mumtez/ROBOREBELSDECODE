@@ -22,6 +22,10 @@ import org.opencv.core.Point;
 @Configurable
 public class BaseCloseAuto {
 
+  public int pattern = 0; //0 = gpp 1 = pgp 2 =ppg
+
+  private static final double CYCLE_TIMER = 2000;
+  private static final double TRANSFER_TIMER = 1000;
   public static double[] START_BLUE = {116, 131, 127}; // initial rotation 37
   public static double[] SHOOT_BLUE = {80, 88, 41};
 
@@ -148,7 +152,9 @@ public class BaseCloseAuto {
   public void autonomousPathUpdate() {
     switch (pathState) {
       case PRELOAD:
+
         shootThree(shootPreLoad);
+
         setPathState(pathOrder.next());
         break;
 
@@ -224,6 +230,37 @@ public class BaseCloseAuto {
     }
   }
 
+  private void cycle(ElapsedTime cycleTimer) {
+    robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
+
+    while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
+      // delay
+      robot.updateAutoControls();
+
+    }
+    cycleTimer.reset();
+    robot.outtake.setShoot();
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < CYCLE_TIMER) {
+      // delay
+      robot.updateAutoControls();
+    }
+    robot.outtake.setBase();
+    robot.intake.setPower(1);
+    cycleTimer.reset();
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < TRANSFER_TIMER) {
+      // delay
+      robot.updateAutoControls();
+    }
+
+    robot.intake.setPowerVertical(-.4);
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < TRANSFER_TIMER) {
+      // delay
+      robot.updateAutoControls();
+    }
+
+    robot.intake.setPower(1);
+  }
+
   private void reloadAndWait(ElapsedTime shootTimer) {
     robot.outtake.setBase();
 
@@ -267,14 +304,18 @@ public class BaseCloseAuto {
     if (currentTag == 21) {
       pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP)
           .iterator();
+      pattern = 0;
+
     }
     if (currentTag == 22) {
       pathOrder = List.of(PathState.PGP, PathState.GPP, PathState.PPG, PathState.STOP)
           .iterator();
+      pattern = 1;
     }
     if (currentTag == 23) {
       pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
           .iterator();
+      pattern = 2;
     }
 
     // LOOP

@@ -82,8 +82,12 @@ public class BaseTeleop {
         robot.intake.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
       } else if (gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0) {
         robot.intake.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
+      } else if (gamepad2.left_bumper) {
+        robot.intake.setPowerVertical(-.4);
       } else {
-        robot.intake.setPower(0);
+
+        robot.intake.setPowerVertical(0);
+
       }
 
       robot.outtake.updatePIDControl();
