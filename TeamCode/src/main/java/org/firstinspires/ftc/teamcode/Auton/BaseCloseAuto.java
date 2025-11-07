@@ -22,10 +22,11 @@ import org.opencv.core.Point;
 @Configurable
 public class BaseCloseAuto {
 
+  private static double INTAKE_TIMER = 1000;
   public int pattern = 0; //0 = gpp 1 = pgp 2 =ppg
 
-  private static final double CYCLE_TIMER = 2000;
-  private static final double TRANSFER_TIMER = 1000;
+  private static double CYCLE_TIMER = 1200;
+  private static double TRANSFER_TIMER = 500;
   public static double[] START_BLUE = {116, 131, 127}; // initial rotation 37
   public static double[] SHOOT_BLUE = {80, 88, 41};
 
@@ -36,7 +37,7 @@ public class BaseCloseAuto {
 
 
   public static double[] INTAKE_PGP_START_BLUE = {86, 64, 0};
-  public static double[] INTAKE_PGP_END_BLUE = {112, 64, 0};
+  public static double[] INTAKE_PGP_END_BLUE = {116, 64, 0};
 
 
   public static double[] INTAKE_GPP_START_BLUE = {88, 41, 0};
@@ -152,7 +153,13 @@ public class BaseCloseAuto {
   public void autonomousPathUpdate() {
     switch (pathState) {
       case PRELOAD:
-
+        if (pattern == 1) {
+          cycle();
+          cycle();
+        }
+        if (pattern == 2) {
+          cycle();
+        }
         shootThree(shootPreLoad);
 
         setPathState(pathOrder.next());
@@ -230,7 +237,8 @@ public class BaseCloseAuto {
     }
   }
 
-  private void cycle(ElapsedTime cycleTimer) {
+  private void cycle() {
+    ElapsedTime cycleTimer = new ElapsedTime();
     robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
 
     while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
@@ -247,12 +255,12 @@ public class BaseCloseAuto {
     robot.outtake.setBase();
     robot.intake.setPower(1);
     cycleTimer.reset();
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < TRANSFER_TIMER) {
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < INTAKE_TIMER) {
       // delay
       robot.updateAutoControls();
     }
-
-    robot.intake.setPowerVertical(-.4);
+    cycleTimer.reset();
+    robot.intake.setPowerVertical(-.6);
     while (opMode.opModeIsActive() && cycleTimer.milliseconds() < TRANSFER_TIMER) {
       // delay
       robot.updateAutoControls();
