@@ -48,8 +48,7 @@ public class BaseCloseAuto {
   }
 
   private PathState pathState = PathState.PRELOAD;
-  private Iterator<PathState> pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
-      .iterator();
+  private Iterator<PathState> pathOrder;
 
   private final Timer pathTimer = new Timer();
   final Robot robot;
@@ -248,6 +247,8 @@ public class BaseCloseAuto {
           }
         }
       }
+      pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
+          .iterator();
     }
 
     // START
