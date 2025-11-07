@@ -30,7 +30,7 @@ public class BaseCloseAuto {
   public static double[] INTAKE_GPP_END_BLUE   = {120, 39, 0};
 
   public static int OUTTAKE_SERVO_UP_MS = 500;
-  public static int OUTTAKE_SERVO_DOWN_MS = 2000;
+  public static int OUTTAKE_SERVO_DOWN_MS = 1000;
   public static double INTAKE_DRIVE_SPEED = 0.3;
 
   // TODO: implement park
@@ -150,6 +150,9 @@ public class BaseCloseAuto {
         break;
 
       case STOP:
+        robot.intake.setPower(0);
+        robot.outtake.setTargetVelocity(0);
+        robot.outtake.setBase();
         break;
     }
   }
@@ -168,16 +171,16 @@ public class BaseCloseAuto {
   }
 
   private void shootThree(PathChain intakeToShoot) {
+    ElapsedTime shootTimer = new ElapsedTime();
+
     robot.outtake.setTargetVelocity(Outtake.medSpeed);
     robot.outtake.setBase();
+    robot.intake.setPower(1);
 
     robot.follower.followPath(intakeToShoot);
     while (opMode.opModeIsActive() && (robot.follower.isBusy() || !robot.outtake.atTarget())) {
       robot.updateAutoControls();
     }
-
-    ElapsedTime shootTimer = new ElapsedTime();
-    robot.intake.setPower(1);
 
     shootAndWait(shootTimer);
     reloadAndWait(shootTimer);
