@@ -78,7 +78,6 @@ public class Outtake {
     flapper.setPosition(pos);
   }
 
-
   // --- Main PID update loop ---
   public double updatePIDControl() {
     if (this.atTarget(40) && targetVelocity != 0) {
@@ -104,6 +103,7 @@ public class Outtake {
     double output = (kP * error) + (kI * integralSum) + (kD * derivative);
 
     // limit power range
+    // TODO: allow motor to go under 0 (-0.2?)
     output = Range.clip(output, 0.0, 1.0);
 
     this.setPower(output);
@@ -121,7 +121,6 @@ public class Outtake {
   public boolean atTarget(double threshold) {
     return Math.abs(this.getCurrentVelocity() - this.targetVelocity) < threshold;
   }
-
 
   public double getTargetVelocity() {
     return this.targetVelocity;

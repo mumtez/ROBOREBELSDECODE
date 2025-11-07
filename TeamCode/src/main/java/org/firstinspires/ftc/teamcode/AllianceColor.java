@@ -6,13 +6,13 @@ public enum AllianceColor {
   RED {
     @Override
     public Pose poseFromArray(double[] arr) {
-      return new Pose(arr[0], arr[1], Math.toRadians(arr[2])).mirror();
+      return new Pose(arr[0], arr[1], Math.toRadians(arr[2]));
     }
   },
   BLUE {
     @Override
     public Pose poseFromArray(double[] arr) {
-      return new Pose(arr[0], arr[1], Math.toRadians(arr[2]));
+      return new Pose(arr[0], arr[1], Math.toRadians(arr[2])).mirror();
     }
   };
 
