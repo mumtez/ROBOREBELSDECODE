@@ -17,7 +17,7 @@ public class SensorTest extends LinearOpMode {
     Robot robot = new Robot(this);
     waitForStart();
     while (opModeIsActive()) {
-      LLResult result = robot.limelight.getLatestResult(); //TODO demo limeliht code actually have to put real logic
+      LLResult result = robot.limelight.getLatestResult(); //TODO demo limelight code actually have to put real logic
       List<FiducialResult> fiducials = result.getFiducialResults();
       if (result != null) {
         if (result.isValid()) {
