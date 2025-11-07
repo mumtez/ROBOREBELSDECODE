@@ -22,7 +22,7 @@ import org.opencv.core.Point;
 @Configurable
 public class BaseCloseAuto {
 
-  private static double INTAKE_TIMER = 1000;
+  private static double INTAKE_TIMER = 600;
   public int pattern = 0; //0 = gpp 1 = pgp 2 =ppg
 
   private static double CYCLE_TIMER = 1200;
@@ -31,7 +31,7 @@ public class BaseCloseAuto {
   public static double[] SHOOT_BLUE = {80, 88, 41};
 
   public static double[] INTAKE_PPG_START_BLUE = {83, 88, 0};
-  public static double[] INTAKE_PPG_END_BLUE = {118, 88, 0};
+  public static double[] INTAKE_PPG_END_BLUE = {114, 88, 0};
 
   public static double[] SHOOT_CONTROl = {72, 48, 0};
 
@@ -160,6 +160,7 @@ public class BaseCloseAuto {
         if (pattern == 2) {
           cycle();
         }
+
         shootThree(shootPreLoad);
 
         setPathState(pathOrder.next());
@@ -211,7 +212,7 @@ public class BaseCloseAuto {
     robot.outtake.setBase();
     robot.intake.setPower(1);
 
-    robot.follower.followPath(intakeToShoot);
+    robot.follower.followPath(intakeToShoot, true); //TODO testing holdend
     while (opMode.opModeIsActive() && (robot.follower.isBusy() || !robot.outtake.atTarget())) {
       robot.updateAutoControls();
     }
@@ -316,7 +317,7 @@ public class BaseCloseAuto {
 
     }
     if (currentTag == 22) {
-      pathOrder = List.of(PathState.PGP, PathState.GPP, PathState.PPG, PathState.STOP)
+      pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GPP, PathState.STOP)
           .iterator();
       pattern = 1;
     }
