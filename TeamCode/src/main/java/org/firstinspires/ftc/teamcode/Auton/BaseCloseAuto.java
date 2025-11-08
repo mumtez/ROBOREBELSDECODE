@@ -27,7 +27,7 @@ public class BaseCloseAuto {
 
   public static double CYCLE_TIMER = 1200;
   public static double TRANSFER_TIMER = 500;
-  public static double[] START_RED = {116, 131, 127}; // initial rotation 37
+  public static double[] START_RED = {113, 131, 180}; // old value 116, 131, 127
   public static double[] SHOOT_RED = {80, 88, 41};
 
   public static double[] INTAKE_PPG_START_RED = {83, 88, 0};
@@ -78,7 +78,7 @@ public class BaseCloseAuto {
   Pose poseFromArr(double[] arr) {
     return this.robot.getAllianceColor().poseFromArray(arr);
   }
-  
+
   void setPathState(PathState pState) {
     pathState = pState;
     pathTimer.resetTimer();
@@ -127,7 +127,8 @@ public class BaseCloseAuto {
         .build();
     shootPGP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(SHOOT_CONTROl), poseFromArr(SHOOT_RED)))
-        .setLinearHeadingInterpolation(poseFromArr(INTAKE_PGP_END_RED).getHeading(), poseFromArr(SHOOT_RED).getHeading())
+        .setLinearHeadingInterpolation(poseFromArr(INTAKE_PGP_END_RED).getHeading(),
+            poseFromArr(SHOOT_RED).getHeading())
         .setTimeoutConstraint(500)
         .build();
 
@@ -292,6 +293,7 @@ public class BaseCloseAuto {
     while (this.opMode.opModeInInit()) {
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
       telemetry.update();
+      robot.limelight.pipelineSwitch(0);
       LLResult result = robot.limelight.getLatestResult(); //TODO demo limelight code actually have to put real logic
       List<FiducialResult> fiducials = result.getFiducialResults();
       if (result != null) {

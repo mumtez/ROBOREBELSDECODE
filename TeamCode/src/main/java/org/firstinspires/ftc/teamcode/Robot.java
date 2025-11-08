@@ -62,8 +62,6 @@ public class Robot {
 
     opMode.telemetry.setMsTransmissionInterval(11);
 
-    limelight.pipelineSwitch(0);
-
     bl = hardwareMap.dcMotor.get("bl");
     br = hardwareMap.dcMotor.get("br");
     fl = hardwareMap.dcMotor.get("fl");

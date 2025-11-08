@@ -27,21 +27,21 @@ public class BaseCloseAutoSafeForBlue {
 
   public static double CYCLE_TIMER = 1200;
   public static double TRANSFER_TIMER = 500;
-  public static double[] START_BLUE = {116, 131, 127}; // initial rotation 37
-  public static double[] SHOOT_BLUE = {64, 88, 137}; // TODO This is the one non mirrored point
+  public static double[] START_BLUE = {113, 131, 180}; // initial rotation 37
+  public static double[] SHOOT_BLUE = {64, 88, 134}; // TODO This is the one non mirrored point
 
   public static double[] INTAKE_PPG_START_BLUE = {83, 88, 0};
-  public static double[] INTAKE_PPG_END_BLUE = {114, 88, 0};
+  public static double[] INTAKE_PPG_END_BLUE = {114, 88, 180};
 
   public static double[] SHOOT_CONTROl = {72, 48, 0};
 
 
   public static double[] INTAKE_PGP_START_BLUE = {86, 64, 0};
-  public static double[] INTAKE_PGP_END_BLUE = {116, 64, 0};
+  public static double[] INTAKE_PGP_END_BLUE = {116, 64, 180};
 
 
   public static double[] INTAKE_GPP_START_BLUE = {88, 41, 0};
-  public static double[] INTAKE_GPP_END_BLUE = {110, 41, 0};
+  public static double[] INTAKE_GPP_END_BLUE = {110, 41, 180};
 
 
   public static int OUTTAKE_SERVO_UP_MS = 500;
@@ -109,7 +109,7 @@ public class BaseCloseAutoSafeForBlue {
         .build();
     intakePPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_START_BLUE), poseFromArr(INTAKE_PPG_END_BLUE)))
-        .setConstantHeadingInterpolation(0)
+        .setConstantHeadingInterpolation(180)
         .setTimeoutConstraint(500)
         .build();
     shootPPG = robot.follower.pathBuilder()
@@ -127,13 +127,14 @@ public class BaseCloseAutoSafeForBlue {
         .build();
     intakePGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PGP_START_BLUE), poseFromArr(INTAKE_PGP_END_BLUE)))
-        .setConstantHeadingInterpolation(0)
+        .setConstantHeadingInterpolation(180)
         .setTimeoutConstraint(500)
         .build();
     shootPGP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_BLUE), poseFromArr(SHOOT_CONTROl),
             poseFromArrNonMirror(SHOOT_BLUE)))
-        .setLinearHeadingInterpolation(poseFromArr(INTAKE_PGP_END_BLUE).getHeading(), poseFromArrNonMirror(SHOOT_BLUE).getHeading())
+        .setLinearHeadingInterpolation(poseFromArr(INTAKE_PGP_END_BLUE).getHeading(),
+            poseFromArrNonMirror(SHOOT_BLUE).getHeading())
         .setTimeoutConstraint(500)
         .build();
 
@@ -145,7 +146,7 @@ public class BaseCloseAutoSafeForBlue {
         .build();
     intakeGPP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_GPP_START_BLUE), poseFromArr(INTAKE_GPP_END_BLUE)))
-        .setConstantHeadingInterpolation(0)
+        .setConstantHeadingInterpolation(180)
         .setTimeoutConstraint(500)
         .build();
     shootGPP = robot.follower.pathBuilder()
@@ -299,6 +300,7 @@ public class BaseCloseAutoSafeForBlue {
     while (this.opMode.opModeInInit()) {
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
       telemetry.update();
+      robot.limelight.pipelineSwitch(1);
       LLResult result = robot.limelight.getLatestResult(); //TODO demo limelight code actually have to put real logic
       List<FiducialResult> fiducials = result.getFiducialResults();
       if (result != null) {
