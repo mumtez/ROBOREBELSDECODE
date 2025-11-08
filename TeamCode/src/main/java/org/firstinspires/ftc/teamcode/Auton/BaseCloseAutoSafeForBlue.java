@@ -31,17 +31,17 @@ public class BaseCloseAutoSafeForBlue {
   public static double[] SHOOT_BLUE = {64, 88, 134}; // TODO This is the one non mirrored point
 
   public static double[] INTAKE_PPG_START_BLUE = {83, 88, 0};
-  public static double[] INTAKE_PPG_END_BLUE = {114, 88, 180};
+  public static double[] INTAKE_PPG_END_BLUE = {114, 88, 0};
 
   public static double[] SHOOT_CONTROl = {72, 48, 0};
 
 
   public static double[] INTAKE_PGP_START_BLUE = {86, 64, 0};
-  public static double[] INTAKE_PGP_END_BLUE = {116, 64, 180};
+  public static double[] INTAKE_PGP_END_BLUE = {116, 64, 0};
 
 
   public static double[] INTAKE_GPP_START_BLUE = {88, 41, 0};
-  public static double[] INTAKE_GPP_END_BLUE = {110, 41, 180};
+  public static double[] INTAKE_GPP_END_BLUE = {110, 41, 0};
 
 
   public static int OUTTAKE_SERVO_UP_MS = 500;
