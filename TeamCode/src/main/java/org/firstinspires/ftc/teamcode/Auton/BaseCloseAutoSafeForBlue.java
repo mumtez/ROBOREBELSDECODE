@@ -109,7 +109,7 @@ public class BaseCloseAutoSafeForBlue {
         .build();
     intakePPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_START_BLUE), poseFromArr(INTAKE_PPG_END_BLUE)))
-        .setConstantHeadingInterpolation(180)
+        .setConstantHeadingInterpolation(Math.toRadians(180))
         .setTimeoutConstraint(500)
         .build();
     shootPPG = robot.follower.pathBuilder()
@@ -127,7 +127,7 @@ public class BaseCloseAutoSafeForBlue {
         .build();
     intakePGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PGP_START_BLUE), poseFromArr(INTAKE_PGP_END_BLUE)))
-        .setConstantHeadingInterpolation(180)
+        .setConstantHeadingInterpolation(Math.toRadians(180))
         .setTimeoutConstraint(500)
         .build();
     shootPGP = robot.follower.pathBuilder()
@@ -146,7 +146,7 @@ public class BaseCloseAutoSafeForBlue {
         .build();
     intakeGPP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_GPP_START_BLUE), poseFromArr(INTAKE_GPP_END_BLUE)))
-        .setConstantHeadingInterpolation(180)
+        .setConstantHeadingInterpolation(Math.toRadians(180))
         .setTimeoutConstraint(500)
         .build();
     shootGPP = robot.follower.pathBuilder()
