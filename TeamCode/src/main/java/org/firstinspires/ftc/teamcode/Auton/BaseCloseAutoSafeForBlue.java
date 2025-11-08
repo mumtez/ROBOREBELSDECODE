@@ -133,7 +133,7 @@ public class BaseCloseAutoSafeForBlue {
     shootPGP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_BLUE), poseFromArr(SHOOT_CONTROl),
             poseFromArrNonMirror(SHOOT_BLUE)))
-        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_PGP_END_BLUE[2]), Math.toRadians(SHOOT_BLUE[2]))
+        .setLinearHeadingInterpolation(poseFromArr(INTAKE_PGP_END_BLUE).getHeading(), poseFromArrNonMirror(SHOOT_BLUE).getHeading())
         .setTimeoutConstraint(500)
         .build();
 

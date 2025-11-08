@@ -127,7 +127,7 @@ public class BaseCloseAuto {
         .build();
     shootPGP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(SHOOT_CONTROl), poseFromArr(SHOOT_RED)))
-        .setLinearHeadingInterpolation(Math.toRadians(INTAKE_PGP_END_RED[2]), Math.toRadians(SHOOT_RED[2]))
+        .setLinearHeadingInterpolation(poseFromArr(INTAKE_PGP_END_RED).getHeading(), poseFromArr(SHOOT_RED).getHeading())
         .setTimeoutConstraint(500)
         .build();
 
