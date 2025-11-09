@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.opencv.core.Point;
 
 @Configurable
-public class BaseCloseAuto {
+public class BaseCloseAutoRed {
 
   public static double INTAKE_TIMER = 600;
   public int pattern = 0; //0 = gpp 1 = pgp 2 =ppg
@@ -69,7 +69,7 @@ public class BaseCloseAuto {
   final LinearOpMode opMode;
   final Telemetry telemetry;
 
-  public BaseCloseAuto(LinearOpMode opMode, Robot robot) {
+  public BaseCloseAutoRed(LinearOpMode opMode, Robot robot) {
     this.opMode = opMode;
     this.telemetry = opMode.telemetry;
     this.robot = robot;
@@ -294,11 +294,10 @@ public class BaseCloseAuto {
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
       telemetry.update();
       robot.limelight.pipelineSwitch(0);
-      LLResult result = robot.limelight.getLatestResult(); //TODO demo limelight code actually have to put real logic
+      LLResult result = robot.limelight.getLatestResult();
       List<FiducialResult> fiducials = result.getFiducialResults();
       if (result != null) {
         if (result.isValid()) {
-          Pose3D botpose = result.getBotpose();
           for (FiducialResult fiducial : fiducials) {
             int id = fiducial.getFiducialId(); // The ID number of the fiducial
             currentTag = id;
@@ -309,9 +308,9 @@ public class BaseCloseAuto {
     }
 
     // START
+    robot.limelight.stop(); //TODO TEST
     robot.follower.setStartingPose(poseFromArr(START_RED));
 
-    // TODO: read camera with limelight and update pathOrder
     if (currentTag == 21) {
       pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP)
           .iterator();

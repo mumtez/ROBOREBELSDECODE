@@ -11,6 +11,6 @@ public class RedClose extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
     Robot robot = new Robot(this, AllianceColor.RED);
-    new BaseCloseAuto(this, robot).run();
+    new BaseCloseAutoRed(this, robot).run();
   }
 }

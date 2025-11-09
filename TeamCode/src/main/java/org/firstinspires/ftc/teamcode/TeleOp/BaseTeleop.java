@@ -35,6 +35,8 @@ public class BaseTeleop {
 
   public void run() {
     // --- INIT ---
+    robot.limelight.start();
+    robot.limelight.pipelineSwitch(2);
 
     // --- INIT LOOP ---
     while (this.opMode.opModeInInit()) {
