@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.opencv.core.Point;
@@ -300,7 +301,7 @@ public class BaseCloseAutoBlue {
     while (this.opMode.opModeInInit()) {
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
       telemetry.update();
-      robot.limelight.pipelineSwitch(1);
+      robot.limelight.pipelineSwitch(this.robot.getAllianceColor().getLLPipelineAuto());
       LLResult result = robot.limelight.getLatestResult();
       List<FiducialResult> fiducials = result.getFiducialResults();
       if (result != null) {

@@ -293,7 +293,7 @@ public class BaseCloseAutoRed {
     while (this.opMode.opModeInInit()) {
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
       telemetry.update();
-      robot.limelight.pipelineSwitch(0);
+      robot.limelight.pipelineSwitch(this.robot.getAllianceColor().getLLPipelineAuto());
       LLResult result = robot.limelight.getLatestResult();
       List<FiducialResult> fiducials = result.getFiducialResults();
       if (result != null) {

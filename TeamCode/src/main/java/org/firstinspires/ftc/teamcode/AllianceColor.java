@@ -8,13 +8,20 @@ public enum AllianceColor {
     public Pose poseFromArray(double[] arr) {
       return new Pose(arr[0], arr[1], Math.toRadians(arr[2]));
     }
+    public int getLLPipelineAuto(){
+      return 0;
+    }
   },
   BLUE {
     @Override
     public Pose poseFromArray(double[] arr) {
       return new Pose(arr[0], arr[1], Math.toRadians(arr[2])).mirror();
     }
+    public int getLLPipelineAuto(){
+      return 1;
+    }
   };
 
   public abstract Pose poseFromArray(double[] arr);
+  public abstract int getLLPipelineAuto();
 }
