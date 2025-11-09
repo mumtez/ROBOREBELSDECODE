@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Robot;
 @Configurable
 
-@Autonomous(name = "BLUE CLOSE SAFE", group = "BLUE")
+@Autonomous(name = "BLUE CLOSE", group = "BLUE")
 public class BlueClose extends LinearOpMode {
   public static double[] SHOOT_BLUE = {64, 88, 134};
 
