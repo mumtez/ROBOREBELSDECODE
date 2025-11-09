@@ -25,6 +25,8 @@ public class SensorTest extends LinearOpMode {
           Pose3D botpose = result.getBotpose();
           telemetry.addData("tx", result.getTx());
           telemetry.addData("ty", result.getTy());
+          telemetry.addData("avgdist", result.getBotposeAvgDist());
+
           telemetry.addData("Botpose", botpose.toString());
           for (FiducialResult fiducial : fiducials) {
             int id = fiducial.getFiducialId(); // The ID number of the fiducial
