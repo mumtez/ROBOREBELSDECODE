@@ -11,13 +11,12 @@ import org.firstinspires.ftc.teamcode.Robot;
 @Configurable
 public class FlywheelPIDTesting extends LinearOpMode {
 
-  private final TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
   public static int TARGET = 0;
+
+  TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
 
   @Override
   public void runOpMode() throws InterruptedException {
-    // use dashboard telemetry
-
     Robot robot = new Robot(this);
     waitForStart();
     while (opModeIsActive()) {
@@ -26,12 +25,11 @@ public class FlywheelPIDTesting extends LinearOpMode {
       }
 
       double pow = robot.outtake.updatePIDControl();
-      panelsTelemetry.update(telemetry);
 
-      telemetry.addData("TARGET", TARGET);
-      telemetry.addData("REFERENCE", robot.outtake.getCurrentVelocity());
-      telemetry.addData("POWER", pow);
-      telemetry.update();
+      panelsTelemetry.addData("TARGET", TARGET);
+      panelsTelemetry.addData("REFERENCE", robot.outtake.getCurrentVelocity());
+      panelsTelemetry.addData("POWER", pow);
+      panelsTelemetry.update(telemetry);
     }
 
   }
