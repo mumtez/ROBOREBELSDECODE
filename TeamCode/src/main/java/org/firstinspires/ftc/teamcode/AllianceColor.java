@@ -13,6 +13,10 @@ public enum AllianceColor {
     public int getLLPipelineAuto(){
       return 0;
     }
+    @Override
+    public int getLLPipelineTeleOP(){
+      return 2;
+    }
   },
   BLUE {
     @Override
@@ -22,10 +26,15 @@ public enum AllianceColor {
 
     @Override
     public int getLLPipelineAuto(){
-      return 1;
+      return 1; // TODO add Tag filtering
+    }
+    @Override
+    public int getLLPipelineTeleOP(){
+      return 3; //TODO make these in LL
     }
   };
 
   public abstract Pose poseFromArray(double[] arr);
   public abstract int getLLPipelineAuto();
+  public abstract int getLLPipelineTeleOP();
 }

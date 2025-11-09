@@ -36,7 +36,7 @@ public class BaseTeleop {
   public void run() {
     // --- INIT ---
     robot.limelight.start();
-    robot.limelight.pipelineSwitch(2);
+    robot.limelight.pipelineSwitch(this.robot.getAllianceColor().getLLPipelineTeleOP());
 
     // --- INIT LOOP ---
     while (this.opMode.opModeInInit()) {
