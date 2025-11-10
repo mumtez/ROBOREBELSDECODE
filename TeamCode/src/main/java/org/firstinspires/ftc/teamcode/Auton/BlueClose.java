@@ -5,11 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Robot;
+
 @Configurable
 
 @Autonomous(name = "BLUE CLOSE", group = "BLUE")
 public class BlueClose extends LinearOpMode {
-  public static double[] SHOOT_BLUE = {64, 88, 134};
+
+  public static double[] SHOOT_BLUE = {66, 86, 134};
 
   @Override
   public void runOpMode() throws InterruptedException {

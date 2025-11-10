@@ -7,7 +7,9 @@ import org.firstinspires.ftc.teamcode.Robot;
 
 @Autonomous(name = "RED CLOSE", group = "RED")
 public class RedClose extends LinearOpMode {
-public static double[] SHOOT_RED = {80, 88, 41};
+
+  public static double[] SHOOT_RED = {78, 86, 41};
+
   @Override
   public void runOpMode() throws InterruptedException {
     Robot robot = new Robot(this, AllianceColor.RED);
