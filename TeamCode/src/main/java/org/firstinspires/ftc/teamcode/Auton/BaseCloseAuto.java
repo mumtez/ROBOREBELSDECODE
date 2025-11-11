@@ -107,7 +107,7 @@ public class BaseCloseAuto {
         .build();
     intakePPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_START_RED), poseFromArr(INTAKE_PPG_END_RED)))
-        .setConstantHeadingInterpolation(Math.toRadians(180))
+        .setConstantHeadingInterpolation(poseFromArr(INTAKE_PPG_START_RED).getHeading())
         .setTimeoutConstraint(500)
         .build();
     shootPPG = robot.follower.pathBuilder()
@@ -125,7 +125,7 @@ public class BaseCloseAuto {
         .build();
     intakePGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PGP_START_RED), poseFromArr(INTAKE_PGP_END_RED)))
-        .setConstantHeadingInterpolation(Math.toRadians(180))
+        .setConstantHeadingInterpolation(poseFromArr(INTAKE_PGP_START_RED).getHeading())
         .setTimeoutConstraint(500)
         .build();
     shootPGP = robot.follower.pathBuilder()
@@ -144,7 +144,7 @@ public class BaseCloseAuto {
         .build();
     intakeGPP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_GPP_START_RED), poseFromArr(INTAKE_GPP_END_RED)))
-        .setConstantHeadingInterpolation(Math.toRadians(180))
+        .setConstantHeadingInterpolation(poseFromArr(INTAKE_GPP_START_RED).getHeading())
         .setTimeoutConstraint(500)
         .build();
     shootGPP = robot.follower.pathBuilder()
@@ -230,7 +230,6 @@ public class BaseCloseAuto {
     shootAndWait(shootTimer);
 
     robot.intake.setPower(0);
-    robot.outtake.setTargetVelocity(0);
     robot.outtake.setBase();
   }
 
@@ -298,7 +297,7 @@ public class BaseCloseAuto {
     while (this.opMode.opModeInInit()) {
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
       telemetry.update();
-      robot.limelight.pipelineSwitch(this.robot.getAllianceColor().getLLPipelineAuto());
+      robot.limelight.pipelineSwitch(0);
       LLResult result = robot.limelight.getLatestResult();
       List<FiducialResult> fiducials = result.getFiducialResults();
       if (result != null) {
