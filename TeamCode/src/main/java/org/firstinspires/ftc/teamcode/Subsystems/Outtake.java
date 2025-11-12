@@ -21,9 +21,9 @@ public class Outtake {
   public static int farSpeed = 1600;
 
   public static int cycleSpeed = 500;
-  public static double kP = 0.018;
-  public static double kI = 0.00005;
-  public static double kD = 0.000001;
+  public static double kP = .04;
+  public static double kI = 0;
+  public static double kD = 0.00001;
 
   public static double SHOOT_POS = 0.7;
   public static double SHOOT_BASE = 0.95;
@@ -103,7 +103,6 @@ public class Outtake {
     double output = (kP * error) + (kI * integralSum) + (kD * derivative);
 
     // limit power range
-    // TODO: allow motor to go under 0 (-0.2?)
     output = Range.clip(output, -0.2, 1.0);
 
     this.setPower(output);

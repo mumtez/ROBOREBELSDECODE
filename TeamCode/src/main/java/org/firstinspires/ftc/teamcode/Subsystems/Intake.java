@@ -20,7 +20,7 @@ public class Intake {
   // Color Sensor tuning vars
   public static final float COLOR_GAIN = 2;
   public static final double DIST_THRESHOLD_CM = 3;
-  public static final float GREEN_THRESHOLD = .025f;
+  public static final float GREEN_THRESHOLD = .022f;
   public static final float RED_THRESHOLD = .014f;
 
 
