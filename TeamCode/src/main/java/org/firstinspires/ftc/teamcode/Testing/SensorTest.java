@@ -26,7 +26,8 @@ public class SensorTest extends LinearOpMode {
           Pose3D botpose = result.getBotpose();
           telemetry.addData("tx", result.getTx());
           telemetry.addData("ty", result.getTy());
-          telemetry.addData("avgdist", result.getBotposeAvgDist());
+          telemetry.addData("area", result.getTa());
+          telemetry.addData("distance", (179.44107 * Math.pow(result.getTa(), -0.495624)));
 
           telemetry.addData("Botpose", botpose.toString());
           for (FiducialResult fiducial : fiducials) {
