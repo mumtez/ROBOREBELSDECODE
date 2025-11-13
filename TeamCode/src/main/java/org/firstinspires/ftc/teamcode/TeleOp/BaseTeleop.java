@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import java.util.List;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -20,6 +23,9 @@ public class BaseTeleop {
   Gamepad gamepad1 = new Gamepad();
   Gamepad gamepad2 = new Gamepad();
 
+  double distance;
+  double power;
+
   public BaseTeleop(LinearOpMode opMode, Robot robot, double headingOffset) {
     this.opMode = opMode;
     this.telemetry = opMode.telemetry;
@@ -35,8 +41,8 @@ public class BaseTeleop {
 
   public void run() {
     // --- INIT ---
-    robot.limelight.start();
     robot.limelight.pipelineSwitch(this.robot.getAllianceColor().getLLPipelineTeleOP());
+    robot.limelight.start();
 
     // --- INIT LOOP ---
     while (this.opMode.opModeInInit()) {
@@ -75,6 +81,20 @@ public class BaseTeleop {
       }
       if (gamepad2.dpad_right) {
         robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
+      }
+
+      if (gamepad2.dpad_left) {
+
+        LLResult result = robot.limelight.getLatestResult(); //TODO demo limelight code actually have to put real logic
+        List<FiducialResult> fiducials = result.getFiducialResults();
+        if (result != null) {
+          if (result.isValid()) {
+            distance = (((41.275) / Math.tan((Math.toRadians(result.getTy() + 1)))) / 100);
+            power = (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037;
+            robot.outtake.setTargetVelocity(power);
+          }
+        }
+
       }
       if (gamepad1.dpad_down) {
         robot.outtake.stop();
@@ -132,6 +152,8 @@ public class BaseTeleop {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());
+    telemetry.addData("Distance Estimate", distance);
+    telemetry.addData("Power Esstimeate", power);
     telemetry.addLine("=== SENSORS ===");
     NormalizedRGBA cs1Colors = robot.intake.cs1.getNormalizedColors();
     NormalizedRGBA cs2Colors = robot.intake.cs2.getNormalizedColors();
