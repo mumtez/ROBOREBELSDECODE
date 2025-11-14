@@ -2,11 +2,10 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import java.util.List;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -19,6 +18,15 @@ public class BaseTeleop {
   final LinearOpMode opMode;
   final Telemetry telemetry;
   double headingOffset;
+
+  private final ElapsedTime aimTimer = new ElapsedTime();
+
+  private double aimKp = 0.0;
+  private double aimKi = 0.0;
+  private double aimKd = 0.00;
+
+  private double aimIntegral = 0;
+  private double aimLastError = 0;
 
   Gamepad gamepad1 = new Gamepad();
   Gamepad gamepad2 = new Gamepad();
@@ -56,17 +64,39 @@ public class BaseTeleop {
       updateGamepads();
       robot.intake.updateSampleColor();
 
-      this.fieldCentricDrive();
+      if (gamepad1.right_bumper) {
+        LLResult result = robot.limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+          double tx = result.getTx();
+          double turnPower = updateAimPID(tx);
 
-      // SHOOTER WITH NO AUTOMATED METHODS
-      /*
-      if (gamepad2.a) {
-        robot.outtake.setTargetVelocity(Outtake.medSpeed);
-      } else if (gamepad2.dpad_down) {
-        robot.outtake.setTargetVelocity(150);
-      } else if (gamepad2.b) {
-        robot.outtake.setTargetVelocity(0);
-      } */
+          // Inject PID turn power into field-centric drive
+          double y = -gamepad1.left_stick_y;
+          double x = gamepad1.left_stick_x;
+          double rx = turnPower;   // <-- PID replaces right stick turning
+
+          // run drive using rx as rotation
+          double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + this.headingOffset;
+
+          double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+          double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+          rotX *= 1.1;
+
+          double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+          double fl = (rotY + rotX + rx) / denominator;
+          double bl = (rotY - rotX + rx) / denominator;
+          double fr = (rotY - rotX - rx) / denominator;
+          double br = (rotY + rotX - rx) / denominator;
+
+          robot.fr.setPower(fr);
+          robot.fl.setPower(fl);
+          robot.br.setPower(br);
+          robot.bl.setPower(bl);
+        }
+      } else {
+        // default drive
+        this.fieldCentricDrive();
+      }
 
       if (gamepad2.triangle) {
         robot.outtake.setShoot();
@@ -84,15 +114,11 @@ public class BaseTeleop {
       }
 
       if (gamepad2.dpad_left) {
-
         LLResult result = robot.limelight.getLatestResult(); //TODO demo limelight code actually have to put real logic
-        List<FiducialResult> fiducials = result.getFiducialResults();
-        if (result != null) {
-          if (result.isValid()) {
-            distance = (((41.275) / Math.tan((Math.toRadians(result.getTy() + 1)))) / 100);
-            power = (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037;
-            robot.outtake.setTargetVelocity(power);
-          }
+        if (result != null && result.isValid()) {
+          distance = (((41.275) / Math.tan((Math.toRadians(result.getTy() + 1)))) / 100);
+          power = (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037;
+          robot.outtake.setTargetVelocity(power);
         }
 
       }
@@ -146,6 +172,32 @@ public class BaseTeleop {
     robot.br.setPower(backRightPower);
     robot.bl.setPower(backLeftPower);
   }
+
+  public double updateAimPID(double tx) {
+
+    double dt = aimTimer.seconds();
+    aimTimer.reset();
+
+    double error = tx;     // want tx → 0
+
+    // Integral
+    aimIntegral += error * dt;
+
+    // Derivative
+    double derivative = (error - aimLastError) / dt;
+    aimLastError = error;
+
+    // PID Output
+    double output = aimKp * error
+        + aimKi * aimIntegral
+        + aimKd * derivative;
+
+    // Clamp for safety
+    output = Math.max(-1, Math.min(1, output));
+
+    return output;   // return turn power
+  }
+
 
   private void updateTelemetry() {
     // TODO: do not re-read sensor values for telemetry. Cache values from updateSampleColor, etc if necessary
