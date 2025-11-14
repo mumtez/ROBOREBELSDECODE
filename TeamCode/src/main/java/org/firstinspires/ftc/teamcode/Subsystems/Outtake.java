@@ -22,7 +22,7 @@ public class Outtake {
 
   public static int cycleSpeed = 500;
   public static double kP = .028; //TODO tune
-  public static double kV = 1 / 2500; //TODO tune
+  public static double kV = 1.0 / 2500.0; //TODO tune
 
 
   public static double SHOOT_POS = 0.7;
