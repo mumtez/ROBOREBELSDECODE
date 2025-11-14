@@ -21,7 +21,7 @@ public class Outtake {
   public static int farSpeed = 1600;
 
   public static int cycleSpeed = 500;
-  public static double kP = .028; //TODO tune
+  public static double kP = 0.0; //TODO tune
   public static double kV = 1.0 / 2500.0; //TODO tune
 
 
