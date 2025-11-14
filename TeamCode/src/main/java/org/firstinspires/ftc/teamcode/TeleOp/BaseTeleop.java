@@ -116,7 +116,7 @@ public class BaseTeleop {
       if (gamepad2.dpad_left) {
         LLResult result = robot.limelight.getLatestResult(); //TODO demo limelight code actually have to put real logic
         if (result != null && result.isValid()) {
-          distance = (((41.275) / Math.tan((Math.toRadians(result.getTy() + 1)))) / 100);
+          distance = (((41.275) / Math.tan((Math.toRadians(result.getTy() + 1.0)))) / 100.0);
           power = (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037;
           robot.outtake.setTargetVelocity(power);
         }

@@ -32,7 +32,7 @@ public class SensorTest extends LinearOpMode {
           telemetry.addData("ty", result.getTy());
           telemetry.addData("area", result.getTa());
           telemetry.addData("distance ares est", (179.44107 * Math.pow(result.getTa(), -0.495624)));
-          double angleToGoalRadians = Math.PI * ((result.getTy()) + 1) / 180;
+          double angleToGoalRadians = Math.PI * ((result.getTy()) + 1.0) / 180.0;
           double distanceFromLimelightToGoal = (goalHeight - llHeight) / Math.tan(angleToGoalRadians);
           telemetry.addData("distance tangent est", distanceFromLimelightToGoal);
 
