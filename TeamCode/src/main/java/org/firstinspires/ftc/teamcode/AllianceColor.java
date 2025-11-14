@@ -9,6 +9,9 @@ public enum AllianceColor {
       return new Pose(arr[0], arr[1], Math.toRadians(arr[2]));
     }
 
+    public int getAimPose() {
+      return -5;
+    }
 
     @Override
     public int getLLPipelineTeleOP() {
@@ -19,6 +22,10 @@ public enum AllianceColor {
     @Override
     public Pose poseFromArray(double[] arr) {
       return new Pose(arr[0], arr[1], Math.toRadians(arr[2])).mirror();
+    }
+
+    public int getAimPose() {
+      return 5;
     }
 
 
@@ -32,4 +39,6 @@ public enum AllianceColor {
 
 
   public abstract int getLLPipelineTeleOP();
+
+  public abstract int getAimPose();
 }

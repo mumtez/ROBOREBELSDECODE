@@ -21,9 +21,9 @@ public class BaseTeleop {
 
   private final ElapsedTime aimTimer = new ElapsedTime();
 
-  private double aimKp = 0.0;
-  private double aimKi = 0.0;
-  private double aimKd = 0.00;
+  public static double aimKp = 0.024;
+  public static double aimKi = 0.0;
+  public static double aimKd = 0.001;
 
   private double aimIntegral = 0;
   private double aimLastError = 0;
@@ -50,6 +50,7 @@ public class BaseTeleop {
   public void run() {
     // --- INIT ---
     robot.limelight.pipelineSwitch(this.robot.getAllianceColor().getLLPipelineTeleOP());
+    robot.limelight.setPollRateHz(100);
     robot.limelight.start();
 
     // --- INIT LOOP ---
@@ -114,7 +115,7 @@ public class BaseTeleop {
       }
 
       if (gamepad2.dpad_left) {
-        LLResult result = robot.limelight.getLatestResult(); //TODO demo limelight code actually have to put real logic
+        LLResult result = robot.limelight.getLatestResult();
         if (result != null && result.isValid()) {
           distance = (((41.275) / Math.tan((Math.toRadians(result.getTy() + 1.0)))) / 100.0);
           power = (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037;
@@ -131,7 +132,7 @@ public class BaseTeleop {
       } else if (gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0) {
         robot.intake.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
       } else if (gamepad2.left_bumper) {
-        robot.intake.setPowerVertical(-.4);
+        robot.intake.setPowerVertical(-.6);
       } else {
 
         robot.intake.setPowerVertical(0);
@@ -178,7 +179,7 @@ public class BaseTeleop {
     double dt = aimTimer.seconds();
     aimTimer.reset();
 
-    double error = tx;     // want tx → 0
+    double error = tx - robot.getAllianceColor().getAimPose();     // want tx → 0
 
     // Integral
     aimIntegral += error * dt;
@@ -193,7 +194,7 @@ public class BaseTeleop {
         + aimKd * derivative;
 
     // Clamp for safety
-    output = Math.max(-1, Math.min(1, output));
+    output = Math.max(-.5, Math.min(.5, output));
 
     return output;   // return turn power
   }
