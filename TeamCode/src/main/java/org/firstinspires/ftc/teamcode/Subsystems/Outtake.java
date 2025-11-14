@@ -21,9 +21,9 @@ public class Outtake {
   public static int farSpeed = 1600;
 
   public static int cycleSpeed = 500;
-  public static double kP = .028;
-  public static double kI = 0;
-  public static double kD = 0.00001;
+  public static double kP = .028; //TODO tune
+  public static double kV = 1 / 2500; //TODO tune
+
 
   public static double SHOOT_POS = 0.7;
   public static double SHOOT_BASE = 0.95;
@@ -32,8 +32,6 @@ public class Outtake {
 
   // --- Variables ---
   private double targetVelocity = 0; // ticks/sec
-  private double lastError = 0;
-  private double integralSum = 0;
   private final ElapsedTime timer = new ElapsedTime();
 
   // --- Hardware ---
@@ -51,7 +49,7 @@ public class Outtake {
     flywheel.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     flywheel.setMode(RunMode.RUN_WITHOUT_ENCODER);
     flapper = hardwareMap.get(ServoImplEx.class, "flapper");
-    timer.reset();
+
   }
 
   public void setPower(double pow) {
@@ -61,9 +59,6 @@ public class Outtake {
   // --- Set target velocity ---
   public void setTargetVelocity(double targetTicksPerSec) {
     targetVelocity = Math.max(targetTicksPerSec, 0);
-    integralSum = 0;
-    lastError = 0;
-    timer.reset();
   }
 
   public void setShoot() {
@@ -86,21 +81,10 @@ public class Outtake {
       rgb.setPosition(.3);
     }
 
-    double dt = timer.seconds();
-    timer.reset();
-    if (dt == 0) {
-      return 0;
-    }
-
     double currentVelocity = this.getCurrentVelocity(); // ticks/sec
-    double error = targetVelocity - currentVelocity;
+    double error = this.targetVelocity - currentVelocity;
 
-    // PID calculations
-    integralSum += error * dt;
-    double derivative = (error - lastError) / dt;
-    lastError = error;
-
-    double output = (kP * error) + (kI * integralSum) + (kD * derivative);
+    double output = (kV * this.targetVelocity) + (kP * error);
 
     // limit power range
     output = Range.clip(output, -0.2, 1.0);
@@ -126,9 +110,6 @@ public class Outtake {
   }
 
   public void stop() {
-    flywheel.setPower(0);
     targetVelocity = 0;
-    integralSum = 0;
-    lastError = 0;
   }
 }
