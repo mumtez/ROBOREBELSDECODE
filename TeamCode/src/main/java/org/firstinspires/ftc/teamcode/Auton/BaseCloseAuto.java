@@ -25,18 +25,18 @@ public class BaseCloseAuto {
   public int pattern = 0; //0 = gpp 1 = pgp 2 =ppg
 
   public static double CYCLE_TIMER = 1200;
-  public static double TRANSFER_TIMER = 500;
+  public static double TRANSFER_TIMER = 800; //500
   public static double[] START_RED = {113, 131, 180}; // initial rotation 37
   public static double[] SHOOT_CONTROl = {72, 48, 0};
 
-  public static double[] INTAKE_PPG_START_RED = {83, 88, 0};
-  public static double[] INTAKE_PPG_END_RED = {114, 88, 0};
+  public static double[] INTAKE_PPG_START_RED = {83, 87, 0};
+  public static double[] INTAKE_PPG_END_RED = {114, 87, 0};
 
-  public static double[] INTAKE_PGP_START_RED = {86, 64, 0};
-  public static double[] INTAKE_PGP_END_RED = {116, 64, 0};
+  public static double[] INTAKE_PGP_START_RED = {86, 63, 0};
+  public static double[] INTAKE_PGP_END_RED = {116, 63, 0};
 
-  public static double[] INTAKE_GPP_START_RED = {88, 41, 0};
-  public static double[] INTAKE_GPP_END_RED = {110, 41, 0};
+  public static double[] INTAKE_GPP_START_RED = {88, 40, 0};
+  public static double[] INTAKE_GPP_END_RED = {110, 40, 0};
 
 
   public static int OUTTAKE_SERVO_UP_MS = 500;
@@ -159,6 +159,8 @@ public class BaseCloseAuto {
   public void autonomousPathUpdate() {
     switch (pathState) {
       case PRELOAD:
+        robot.follower.followPath(shootPreLoad);
+
         if (pattern == 1) {
           cycle();
           cycle();
@@ -166,14 +168,14 @@ public class BaseCloseAuto {
         if (pattern == 2) {
           cycle();
         }
-
-        shootThree(shootPreLoad);
+        shootThree();
 
         setPathState(pathOrder.next());
         break;
 
       case PPG:
         intakeThree(preIntakePPG, intakePPG);
+
         shootThree(shootPPG);
         setPathState(pathOrder.next());
         break;
@@ -211,6 +213,28 @@ public class BaseCloseAuto {
     }
   }
 
+  private void shootThree() {
+    ElapsedTime shootTimer = new ElapsedTime();
+
+    robot.outtake.setTargetVelocity(Outtake.medSpeed);
+    robot.outtake.setBase();
+    robot.intake.setPower(1);
+
+    while (opMode.opModeIsActive() && (robot.follower.isBusy() || !robot.outtake.atTarget())) {
+      robot.updateAutoControls();
+    }
+
+    shootAndWait(shootTimer);
+    reloadAndWait(shootTimer);
+    shootAndWait(shootTimer);
+    reloadAndWait(shootTimer);
+    shootAndWait(shootTimer);
+
+    robot.intake.setPower(0);
+    robot.outtake.setBase();
+  }
+
+
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
 
@@ -232,6 +256,7 @@ public class BaseCloseAuto {
     robot.intake.setPower(0);
     robot.outtake.setBase();
   }
+
 
   private void shootAndWait(ElapsedTime shootTimer) {
     robot.outtake.setShoot();
@@ -312,7 +337,7 @@ public class BaseCloseAuto {
     }
 
     // START
-    robot.limelight.stop(); //TODO TEST
+    robot.limelight.stop();
     robot.follower.setStartingPose(poseFromArr(START_RED));
 
     if (currentTag == 21) {

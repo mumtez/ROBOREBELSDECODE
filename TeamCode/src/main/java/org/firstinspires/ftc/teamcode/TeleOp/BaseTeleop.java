@@ -21,7 +21,7 @@ public class BaseTeleop {
 
   private final ElapsedTime aimTimer = new ElapsedTime();
 
-  public static double aimKp = 0.024;
+  public static double aimKp = 0.018;
   public static double aimKi = 0.0;
   public static double aimKd = 0.001;
 
@@ -147,7 +147,8 @@ public class BaseTeleop {
     robot.br.setPower(backRightPower);
     robot.bl.setPower(backLeftPower);
   }
-  private void fieldCentricDriveAim(){
+
+  private void fieldCentricDriveAim() {
     LLResult result = robot.limelight.getLatestResult();
     if (result != null && result.isValid()) {
       double tx = result.getTx();
@@ -198,7 +199,7 @@ public class BaseTeleop {
         + aimKd * derivative;
 
     // Clamp for safety
-    output = Math.max(-.5, Math.min(.5, output));
+    output = Math.max(-1, Math.min(1, output));
 
     return output;   // return turn power
   }

@@ -17,7 +17,7 @@ public class Outtake {
 
   // --- PID constants (tune in Panels) ---
 
-  public static int medSpeed = 1320;
+  public static int medSpeed = 1270;
   public static int farSpeed = 1600;
 
   public static int cycleSpeed = 300;
@@ -98,7 +98,7 @@ public class Outtake {
   }
 
   public boolean atTarget() {
-    return atTarget(60);
+    return atTarget(40);
   }
 
   public boolean atTarget(double threshold) {

@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
 
-  public static FollowerConstants followerConstants = new FollowerConstants().mass(10.5)
-      .forwardZeroPowerAcceleration(-42.202).lateralZeroPowerAcceleration(-81.4226)
+  public static FollowerConstants followerConstants = new FollowerConstants().mass(11.285)
+      .forwardZeroPowerAcceleration(-41.2).lateralZeroPowerAcceleration(-67.735)
       .headingPIDFCoefficients(new PIDFCoefficients(1.6, 0, .07, 0))
       .translationalPIDFCoefficients(new PIDFCoefficients(.18, 0, 0.02, 0))
       .drivePIDFCoefficients(new FilteredPIDFCoefficients(.018, 0, .00003, .6, .0)); //TODO UPDATE
@@ -25,8 +25,8 @@ public class Constants {
       .rightRearMotorName("br")
       .leftRearMotorName("bl")
       .leftFrontMotorName("fl")
-      .xVelocity(79.403)
-      .yVelocity(63.081)
+      .xVelocity(81.161)
+      .yVelocity(67.146)
       .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
       .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
       .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
@@ -38,7 +38,7 @@ public class Constants {
       .leftPodY(7.5)
       .rightPodY(-7.5)
       .strafePodX(-2.5)
-      .leftEncoder_HardwareMapName("br") //TODO FIX
+      .leftEncoder_HardwareMapName("br")
       .rightEncoder_HardwareMapName("fl")
       .strafeEncoder_HardwareMapName("intakealt")
       .leftEncoderDirection(Encoder.REVERSE)
