@@ -179,7 +179,7 @@ public class BaseTeleop {
     double dt = aimTimer.seconds();
     aimTimer.reset();
 
-    double error = tx - robot.getAllianceColor().getAimPose();     // want tx → 0
+    double error = tx - robot.getAllianceColor().getAimPose();
 
     // Integral
     aimIntegral += error * dt;
