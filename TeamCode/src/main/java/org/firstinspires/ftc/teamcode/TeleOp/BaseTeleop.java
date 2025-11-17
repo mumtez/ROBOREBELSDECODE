@@ -66,34 +66,8 @@ public class BaseTeleop {
       robot.intake.updateSampleColor();
 
       if (gamepad1.right_bumper) {
-        LLResult result = robot.limelight.getLatestResult();
-        if (result != null && result.isValid()) {
-          double tx = result.getTx();
-          double turnPower = updateAimPID(tx);
-
-          // Inject PID turn power into field-centric drive
-          double y = -gamepad1.left_stick_y;
-          double x = gamepad1.left_stick_x;
-          double rx = turnPower;   // <-- PID replaces right stick turning
-
-          // run drive using rx as rotation
-          double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + this.headingOffset;
-
-          double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-          double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-          rotX *= 1.1;
-
-          double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-          double fl = (rotY + rotX + rx) / denominator;
-          double bl = (rotY - rotX + rx) / denominator;
-          double fr = (rotY - rotX - rx) / denominator;
-          double br = (rotY + rotX - rx) / denominator;
-
-          robot.fr.setPower(fr);
-          robot.fl.setPower(fl);
-          robot.br.setPower(br);
-          robot.bl.setPower(bl);
-        }
+        // autoaim
+        fieldCentricDriveAim();
       } else {
         // default drive
         this.fieldCentricDrive();
@@ -172,6 +146,36 @@ public class BaseTeleop {
     robot.fl.setPower(frontLeftPower);
     robot.br.setPower(backRightPower);
     robot.bl.setPower(backLeftPower);
+  }
+  private void fieldCentricDriveAim(){
+    LLResult result = robot.limelight.getLatestResult();
+    if (result != null && result.isValid()) {
+      double tx = result.getTx();
+      double turnPower = updateAimPID(tx);
+
+      // Inject PID turn power into field-centric drive
+      double y = -gamepad1.left_stick_y;
+      double x = gamepad1.left_stick_x;
+      double rx = turnPower;   // <-- PID replaces right stick turning
+
+      // run drive using rx as rotation
+      double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + this.headingOffset;
+
+      double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+      double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+      rotX *= 1.1;
+
+      double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+      double fl = (rotY + rotX + rx) / denominator;
+      double bl = (rotY - rotX + rx) / denominator;
+      double fr = (rotY - rotX - rx) / denominator;
+      double br = (rotY + rotX - rx) / denominator;
+
+      robot.fr.setPower(fr);
+      robot.fl.setPower(fl);
+      robot.br.setPower(br);
+      robot.bl.setPower(bl);
+    }
   }
 
   public double updateAimPID(double tx) {
