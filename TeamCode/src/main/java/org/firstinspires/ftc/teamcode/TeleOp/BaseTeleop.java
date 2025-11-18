@@ -92,7 +92,6 @@ public class BaseTeleop {
         robot.outtake.stop();
         this.autoCalculateShootPower = false; // don't continue calculating and setting target if stopping
       } else if (autoCalculateShootPower) {
-        // TODO: I think you want && here? Not sure what this condition is for
         if (Math.abs(currentGamepad1.left_stick_x) <= .05 && Math.abs(currentGamepad1.left_stick_y) <= .05) {
           robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
         }
