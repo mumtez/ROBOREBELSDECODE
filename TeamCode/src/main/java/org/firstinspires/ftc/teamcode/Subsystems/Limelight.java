@@ -15,6 +15,8 @@ public class Limelight {
 
   AllianceColor currentColor;
 
+  public LLResult currentGoal;
+
   public Limelight(LinearOpMode opMode, AllianceColor color) {
     HardwareMap hardwareMap = opMode.hardwareMap;
     currentColor = color;
@@ -22,9 +24,11 @@ public class Limelight {
     this.limelight.start();
   }
 
-  public LLResult getGoalResult() {
+
+  public LLResult updateGoalTeleop() {
     this.limelight.pipelineSwitch(currentColor.getLLPipelineTeleOP());
-    return this.limelight.getLatestResult();
+    currentGoal = this.limelight.getLatestResult();
+    return currentGoal;
   }
 
   public int getPatternIdAuto() {

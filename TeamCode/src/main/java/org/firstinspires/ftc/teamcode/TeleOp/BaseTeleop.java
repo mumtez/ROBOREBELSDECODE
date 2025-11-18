@@ -61,7 +61,7 @@ public class BaseTeleop {
     // --- START ---
     robot.stateTimer.reset();
     while (opMode.opModeIsActive()) {
-      currentTagResult = robot.limelight.getGoalResult();
+      currentTagResult = robot.limelight.updateGoalTeleop();
       updateGamepads();
       robot.intake.updateSampleColor();
 
