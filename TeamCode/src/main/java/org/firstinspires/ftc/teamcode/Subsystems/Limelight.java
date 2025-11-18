@@ -5,6 +5,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 import org.firstinspires.ftc.teamcode.AllianceColor;
 
@@ -18,6 +19,15 @@ public class Limelight {
   public LLResult currentGoal;
 
   public double lastPower;
+
+  private final ElapsedTime aimTimer = new ElapsedTime();
+
+  public static double aimKp = 0.018;
+  public static double aimKi = 0.0;
+  public static double aimKd = 0.001;
+
+  private double aimIntegral = 0;
+  private double aimLastError = 0;
 
   public Limelight(LinearOpMode opMode, AllianceColor color) {
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -43,6 +53,31 @@ public class Limelight {
       return power;
     }
     return lastPower;
+  }
+
+  public double updateAimPID(double tx) {
+
+    double dt = aimTimer.seconds();
+    aimTimer.reset();
+
+    double error = tx - currentColor.getAimPose();
+
+    // Integral
+    aimIntegral += error * dt;
+
+    // Derivative
+    double derivative = (error - aimLastError) / dt;
+    aimLastError = error;
+
+    // PID Output
+    double output = aimKp * error
+        + aimKi * aimIntegral
+        + aimKd * derivative;
+
+    // Clamp for safety
+    output = Math.max(-1, Math.min(1, output));
+
+    return output;   // return turn power
   }
 
   public int getPatternIdAuto() {

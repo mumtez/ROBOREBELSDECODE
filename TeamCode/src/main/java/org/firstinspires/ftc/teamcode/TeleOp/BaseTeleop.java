@@ -5,7 +5,6 @@ import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -19,14 +18,6 @@ public class BaseTeleop {
   final Telemetry telemetry;
   double headingOffset;
 
-  private final ElapsedTime aimTimer = new ElapsedTime();
-
-  public static double aimKp = 0.018;
-  public static double aimKi = 0.0;
-  public static double aimKd = 0.001;
-
-  private double aimIntegral = 0;
-  private double aimLastError = 0;
 
   Gamepad gamepad1 = new Gamepad();
   Gamepad gamepad2 = new Gamepad();
@@ -145,7 +136,7 @@ public class BaseTeleop {
   private void fieldCentricDriveAim() {
     if (currentTagResult != null && currentTagResult.isValid()) {
       double tx = currentTagResult.getTx();
-      double turnPower = updateAimPID(tx);
+      double turnPower = robot.limelight.updateAimPID(tx);
 
       // Inject PID turn power into field-centric drive
       double y = -gamepad1.left_stick_y;
@@ -170,31 +161,6 @@ public class BaseTeleop {
       robot.br.setPower(br);
       robot.bl.setPower(bl);
     }
-  }
-
-  public double updateAimPID(double tx) {
-
-    double dt = aimTimer.seconds();
-    aimTimer.reset();
-
-    double error = tx - robot.getAllianceColor().getAimPose();
-
-    // Integral
-    aimIntegral += error * dt;
-
-    // Derivative
-    double derivative = (error - aimLastError) / dt;
-    aimLastError = error;
-
-    // PID Output
-    double output = aimKp * error
-        + aimKi * aimIntegral
-        + aimKd * derivative;
-
-    // Clamp for safety
-    output = Math.max(-1, Math.min(1, output));
-
-    return output;   // return turn power
   }
 
 
