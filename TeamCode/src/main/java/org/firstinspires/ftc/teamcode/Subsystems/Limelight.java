@@ -31,7 +31,7 @@ public class Limelight {
   private double aimIntegral = 0;
   private double aimLastError = 0;
 
-  public Limelight(LinearOpMode opMode, AllianceColor color) {
+  public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
     HardwareMap hardwareMap = opMode.hardwareMap;
     currentColor = color;
     limelight = hardwareMap.get(Limelight3A.class, "limelight");
@@ -39,13 +39,13 @@ public class Limelight {
   }
 
 
-  public LLResult updateGoalTeleop() {
+  public LLResult updateGoalTeleop() { // Update the current goal tag for teleop
     this.limelight.pipelineSwitch(currentColor.getLLPipelineTeleOP());
     currentGoal = this.limelight.getLatestResult();
     return currentGoal;
   }
 
-  public double getShooterPower() {
+  public double getShooterPower() { // returns the power for shooter based on the teleop goal tag
     double distance;
     double power;
     if (currentGoal != null && currentGoal.isValid()) {
@@ -57,7 +57,7 @@ public class Limelight {
     return lastPower;
   }
 
-  public double updateAimPID() {
+  public double updateAimPID() { // returns the turn power from pid for autoaiming
     if (currentGoal != null && currentGoal.isValid()) {
       double dt = aimTimer.seconds();
       aimTimer.reset();
@@ -84,7 +84,7 @@ public class Limelight {
     return 0;
   }
 
-  public int getPatternIdAuto() {
+  public int getPatternIdAuto() { // only for auto just returns the tag id for patterns
     this.limelight.pipelineSwitch(0);
     LLResult result = this.limelight.getLatestResult();
     List<FiducialResult> fiducials = result.getFiducialResults();
