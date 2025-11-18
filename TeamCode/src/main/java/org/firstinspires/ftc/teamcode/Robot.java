@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
-import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection;
@@ -16,6 +15,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -30,12 +30,13 @@ public class Robot {
   ModeState state = ModeState.INTAKING;
 
   public Follower follower;
-  public Limelight3A limelight;
   public DcMotor fr, fl, br, bl;
   public IMU imu;
 
   public Outtake outtake;
   public Intake intake;
+  public Limelight limelight;
+
 
   private final AllianceColor allianceColor;
 
@@ -58,7 +59,6 @@ public class Robot {
     for (LynxModule hub : allHubs) {
       hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
     }
-    limelight = hardwareMap.get(Limelight3A.class, "limelight");
 
     opMode.telemetry.setMsTransmissionInterval(11);
 
@@ -93,6 +93,8 @@ public class Robot {
     // Init Subsystems
     outtake = new Outtake(opMode);
     intake = new Intake(opMode);
+
+    limelight = new Limelight(opMode, this.getAllianceColor());
   }
 
   public void initAuton() {

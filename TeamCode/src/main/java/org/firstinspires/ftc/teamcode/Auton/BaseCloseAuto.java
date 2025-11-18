@@ -7,8 +7,6 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
-import com.qualcomm.hardware.limelightvision.LLResult;
-import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.Iterator;
@@ -316,28 +314,14 @@ public class BaseCloseAuto {
     buildPaths();
     robot.initAuton();
 
-    robot.limelight.start();
-
     // INIT LOOP
     while (this.opMode.opModeInInit()) {
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
       telemetry.update();
-      robot.limelight.pipelineSwitch(0);
-      LLResult result = robot.limelight.getLatestResult();
-      List<FiducialResult> fiducials = result.getFiducialResults();
-      if (result != null) {
-        if (result.isValid()) {
-          for (FiducialResult fiducial : fiducials) {
-            int id = fiducial.getFiducialId(); // The ID number of the fiducial
-            currentTag = id;
-            telemetry.addData("Tag ", id);
-          }
-        }
-      }
+      currentTag = robot.limelight.getPatternIdAuto();
     }
 
     // START
-    robot.limelight.stop();
     robot.follower.setStartingPose(poseFromArr(START_RED));
 
     if (currentTag == 21) {

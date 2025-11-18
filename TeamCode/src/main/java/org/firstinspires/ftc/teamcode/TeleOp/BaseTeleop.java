@@ -34,6 +34,8 @@ public class BaseTeleop {
   double distance;
   double power;
 
+  LLResult currentTagResult;
+
   public BaseTeleop(LinearOpMode opMode, Robot robot, double headingOffset) {
     this.opMode = opMode;
     this.telemetry = opMode.telemetry;
@@ -49,9 +51,6 @@ public class BaseTeleop {
 
   public void run() {
     // --- INIT ---
-    robot.limelight.pipelineSwitch(this.robot.getAllianceColor().getLLPipelineTeleOP());
-    robot.limelight.setPollRateHz(100);
-    robot.limelight.start();
 
     // --- INIT LOOP ---
     while (this.opMode.opModeInInit()) {
@@ -62,6 +61,7 @@ public class BaseTeleop {
     // --- START ---
     robot.stateTimer.reset();
     while (opMode.opModeIsActive()) {
+      currentTagResult = robot.limelight.getGoalResult();
       updateGamepads();
       robot.intake.updateSampleColor();
 
@@ -89,9 +89,8 @@ public class BaseTeleop {
       }
 
       if (gamepad2.dpad_left) {
-        LLResult result = robot.limelight.getLatestResult();
-        if (result != null && result.isValid()) {
-          distance = (((41.275) / Math.tan((Math.toRadians(result.getTy() + 1.0)))) / 100.0);
+        if (currentTagResult != null && currentTagResult.isValid()) {
+          distance = (((41.275) / Math.tan((Math.toRadians(currentTagResult.getTy() + 1.0)))) / 100.0);
           power = (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037;
           robot.outtake.setTargetVelocity(power);
         }
@@ -149,9 +148,8 @@ public class BaseTeleop {
   }
 
   private void fieldCentricDriveAim() {
-    LLResult result = robot.limelight.getLatestResult();
-    if (result != null && result.isValid()) {
-      double tx = result.getTx();
+    if (currentTagResult != null && currentTagResult.isValid()) {
+      double tx = currentTagResult.getTx();
       double turnPower = updateAimPID(tx);
 
       // Inject PID turn power into field-centric drive
