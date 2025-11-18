@@ -214,11 +214,16 @@ public class BaseCloseAuto {
   private void shootThree() {
     ElapsedTime shootTimer = new ElapsedTime();
 
-    robot.outtake.setTargetVelocity(Outtake.medSpeed);
     robot.outtake.setBase();
     robot.intake.setPower(1);
+    robot.outtake.setTargetVelocity(1000);
 
-    while (opMode.opModeIsActive() && (robot.follower.isBusy() || !robot.outtake.atTarget())) {
+    while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
+      robot.updateAutoControls();
+    }
+
+    robot.outtake.setTargetVelocity(robot.limelight.getShooterPower());
+    while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
       robot.updateAutoControls();
     }
 
@@ -238,6 +243,7 @@ public class BaseCloseAuto {
 
     robot.outtake.setBase();
     robot.intake.setPower(1);
+    robot.outtake.setTargetVelocity(1000);
 
     robot.follower.followPath(intakeToShoot, true); //TODO testing holdend
     while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
