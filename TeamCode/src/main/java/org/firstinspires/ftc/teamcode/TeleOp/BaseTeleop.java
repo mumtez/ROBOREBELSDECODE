@@ -26,6 +26,7 @@ public class BaseTeleop {
   double power;
 
   LLResult currentTagResult;
+  private boolean autoAiming = true;
 
   public BaseTeleop(LinearOpMode opMode, Robot robot, double headingOffset) {
     this.opMode = opMode;
@@ -79,9 +80,27 @@ public class BaseTeleop {
         robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
       }
 
-      if (gamepad2.dpad_left) {
+      if (gamepad2.dpad_left && !autoAiming) {
         robot.outtake.setPower(robot.limelight.getShooterPower());
       }
+
+      if (gamepad2.right_stick_button) { // set to aiming
+        gamepad2.setLedColor(0, 1, 0, 2000);
+        gamepad2.rumble(500);
+        autoAiming = true;
+      }
+      if (gamepad2.left_stick_button) { // set to not aiming
+        gamepad2.setLedColor(1, 1, 0, 2000);
+        gamepad2.rumble(500);
+        autoAiming = false;
+      }
+
+      if (autoAiming) {
+        if (Math.abs(gamepad1.left_stick_x) <= 5 || Math.abs(gamepad1.right_stick_x) <= 5) {
+          robot.outtake.setPower(robot.limelight.getShooterPower());
+        }
+      }
+
       if (gamepad1.dpad_down) {
         robot.outtake.stop();
       }
