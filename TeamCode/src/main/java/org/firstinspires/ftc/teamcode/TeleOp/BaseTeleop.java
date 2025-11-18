@@ -96,7 +96,7 @@ public class BaseTeleop {
       }
 
       if (autoAiming) {
-        if (Math.abs(gamepad1.left_stick_x) <= 5 || Math.abs(gamepad1.right_stick_x) <= 5) {
+        if (Math.abs(gamepad1.left_stick_x) <= .05 || Math.abs(gamepad1.right_stick_x) <= .05) {
           robot.outtake.setPower(robot.limelight.getShooterPower());
         }
       }
