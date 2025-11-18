@@ -173,19 +173,39 @@ public class BaseCloseAuto {
 
       case PPG:
         intakeThree(preIntakePPG, intakePPG);
-
+        if (pattern == 0) {
+          cycle();
+        }
+        if (pattern == 1) {
+          cycle();
+          cycle();
+        }
         shootThree(shootPPG);
         setPathState(pathOrder.next());
         break;
 
       case PGP:
         intakeThree(preIntakePGP, intakePGP);
+        if (pattern == 0) {
+          cycle();
+        }
+        if (pattern == 2) {
+          cycle();
+          cycle();
+        }
         shootThree(shootPGP);
         setPathState(pathOrder.next());
         break;
 
       case GPP:
         intakeThree(preIntakeGPP, intakeGPP);
+        if (pattern == 1) {
+          cycle();
+          cycle();
+        }
+        if (pattern == 2) {
+          cycle();
+        }
         shootThree(shootGPP);
         setPathState(pathOrder.next());
         break;
