@@ -58,28 +58,30 @@ public class Limelight {
   }
 
   public double updateAimPID() {
+    if (currentGoal != null && currentGoal.isValid()) {
+      double dt = aimTimer.seconds();
+      aimTimer.reset();
 
-    double dt = aimTimer.seconds();
-    aimTimer.reset();
+      double error = currentGoal.getTx() - currentColor.getAimPose();
 
-    double error = currentGoal.getTx() - currentColor.getAimPose();
+      // Integral
+      aimIntegral += error * dt;
 
-    // Integral
-    aimIntegral += error * dt;
+      // Derivative
+      double derivative = (error - aimLastError) / dt;
+      aimLastError = error;
 
-    // Derivative
-    double derivative = (error - aimLastError) / dt;
-    aimLastError = error;
+      // PID Output
+      double output = aimKp * error
+          + aimKi * aimIntegral
+          + aimKd * derivative;
 
-    // PID Output
-    double output = aimKp * error
-        + aimKi * aimIntegral
-        + aimKd * derivative;
+      // Clamp for safety
+      output = Math.max(-1, Math.min(1, output));
 
-    // Clamp for safety
-    output = Math.max(-1, Math.min(1, output));
-
-    return output;   // return turn power
+      return output;   // return turn power
+    }
+    return 0;
   }
 
   public int getPatternIdAuto() {
