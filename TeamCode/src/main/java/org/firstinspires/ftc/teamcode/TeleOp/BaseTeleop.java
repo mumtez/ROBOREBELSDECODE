@@ -70,13 +70,13 @@ public class BaseTeleop {
       } else {
         robot.outtake.setBase();
       }
-      if (gamepad2.dpad_up) {
+      if (gamepad2.dpad_up && !autoAiming) {
         robot.outtake.setTargetVelocity(Outtake.farSpeed);
       }
-      if (gamepad2.dpad_down) {
+      if (gamepad2.dpad_down && !autoAiming) {
         robot.outtake.setTargetVelocity(Outtake.medSpeed);
       }
-      if (gamepad2.dpad_right) {
+      if (gamepad2.dpad_right && !autoAiming) {
         robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
       }
 
