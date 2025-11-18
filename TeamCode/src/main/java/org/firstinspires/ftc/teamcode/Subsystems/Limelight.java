@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 
 @Configurable
 public class Limelight {
+
   public static double AIM_Kp = 0.018;
   public static double AIM_Ki = 0.0;
   public static double AIM_Kd = 0.001;
@@ -23,7 +24,7 @@ public class Limelight {
   private final ElapsedTime aimTimer = new ElapsedTime();
 
   private LLResult currentGoal;
-  private double lastCalculatedVel;
+  private double lastCalculatedVel = Outtake.medSpeed;
   private double aimIntegral = 0;
   private double aimLastError = 0;
 
@@ -45,6 +46,7 @@ public class Limelight {
 
   /**
    * Calculates the target velocity for the shooter based on the current teleop goal tag reading
+   *
    * @return the target power for the shooter, or the last calculated power if no valid reading
    */
   public double calculateTargetVelocity() {
