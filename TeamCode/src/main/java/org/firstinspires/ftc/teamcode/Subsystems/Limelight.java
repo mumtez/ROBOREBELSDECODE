@@ -28,6 +28,9 @@ public class Limelight {
   public static double aimKi = 0.0;
   public static double aimKd = 0.001;
 
+  public static double aimKs = 0.00; // TODO tune
+
+
   private double aimIntegral = 0;
   private double aimLastError = 0;
 
@@ -74,7 +77,8 @@ public class Limelight {
       // PID Output
       double output = aimKp * error
           + aimKi * aimIntegral
-          + aimKd * derivative;
+          + aimKd * derivative
+          + aimKs * Math.signum(error);
 
       // Clamp for safety
       output = Math.max(-1, Math.min(1, output));
