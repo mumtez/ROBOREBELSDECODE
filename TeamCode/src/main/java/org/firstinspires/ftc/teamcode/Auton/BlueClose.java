@@ -7,7 +7,6 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Robot;
 
 @Configurable
-
 @Autonomous(name = "BLUE CLOSE", group = "BLUE")
 public class BlueClose extends LinearOpMode {
 

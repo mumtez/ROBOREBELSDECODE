@@ -7,30 +7,23 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 import java.util.List;
 import org.firstinspires.ftc.teamcode.AllianceColor;
 
 @Configurable
 public class Limelight {
+  public static double AIM_Kp = 0.018;
+  public static double AIM_Ki = 0.0;
+  public static double AIM_Kd = 0.001;
+  public static double AIM_Ks = 0.00; // TODO tune
 
-
-  public Limelight3A limelight;
-
-  AllianceColor currentColor;
-
-  public LLResult currentGoal;
-
-  public double lastPower;
-
+  public final Limelight3A limelight;
+  private final AllianceColor currentColor;
   private final ElapsedTime aimTimer = new ElapsedTime();
 
-  public static double aimKp = 0.018;
-  public static double aimKi = 0.0;
-  public static double aimKd = 0.001;
-
-  public static double aimKs = 0.00; // TODO tune
-
-
+  private LLResult currentGoal;
+  private double lastCalculatedVel;
   private double aimIntegral = 0;
   private double aimLastError = 0;
 
@@ -41,23 +34,29 @@ public class Limelight {
     this.limelight.start();
   }
 
-
   public LLResult updateGoal() { // Update the current goal tag for teleop
     this.limelight.pipelineSwitch(currentColor.getLLPipelineTeleOP());
     currentGoal = this.limelight.getLatestResult();
     return currentGoal;
   }
 
-  public double getShooterPower() { // returns the power for shooter based on the teleop goal tag
+  // TODO: below is how you properly designate return types / method descriptions in java --
+  //        do the same for other methods.
+
+  /**
+   * Calculates the target velocity for the shooter based on the current teleop goal tag reading
+   * @return the target power for the shooter, or the last calculated power if no valid reading
+   */
+  public double calculateTargetVelocity() {
     double distance;
-    double power;
+    double calculatedVel;
     if (currentGoal != null && currentGoal.isValid()) {
       distance = (((41.275) / Math.tan((Math.toRadians(currentGoal.getTy() + 1.0)))) / 100.0);
-      power = (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037;
-      lastPower = power;
-      return power;
+      calculatedVel = (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037;
+      lastCalculatedVel = calculatedVel;
+      return calculatedVel;
     }
-    return lastPower;
+    return lastCalculatedVel;
   }
 
   public double updateAimPID() { // returns the turn power from pid for autoaiming
@@ -75,15 +74,14 @@ public class Limelight {
       aimLastError = error;
 
       // PID Output
-      double output = aimKp * error
-          + aimKi * aimIntegral
-          + aimKd * derivative
-          + aimKs * Math.signum(error);
+      double output = AIM_Kp * error
+          + AIM_Ki * aimIntegral
+          + AIM_Kd * derivative
+          + AIM_Ks * Math.signum(error);
 
       // Clamp for safety
-      output = Math.max(-1, Math.min(1, output));
-
-      return output;   // return turn power
+      output = Range.clip(output, -1.0, 1.0);
+      return output;   // return flywheel power
     }
     return 0;
   }
@@ -92,14 +90,12 @@ public class Limelight {
     this.limelight.pipelineSwitch(0);
     LLResult result = this.limelight.getLatestResult();
     List<FiducialResult> fiducials = result.getFiducialResults();
-    if (result != null && result.isValid()) {
+    if (result.isValid()) {
       for (FiducialResult fiducial : fiducials) {
-        int id = fiducial.getFiducialId(); // The ID number of the fiducial
-        return id;
+        return fiducial.getFiducialId();
       }
     }
     return 21;
   }
-
 
 }

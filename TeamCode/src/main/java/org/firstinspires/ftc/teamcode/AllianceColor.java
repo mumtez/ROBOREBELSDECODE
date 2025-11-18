@@ -37,7 +37,6 @@ public enum AllianceColor {
 
   public abstract Pose poseFromArray(double[] arr);
 
-
   public abstract int getLLPipelineTeleOP();
 
   public abstract int getAimPose();

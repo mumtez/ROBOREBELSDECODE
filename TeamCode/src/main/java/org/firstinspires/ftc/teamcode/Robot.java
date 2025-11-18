@@ -23,12 +23,6 @@ public class Robot {
 
   public final ElapsedTime stateTimer = new ElapsedTime();
 
-  public enum ModeState {
-    INTAKING, BALLIN, SHOOT, SPUNUP
-  }
-
-  ModeState state = ModeState.INTAKING;
-
   public Follower follower;
   public DcMotor fr, fl, br, bl;
   public IMU imu;
@@ -42,10 +36,6 @@ public class Robot {
 
   public Robot(LinearOpMode opMode) {
     this(opMode, AllianceColor.RED);
-  }
-
-  public ModeState getState() {
-    return state;
   }
 
   public Robot(LinearOpMode opMode, AllianceColor allianceColor) {

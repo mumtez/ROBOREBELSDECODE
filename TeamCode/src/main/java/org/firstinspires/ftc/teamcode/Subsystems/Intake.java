@@ -33,7 +33,7 @@ public class Intake {
   public final NormalizedColorSensor cs1, cs2;
   // TODO: add gobilda rgb to robot config
 
-  private BallColor ballColor = BallColor.NONE;
+  private BallColor currentBallColor = BallColor.NONE;
 
   public Intake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -72,12 +72,12 @@ public class Intake {
 
   public BallColor updateSampleColor() {
     if (this.readDistance(cs1) < DIST_THRESHOLD_CM) {
-      this.ballColor = readBallColor(cs1);
+      this.currentBallColor = readBallColor(cs1);
     } else {
-      this.ballColor = readBallColor(cs2);
+      this.currentBallColor = readBallColor(cs2);
     }
 
-    return this.ballColor;
+    return this.currentBallColor;
   }
 
   public double readDistance(NormalizedColorSensor cs) {

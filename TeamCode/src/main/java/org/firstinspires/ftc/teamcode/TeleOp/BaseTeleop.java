@@ -18,15 +18,16 @@ public class BaseTeleop {
   final Telemetry telemetry;
   double headingOffset;
 
-
-  Gamepad gamepad1 = new Gamepad();
-  Gamepad gamepad2 = new Gamepad();
+  Gamepad currentGamepad1 = new Gamepad();
+  Gamepad currentGamepad2 = new Gamepad();
+  Gamepad lastGamepad1 = new Gamepad();
+  Gamepad lastGamepad2 = new Gamepad();
 
   double distance;
   double power;
 
   LLResult currentTagResult;
-  private boolean autoAiming = true;
+  private boolean autoCalculateShootPower = true;
 
   public BaseTeleop(LinearOpMode opMode, Robot robot, double headingOffset) {
     this.opMode = opMode;
@@ -36,10 +37,12 @@ public class BaseTeleop {
   }
 
   private void updateGamepads() {
-    gamepad1.copy(this.opMode.gamepad1);
-    gamepad2.copy(this.opMode.gamepad2);
-  }
+    lastGamepad1.copy(currentGamepad1);
+    currentGamepad1.copy(this.opMode.gamepad1);
 
+    lastGamepad2.copy(currentGamepad2);
+    currentGamepad2.copy(this.opMode.gamepad2);
+  }
 
   public void run() {
     // --- INIT ---
@@ -53,87 +56,82 @@ public class BaseTeleop {
     // --- START ---
     robot.stateTimer.reset();
     while (opMode.opModeIsActive()) {
-      currentTagResult = robot.limelight.updateGoal();
       updateGamepads();
       robot.intake.updateSampleColor();
 
-      if (gamepad1.right_bumper) {
-        // autoaim
-        fieldCentricDriveAim();
+      // DRIVETRAIN
+      double x = currentGamepad1.left_stick_x;
+      double y = -currentGamepad1.left_stick_y;
+      double rx;
+      if (currentGamepad1.right_bumper) {
+        currentTagResult = robot.limelight.updateGoal(); // only poll the limelight when trying to auto aim
+        rx = robot.limelight.updateAimPID(); // auto aim
       } else {
-        // default drive
-        this.fieldCentricDrive();
+        rx = currentGamepad1.right_stick_x; // normal drive
       }
+      this.fieldCentricDrive(x, y, rx);
 
-      if (gamepad2.triangle) {
+      // OUTTAKE
+      if (currentGamepad2.triangle) {
         robot.outtake.setShoot();
       } else {
         robot.outtake.setBase();
       }
-      if (gamepad2.dpad_up && !autoAiming) {
-        robot.outtake.setTargetVelocity(Outtake.farSpeed);
-      }
-      if (gamepad2.dpad_down && !autoAiming) {
-        robot.outtake.setTargetVelocity(Outtake.medSpeed);
-      }
-      if (gamepad2.dpad_right && !autoAiming) {
-        robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
+
+      if (currentGamepad2.right_stick_button) {
+        currentGamepad2.setLedColor(0, 1, 0, 2000);
+        currentGamepad2.rumble(500);
+        autoCalculateShootPower = true;
+      } else if (currentGamepad2.left_stick_button) {
+        currentGamepad2.setLedColor(1, 1, 0, 2000);
+        currentGamepad2.rumble(500);
+        autoCalculateShootPower = false;
       }
 
-      if (gamepad2.dpad_left && !autoAiming) {
-        robot.outtake.setPower(robot.limelight.getShooterPower());
-      }
-
-      if (gamepad2.right_stick_button) { // set to aiming
-        gamepad2.setLedColor(0, 1, 0, 2000);
-        gamepad2.rumble(500);
-        autoAiming = true;
-      }
-      if (gamepad2.left_stick_button) { // set to not aiming
-        gamepad2.setLedColor(1, 1, 0, 2000);
-        gamepad2.rumble(500);
-        autoAiming = false;
-      }
-
-      if (autoAiming) {
-        if (Math.abs(gamepad1.left_stick_x) <= .05 || Math.abs(gamepad1.right_stick_x) <= .05) {
-          robot.outtake.setPower(robot.limelight.getShooterPower());
+      if (currentGamepad1.dpad_down) {
+        robot.outtake.stop();
+        this.autoCalculateShootPower = false; // don't continue calculating and setting target if stopping
+      } else if (autoCalculateShootPower) {
+        // TODO: I think you want && here? Not sure what this condition is for
+        if (Math.abs(currentGamepad1.left_stick_x) <= .05 || Math.abs(currentGamepad1.right_stick_x) <= .05) {
+          robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
+        }
+      } else {
+        if (currentGamepad2.dpad_up) {
+          robot.outtake.setTargetVelocity(Outtake.farSpeed);
+        } else if (currentGamepad2.dpad_down) {
+          robot.outtake.setTargetVelocity(Outtake.medSpeed);
+        } else if (currentGamepad2.dpad_right) {
+          robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
+        } else if (currentGamepad2.dpad_left) {
+          robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
         }
       }
+      robot.outtake.updatePIDControl();
 
-      if (gamepad1.dpad_down) {
-        robot.outtake.stop();
-      }
       // INTAKE
-      if (gamepad1.right_trigger != 0 || gamepad1.left_trigger != 0) {
-        robot.intake.setPower(gamepad1.right_trigger - gamepad1.left_trigger);
-      } else if (gamepad2.right_trigger != 0 || gamepad2.left_trigger != 0) {
-        robot.intake.setPower(gamepad2.right_trigger - gamepad2.left_trigger);
-      } else if (gamepad2.left_bumper) {
+      if (currentGamepad1.right_trigger > 0.05 || currentGamepad1.left_trigger > 0.05) {
+        robot.intake.setPower(currentGamepad1.right_trigger - currentGamepad1.left_trigger);
+      } else if (currentGamepad2.right_trigger > 0.05 || currentGamepad2.left_trigger > 0.05) {
+        robot.intake.setPower(currentGamepad2.right_trigger - currentGamepad2.left_trigger);
+      } else if (currentGamepad2.left_bumper) {
         robot.intake.setPowerVertical(-.6);
       } else {
-
         robot.intake.setPowerVertical(0);
-
       }
-
-      robot.outtake.updatePIDControl();
 
       // TELEMETRY
       updateTelemetry();
     }
   }
 
-  private void fieldCentricDrive() {
-    if (gamepad1.left_bumper) {
+  private void fieldCentricDrive(double x, double y, double rx) {
+    if (currentGamepad1.left_bumper) {
       robot.imu.resetYaw();
       this.headingOffset = 0;
     }
-    // Field Centric Drive
-    double y = -gamepad1.left_stick_y;
-    double x = gamepad1.left_stick_x;
-    double rx = gamepad1.right_stick_x;
 
+    // Field Centric Drive
     double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + this.headingOffset;
 
     double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
@@ -152,50 +150,22 @@ public class BaseTeleop {
     robot.bl.setPower(backLeftPower);
   }
 
-  private void fieldCentricDriveAim() {
-    double turnPower = robot.limelight.updateAimPID();
-
-    // Inject PID turn power into field-centric drive
-    double y = -gamepad1.left_stick_y;
-    double x = gamepad1.left_stick_x;
-    double rx = turnPower;   // <-- PID replaces right stick turning
-
-    // run drive using rx as rotation
-    double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + this.headingOffset;
-
-    double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-    double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-    rotX *= 1.1;
-
-    double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
-    double fl = (rotY + rotX + rx) / denominator;
-    double bl = (rotY - rotX + rx) / denominator;
-    double fr = (rotY - rotX - rx) / denominator;
-    double br = (rotY + rotX - rx) / denominator;
-
-    robot.fr.setPower(fr);
-    robot.fl.setPower(fl);
-    robot.br.setPower(br);
-    robot.bl.setPower(bl);
-  }
-
-
   private void updateTelemetry() {
-    // TODO: do not re-read sensor values for telemetry. Cache values from updateSampleColor, etc if necessary
-    telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
+    // TODO: do not re-read sensor values for telemetry. Cache values from updateSampleColor, etc if necessary!!
+    telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity()); // TODO: this makes a control hub call
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());
     telemetry.addData("Distance Estimate", distance);
-    telemetry.addData("Power Esstimeate", power);
+    telemetry.addData("Power Estimate", power);
     telemetry.addLine("=== SENSORS ===");
-    NormalizedRGBA cs1Colors = robot.intake.cs1.getNormalizedColors();
-    NormalizedRGBA cs2Colors = robot.intake.cs2.getNormalizedColors();
+    NormalizedRGBA cs1Colors = robot.intake.cs1.getNormalizedColors(); // TODO: this makes a control hub call
+    NormalizedRGBA cs2Colors = robot.intake.cs2.getNormalizedColors(); // TODO: this makes a control hub call
     telemetry.addData("Red 1", cs1Colors.red);
     telemetry.addData("Green 1", cs1Colors.green);
-    telemetry.addData("Dist CM 1", robot.intake.readDistance(robot.intake.cs1));
+    telemetry.addData("Dist CM 1", robot.intake.readDistance(robot.intake.cs1)); // TODO: this makes a control hub call
     telemetry.addData("Red 2", cs2Colors.red);
     telemetry.addData("Green 2", cs2Colors.green);
-    telemetry.addData("Dist CM 2", robot.intake.readDistance(robot.intake.cs2));
+    telemetry.addData("Dist CM 2", robot.intake.readDistance(robot.intake.cs2)); // TODO: this makes a control hub call
 
     telemetry.update();
   }

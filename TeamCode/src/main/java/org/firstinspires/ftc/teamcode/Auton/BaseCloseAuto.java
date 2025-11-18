@@ -242,7 +242,7 @@ public class BaseCloseAuto {
       robot.updateAutoControls();
     }
 
-    robot.outtake.setTargetVelocity(robot.limelight.getShooterPower());
+    robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
     while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
       robot.updateAutoControls();
     }
@@ -269,7 +269,7 @@ public class BaseCloseAuto {
     while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
       robot.updateAutoControls();
     }
-    robot.outtake.setTargetVelocity(robot.limelight.getShooterPower());
+    robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
     while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
       robot.updateAutoControls();
     }

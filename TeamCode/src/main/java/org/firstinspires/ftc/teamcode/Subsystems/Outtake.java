@@ -110,6 +110,6 @@ public class Outtake {
   }
 
   public void stop() {
-    targetVelocity = 0;
+    this.setTargetVelocity(0);
   }
 }
