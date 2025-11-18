@@ -17,6 +17,8 @@ public class Limelight {
 
   public LLResult currentGoal;
 
+  public double lastPower;
+
   public Limelight(LinearOpMode opMode, AllianceColor color) {
     HardwareMap hardwareMap = opMode.hardwareMap;
     currentColor = color;
@@ -29,6 +31,18 @@ public class Limelight {
     this.limelight.pipelineSwitch(currentColor.getLLPipelineTeleOP());
     currentGoal = this.limelight.getLatestResult();
     return currentGoal;
+  }
+
+  public double getShooterPower() {
+    double distance;
+    double power;
+    if (currentGoal != null && currentGoal.isValid()) {
+      distance = (((41.275) / Math.tan((Math.toRadians(currentGoal.getTy() + 1.0)))) / 100.0);
+      power = (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037;
+      lastPower = power;
+      return power;
+    }
+    return lastPower;
   }
 
   public int getPatternIdAuto() {

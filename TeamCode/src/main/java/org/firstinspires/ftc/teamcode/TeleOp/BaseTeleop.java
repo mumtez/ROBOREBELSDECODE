@@ -89,12 +89,7 @@ public class BaseTeleop {
       }
 
       if (gamepad2.dpad_left) {
-        if (currentTagResult != null && currentTagResult.isValid()) {
-          distance = (((41.275) / Math.tan((Math.toRadians(currentTagResult.getTy() + 1.0)))) / 100.0);
-          power = (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037;
-          robot.outtake.setTargetVelocity(power);
-        }
-
+        robot.outtake.setPower(robot.limelight.getShooterPower());
       }
       if (gamepad1.dpad_down) {
         robot.outtake.stop();
