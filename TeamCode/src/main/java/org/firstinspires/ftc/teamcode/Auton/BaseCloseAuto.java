@@ -243,7 +243,7 @@ public class BaseCloseAuto {
 
     robot.outtake.setBase();
     robot.intake.setPower(1);
-    robot.outtake.setTargetVelocity(1000);
+    robot.outtake.setTargetVelocity(1270);
 
     robot.follower.followPath(intakeToShoot, true); //TODO testing holdend
     while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
