@@ -79,11 +79,9 @@ public class BaseTeleop {
       }
 
       if (currentGamepad2.right_stick_button) {
-        currentGamepad2.setLedColor(0, 1, 0, 2000);
         currentGamepad2.rumble(500);
         autoCalculateShootPower = true;
       } else if (currentGamepad2.left_stick_button) {
-        currentGamepad2.setLedColor(1, 1, 0, 2000);
         currentGamepad2.rumble(500);
         autoCalculateShootPower = false;
       }

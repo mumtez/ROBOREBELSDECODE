@@ -23,7 +23,7 @@ public class BaseCloseAuto {
   public int pattern = 0; //0 = gpp 1 = pgp 2 =ppg
 
   public static double CYCLE_TIMER = 1200;
-  public static double TRANSFER_TIMER = 800; //500
+  public static double TRANSFER_TIMER = 550; //500
   public static double[] START_RED = {113, 131, 180}; // initial rotation 37
   public static double[] SHOOT_CONTROl = {72, 48, 0};
 
@@ -37,8 +37,8 @@ public class BaseCloseAuto {
   public static double[] INTAKE_GPP_END_RED = {110, 40, 0};
 
 
-  public static int OUTTAKE_SERVO_UP_MS = 500;
-  public static int OUTTAKE_SERVO_DOWN_MS = 1000;
+  public static int OUTTAKE_SERVO_UP_MS = 400;
+  public static int OUTTAKE_SERVO_DOWN_MS = 400;
   public static double INTAKE_DRIVE_SPEED = 0.3;
 
   public int currentTag = 21;
@@ -157,7 +157,6 @@ public class BaseCloseAuto {
   public void autonomousPathUpdate() {
     switch (pathState) {
       case PRELOAD:
-        robot.follower.followPath(shootPreLoad);
 
         if (pattern == 1) {
           cycle();
@@ -166,25 +165,33 @@ public class BaseCloseAuto {
         if (pattern == 2) {
           cycle();
         }
+        robot.follower.followPath(shootPreLoad);
         shootThree();
 
         setPathState(pathOrder.next());
         break;
 
       case PPG:
+        if (pattern != 2) {
+          robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
+        }
         intakeThree(preIntakePPG, intakePPG);
         if (pattern == 0) {
+          cycle();
           cycle();
         }
         if (pattern == 1) {
           cycle();
-          cycle();
+
         }
         shootThree(shootPPG);
         setPathState(pathOrder.next());
         break;
 
       case PGP:
+        if (pattern != 1) {
+          robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
+        }
         intakeThree(preIntakePGP, intakePGP);
         if (pattern == 0) {
           cycle();
@@ -198,6 +205,9 @@ public class BaseCloseAuto {
         break;
 
       case GPP:
+        if (pattern != 0) {
+          robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
+        }
         intakeThree(preIntakeGPP, intakeGPP);
         if (pattern == 1) {
           cycle();
@@ -236,14 +246,9 @@ public class BaseCloseAuto {
 
     robot.outtake.setBase();
     robot.intake.setPower(1);
-    robot.outtake.setTargetVelocity(1000);
+    robot.outtake.setTargetVelocity(Outtake.medSpeed);
 
-    while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
-      robot.updateAutoControls();
-    }
-
-    robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
-    while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
+    while (opMode.opModeIsActive() && (robot.follower.isBusy()) || !robot.outtake.atTarget()) {
       robot.updateAutoControls();
     }
 
@@ -263,14 +268,10 @@ public class BaseCloseAuto {
 
     robot.outtake.setBase();
     robot.intake.setPower(1);
-    robot.outtake.setTargetVelocity(1270);
+    robot.outtake.setTargetVelocity(Outtake.medSpeed);
 
     robot.follower.followPath(intakeToShoot, true); //TODO testing holdend
-    while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
-      robot.updateAutoControls();
-    }
-    robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
-    while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
+    while (opMode.opModeIsActive() && (robot.follower.isBusy()) || !robot.outtake.atTarget()) {
       robot.updateAutoControls();
     }
 
@@ -302,15 +303,19 @@ public class BaseCloseAuto {
     while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
       // delay
       robot.updateAutoControls();
-
     }
     cycleTimer.reset();
     robot.outtake.setShoot();
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < CYCLE_TIMER) {
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < OUTTAKE_SERVO_UP_MS) {
       // delay
       robot.updateAutoControls();
     }
     robot.outtake.setBase();
+
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < CYCLE_TIMER - OUTTAKE_SERVO_UP_MS) {
+      // delay
+      robot.updateAutoControls();
+    }
     robot.intake.setPower(1); // TODO: this should be a constant in the intake class (Intake.POWER_IN)
     cycleTimer.reset();
     while (opMode.opModeIsActive() && cycleTimer.milliseconds() < INTAKE_TIMER) {
@@ -326,6 +331,7 @@ public class BaseCloseAuto {
 
     robot.intake.setPower(1);
   }
+
 
   private void reloadAndWait(ElapsedTime shootTimer) {
     robot.outtake.setBase();
@@ -345,9 +351,12 @@ public class BaseCloseAuto {
 
     // INIT LOOP
     while (this.opMode.opModeInInit()) {
-      telemetry.addData("ALLIANCE", robot.getAllianceColor());
-      telemetry.update();
       currentTag = robot.limelight.getPatternIdAuto();
+      telemetry.addData("ALLIANCE", robot.getAllianceColor());
+      telemetry.addData("Tag", currentTag);
+
+      telemetry.update();
+
     }
 
     // START
