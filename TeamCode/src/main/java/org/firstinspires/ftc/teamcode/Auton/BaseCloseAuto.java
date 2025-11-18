@@ -236,12 +236,15 @@ public class BaseCloseAuto {
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
 
-    robot.outtake.setTargetVelocity(Outtake.medSpeed);
     robot.outtake.setBase();
     robot.intake.setPower(1);
 
     robot.follower.followPath(intakeToShoot, true); //TODO testing holdend
-    while (opMode.opModeIsActive() && (robot.follower.isBusy() || !robot.outtake.atTarget())) {
+    while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
+      robot.updateAutoControls();
+    }
+    robot.outtake.setTargetVelocity(robot.limelight.getShooterPower());
+    while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
       robot.updateAutoControls();
     }
 
