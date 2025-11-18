@@ -57,12 +57,12 @@ public class Limelight {
     return lastPower;
   }
 
-  public double updateAimPID(double tx) {
+  public double updateAimPID() {
 
     double dt = aimTimer.seconds();
     aimTimer.reset();
 
-    double error = tx - currentColor.getAimPose();
+    double error = currentGoal.getTx() - currentColor.getAimPose();
 
     // Integral
     aimIntegral += error * dt;

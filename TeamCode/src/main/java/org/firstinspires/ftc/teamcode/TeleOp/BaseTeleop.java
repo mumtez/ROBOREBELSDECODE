@@ -135,8 +135,7 @@ public class BaseTeleop {
 
   private void fieldCentricDriveAim() {
     if (currentTagResult != null && currentTagResult.isValid()) {
-      double tx = currentTagResult.getTx();
-      double turnPower = robot.limelight.updateAimPID(tx);
+      double turnPower = robot.limelight.updateAimPID();
 
       // Inject PID turn power into field-centric drive
       double y = -gamepad1.left_stick_y;
