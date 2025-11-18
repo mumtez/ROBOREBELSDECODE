@@ -58,13 +58,13 @@ public class BaseTeleop {
     while (opMode.opModeIsActive()) {
       updateGamepads();
       robot.intake.updateSampleColor();
+      currentTagResult = robot.limelight.updateGoal();
 
       // DRIVETRAIN
       double x = currentGamepad1.left_stick_x;
       double y = -currentGamepad1.left_stick_y;
       double rx;
       if (currentGamepad1.right_bumper) {
-        currentTagResult = robot.limelight.updateGoal(); // only poll the limelight when trying to auto aim
         rx = robot.limelight.updateAimPID(); // auto aim
       } else {
         rx = currentGamepad1.right_stick_x; // normal drive

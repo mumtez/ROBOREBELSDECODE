@@ -311,14 +311,14 @@ public class BaseCloseAuto {
       robot.updateAutoControls();
     }
     robot.outtake.setBase();
-    robot.intake.setPower(1);
+    robot.intake.setPower(1); // TODO: this should be a constant in the intake class (Intake.POWER_IN)
     cycleTimer.reset();
     while (opMode.opModeIsActive() && cycleTimer.milliseconds() < INTAKE_TIMER) {
       // delay
       robot.updateAutoControls();
     }
     cycleTimer.reset();
-    robot.intake.setPowerVertical(-.6);
+    robot.intake.setPowerVertical(-.6); // TODO: this should be a constant in the intake class (Intake.POWER_CYCLE?)
     while (opMode.opModeIsActive() && cycleTimer.milliseconds() < TRANSFER_TIMER) {
       // delay
       robot.updateAutoControls();

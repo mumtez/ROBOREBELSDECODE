@@ -83,7 +83,7 @@ public class Limelight {
 
       // Clamp for safety
       output = Range.clip(output, -1.0, 1.0);
-      return output;   // return flywheel power
+      return output;   // return turn power
     }
     return 0;
   }
