@@ -353,6 +353,7 @@ public class BaseCloseAuto {
     // LOOP
     while (this.opMode.opModeIsActive()) {
       robot.updateAutoControls();
+      robot.limelight.updateGoal();
       autonomousPathUpdate();
 
       telemetry.addData("Path State", pathState);

@@ -42,7 +42,7 @@ public class Limelight {
   }
 
 
-  public LLResult updateGoalTeleop() { // Update the current goal tag for teleop
+  public LLResult updateGoal() { // Update the current goal tag for teleop
     this.limelight.pipelineSwitch(currentColor.getLLPipelineTeleOP());
     currentGoal = this.limelight.getLatestResult();
     return currentGoal;
