@@ -31,7 +31,7 @@ public class BaseCloseAuto {
   public static double[] INTAKE_PPG_END_RED = {114, 86, 0};
 
   public static double[] INTAKE_PGP_START_RED = {86, 62, 0};
-  public static double[] INTAKE_PGP_END_RED = {118, 62, 0};
+  public static double[] INTAKE_PGP_END_RED = {120, 62, 0};
 
   public static double[] INTAKE_GPP_START_RED = {88, 40, 0};
   public static double[] INTAKE_GPP_END_RED = {110, 40, 0};
