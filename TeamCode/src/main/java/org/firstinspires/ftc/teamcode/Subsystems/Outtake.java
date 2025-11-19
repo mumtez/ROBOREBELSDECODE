@@ -75,8 +75,10 @@ public class Outtake {
 
   // --- Main PID update loop ---
   public double updatePIDControl() {
-    if (this.atTarget(40) && targetVelocity != 0) {
+    if (this.atTarget(20) && targetVelocity != 0) {
       rgb.setPosition(.5);
+    } else if (this.atTarget(100) && targetVelocity != 0) {
+      rgb.setPosition(.375);
     } else {
       rgb.setPosition(.3);
     }

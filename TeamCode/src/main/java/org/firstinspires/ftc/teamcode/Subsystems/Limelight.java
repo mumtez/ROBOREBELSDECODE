@@ -59,7 +59,7 @@ public class Limelight {
       lastCalculatedVel = calculatedVel;
       return calculatedVel;
     }
-    return lastCalculatedVel;
+    return lastCalculatedVel - 20;
   }
 
   public double updateAimPID() { // returns the turn power from pid for autoaiming

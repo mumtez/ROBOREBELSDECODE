@@ -58,13 +58,14 @@ public class BaseTeleop {
     while (opMode.opModeIsActive()) {
       updateGamepads();
       robot.intake.updateSampleColor();
-      currentTagResult = robot.limelight.updateGoal();
+      // currentTagResult = robot.limelight.updateGoal(); TODO Test
 
       // DRIVETRAIN
       double x = currentGamepad1.left_stick_x;
       double y = -currentGamepad1.left_stick_y;
       double rx;
       if (currentGamepad1.right_bumper) {
+        currentTagResult = robot.limelight.updateGoal();
         rx = robot.limelight.updateAimPID(); // auto aim
       } else {
         rx = currentGamepad1.right_stick_x; // normal drive
@@ -90,7 +91,7 @@ public class BaseTeleop {
         robot.outtake.stop();
         this.autoCalculateShootPower = false; // don't continue calculating and setting target if stopping
       } else if (autoCalculateShootPower) {
-        if (Math.abs(currentGamepad1.left_stick_x) <= .05 && Math.abs(currentGamepad1.left_stick_y) <= .05) {
+        if (currentGamepad1.right_bumper) {
           robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
         }
       } else {

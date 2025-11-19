@@ -11,6 +11,6 @@ public class RedTeleop extends LinearOpMode {
   @Override
   public void runOpMode() throws InterruptedException {
     Robot robot = new Robot(this, AllianceColor.RED);
-    new BaseTeleop(this, robot, 180).run();
+    new BaseTeleop(this, robot, 0).run();
   }
 }
