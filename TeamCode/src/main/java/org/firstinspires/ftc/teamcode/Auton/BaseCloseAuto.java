@@ -21,8 +21,11 @@ import org.opencv.core.Point;
 public class BaseCloseAuto {
 
   public static double INTAKE_TIMER = 600;
-  public int pattern = 0; //0 = gpp 1 = pgp 2 =ppg
 
+  public enum Pattern {
+    GPP, PGP, PPG
+  }
+  private Pattern curPattern = Pattern.GPP;
   public static double CYCLE_TIMER = 800;
   public static double TRANSFER_TIMER = 550; //500
 
@@ -162,11 +165,11 @@ public class BaseCloseAuto {
     switch (pathState) {
       case PRELOAD:
 
-        if (pattern == 1) {
+        if (curPattern == Pattern.PGP) { //0 = gpp, 1 = pgp, 2 = ppg
           cycle(TRANSFER_TIMER);
           cycle(TRANSFER_TIMER);
         }
-        if (pattern == 2) {
+        if (curPattern == Pattern.PPG) {
           cycle(TRANSFER_TIMER);
         }
         robot.follower.followPath(shootPreLoad);
@@ -176,15 +179,15 @@ public class BaseCloseAuto {
         break;
 
       case PPG:
-        if (pattern != 2) {
+        if (curPattern != Pattern.PPG) {
           robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
         }
         intakeThree(preIntakePPG, intakePPG);
-        if (pattern == 0) {
+        if (curPattern == Pattern.GPP) {
           cycle(TRANSFER_TIMER_INTAKE);
           cycle(TRANSFER_TIMER_INTAKE);
         }
-        if (pattern == 1) {
+        if (curPattern == Pattern.PGP) {
           cycle(TRANSFER_TIMER_INTAKE);
 
         }
@@ -193,14 +196,14 @@ public class BaseCloseAuto {
         break;
 
       case PGP:
-        if (pattern != 1) {
+        if (curPattern != Pattern.PGP) {
           robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
         }
         intakeThree(preIntakePGP, intakePGP);
-        if (pattern == 0) {
+        if (curPattern == Pattern.GPP) {
           cycle(TRANSFER_TIMER_INTAKE);
         }
-        if (pattern == 2) {
+        if (curPattern == Pattern.PPG) {
           cycle(TRANSFER_TIMER_INTAKE);
           cycle(TRANSFER_TIMER_INTAKE);
         }
@@ -209,15 +212,15 @@ public class BaseCloseAuto {
         break;
 
       case GPP:
-        if (pattern != 0) {
+        if (curPattern != Pattern.GPP) {
           robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
         }
         intakeThree(preIntakeGPP, intakeGPP);
-        if (pattern == 1) {
+        if (curPattern == Pattern.PGP) {
           cycle(TRANSFER_TIMER_INTAKE);
           cycle(TRANSFER_TIMER_INTAKE);
         }
-        if (pattern == 2) {
+        if (curPattern == Pattern.PPG) {
           cycle(TRANSFER_TIMER_INTAKE);
         }
         shootThree(shootGPP);
@@ -238,7 +241,7 @@ public class BaseCloseAuto {
       robot.updateAutoControls();
     }
 
-    robot.intake.setPower(1);
+    robot.intake.setPower(Intake.POWER_INTAKE);
     robot.follower.followPath(intake, INTAKE_DRIVE_SPEED, false);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
@@ -360,7 +363,15 @@ public class BaseCloseAuto {
       currentTag = robot.limelight.getPatternIdAuto();
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
       telemetry.addData("Tag", currentTag);
-
+      if (currentTag == 21) {
+        curPattern = Pattern.GPP;
+      }
+      if (currentTag == 22) {
+        curPattern = Pattern.PGP;
+      }
+      if (currentTag == 23) {
+        curPattern = Pattern.PPG;
+      }
       telemetry.update();
 
     }
@@ -368,21 +379,18 @@ public class BaseCloseAuto {
     // START
     robot.follower.setStartingPose(poseFromArr(START_RED));
 
-    if (currentTag == 21) {
-      pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP)
+    if (curPattern == Pattern.GPP) {
+      pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP) // TODO LOOK AT THIS
           .iterator();
-      pattern = 0;
 
-    }
-    if (currentTag == 22) {
+    }else
+    if (curPattern == Pattern.PGP) {
       pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GPP, PathState.STOP)
           .iterator();
-      pattern = 1;
-    }
-    if (currentTag == 23) {
+    }else
+    if (curPattern == Pattern.PPG) {
       pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
           .iterator();
-      pattern = 2;
     }
 
     // LOOP
