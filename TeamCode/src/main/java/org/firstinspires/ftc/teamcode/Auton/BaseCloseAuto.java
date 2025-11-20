@@ -381,11 +381,11 @@ public class BaseCloseAuto {
       pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP)
           .iterator();
 
-    }else
+    } else
     if (pattern == Pattern.PGP) {
       pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GPP, PathState.STOP)
           .iterator();
-    }else
+    } else
     if (pattern == Pattern.PPG) {
       pathOrder = List.of(PathState.PPG,PathState.GPP, PathState.PGP , PathState.STOP) //TODO: Test if right
           .iterator();
