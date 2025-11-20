@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.opencv.core.Point;
 
@@ -22,8 +23,11 @@ public class BaseCloseAuto {
   public static double INTAKE_TIMER = 600;
   public int pattern = 0; //0 = gpp 1 = pgp 2 =ppg
 
-  public static double CYCLE_TIMER = 1200;
+  public static double CYCLE_TIMER = 800;
   public static double TRANSFER_TIMER = 550; //500
+
+  public static double TRANSFER_TIMER_INTAKE = 1000; //500
+
   public static double[] START_RED = {113, 131, 180}; // initial rotation 37
   public static double[] SHOOT_CONTROl = {72, 48, 0};
 
@@ -159,11 +163,11 @@ public class BaseCloseAuto {
       case PRELOAD:
 
         if (pattern == 1) {
-          cycle();
-          cycle();
+          cycle(TRANSFER_TIMER);
+          cycle(TRANSFER_TIMER);
         }
         if (pattern == 2) {
-          cycle();
+          cycle(TRANSFER_TIMER);
         }
         robot.follower.followPath(shootPreLoad);
         shootThree();
@@ -177,11 +181,11 @@ public class BaseCloseAuto {
         }
         intakeThree(preIntakePPG, intakePPG);
         if (pattern == 0) {
-          cycle();
-          cycle();
+          cycle(TRANSFER_TIMER_INTAKE);
+          cycle(TRANSFER_TIMER_INTAKE);
         }
         if (pattern == 1) {
-          cycle();
+          cycle(TRANSFER_TIMER_INTAKE);
 
         }
         shootThree(shootPPG);
@@ -194,11 +198,11 @@ public class BaseCloseAuto {
         }
         intakeThree(preIntakePGP, intakePGP);
         if (pattern == 0) {
-          cycle();
+          cycle(TRANSFER_TIMER_INTAKE);
         }
         if (pattern == 2) {
-          cycle();
-          cycle();
+          cycle(TRANSFER_TIMER_INTAKE);
+          cycle(TRANSFER_TIMER_INTAKE);
         }
         shootThree(shootPGP);
         setPathState(pathOrder.next());
@@ -210,11 +214,11 @@ public class BaseCloseAuto {
         }
         intakeThree(preIntakeGPP, intakeGPP);
         if (pattern == 1) {
-          cycle();
-          cycle();
+          cycle(TRANSFER_TIMER_INTAKE);
+          cycle(TRANSFER_TIMER_INTAKE);
         }
         if (pattern == 2) {
-          cycle();
+          cycle(TRANSFER_TIMER_INTAKE);
         }
         shootThree(shootGPP);
         setPathState(pathOrder.next());
@@ -245,7 +249,7 @@ public class BaseCloseAuto {
     ElapsedTime shootTimer = new ElapsedTime();
 
     robot.outtake.setBase();
-    robot.intake.setPower(1);
+    robot.intake.setPower(Intake.POWER_INTAKE);
     robot.outtake.setTargetVelocity(Outtake.medSpeed);
 
     while (opMode.opModeIsActive() && (robot.follower.isBusy()) || !robot.outtake.atTarget()) {
@@ -267,7 +271,7 @@ public class BaseCloseAuto {
     ElapsedTime shootTimer = new ElapsedTime();
 
     robot.outtake.setBase();
-    robot.intake.setPower(1);
+    robot.intake.setPower(Intake.POWER_INTAKE);
     robot.outtake.setTargetVelocity(Outtake.medSpeed);
 
     robot.follower.followPath(intakeToShoot, true); //TODO testing holdend
@@ -296,7 +300,7 @@ public class BaseCloseAuto {
     }
   }
 
-  private void cycle() {
+  private void cycle(double transferTimer) {
     ElapsedTime cycleTimer = new ElapsedTime();
     robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
 
@@ -312,25 +316,27 @@ public class BaseCloseAuto {
     }
     robot.outtake.setBase();
 
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < CYCLE_TIMER - OUTTAKE_SERVO_UP_MS) {
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < CYCLE_TIMER) {
       // delay
       robot.updateAutoControls();
     }
-    robot.intake.setPower(1); // TODO: this should be a constant in the intake class (Intake.POWER_IN)
+    robot.intake.setPower(Intake.POWER_INTAKE);
     cycleTimer.reset();
     while (opMode.opModeIsActive() && cycleTimer.milliseconds() < INTAKE_TIMER) {
       // delay
       robot.updateAutoControls();
     }
     cycleTimer.reset();
-    robot.intake.setPowerVertical(-.6); // TODO: this should be a constant in the intake class (Intake.POWER_CYCLE?)
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < TRANSFER_TIMER) {
+    robot.intake.setPowerVertical(Intake.POWER_CYCLE_VERTICAL);
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < transferTimer) { // TODO TEST TUNABLE HERE
       // delay
       robot.updateAutoControls();
     }
 
-    robot.intake.setPower(1);
+    robot.intake.setPower(Intake.POWER_INTAKE);
   }
+
+
 
 
   private void reloadAndWait(ElapsedTime shootTimer) {

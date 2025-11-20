@@ -23,6 +23,9 @@ public class Intake {
   public static final float GREEN_THRESHOLD = .022f;
   public static final float RED_THRESHOLD = .014f;
 
+  public static final double POWER_CYCLE_VERTICAL = -.6;
+
+  public static final double POWER_INTAKE = 1;
 
   public static Direction intakeMotorDirection = Direction.FORWARD;
   public static Direction intakeMotorAltDirection = Direction.REVERSE;
