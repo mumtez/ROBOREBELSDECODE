@@ -84,7 +84,7 @@ public class Limelight {
         aimIntegral = 0;
         aimLastError = error;
         return 0;
-      } //TODO: Try K_s with this also attempt tuning ks agian
+      } // TODO: Try K_s with this also attempt tuning ks agian
 
       double output = AIM_Kp * error
           + AIM_Ki * aimIntegral
