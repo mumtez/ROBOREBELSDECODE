@@ -20,8 +20,8 @@ public class Outtake {
   public static int farSpeed = 1600;
 
   public static int cycleSpeed = 300;
-  public static double kP = 0.001; //TODO: Possible retune for this tomorrow
-  public static double kV = 0.00039;
+  public static double kP = 0.001; // .0025
+  public static double kV = 0.00039; // .00073
 
 
   public static double SHOOT_POS = 0.7;

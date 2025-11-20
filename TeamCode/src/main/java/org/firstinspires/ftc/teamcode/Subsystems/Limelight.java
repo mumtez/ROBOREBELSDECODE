@@ -14,10 +14,10 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 @Configurable
 public class Limelight {
 
-  public static double AIM_Kp = 0.018;
+  public static double AIM_Kp = 0.016;
   public static double AIM_Ki = 0.0;
-  public static double AIM_Kd = 0.001;
-  public static double AIM_Ks = 0.00; // TODO tune
+  public static double AIM_Kd = 0.0017;
+  public static double AIM_Ks = 0.06;
 
   public static double AIM_DEADBAND = .4;
 
