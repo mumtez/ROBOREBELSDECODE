@@ -15,7 +15,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
-import org.opencv.core.Point;
 
 @Configurable
 public class BaseCloseAuto {
@@ -89,10 +88,6 @@ public class BaseCloseAuto {
   void setPathState(PathState pState) {
     pathState = pState;
     pathTimer.resetTimer();
-  }
-
-  public Point pointFromArr(double[] arr) {
-    return new Point(arr[0], arr[1]);
   }
 
   void buildPaths() {
@@ -361,17 +356,20 @@ public class BaseCloseAuto {
     // INIT LOOP
     while (this.opMode.opModeInInit()) {
       currentTag = robot.limelight.getPatternIdAuto();
+
+      switch (currentTag){
+        case 21:
+        pattern = Pattern.GPP;
+        break;
+        case 22:
+          pattern = Pattern.PGP;
+          break;
+        case 23:
+          pattern = Pattern.PPG;
+          break;
+      }
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
       telemetry.addData("Tag", currentTag);
-      if (currentTag == 21) {
-        pattern = Pattern.GPP;
-      }
-      if (currentTag == 22) {
-        pattern = Pattern.PGP;
-      }
-      if (currentTag == 23) {
-        pattern = Pattern.PPG;
-      }
       telemetry.addData("Pattern", pattern);
       telemetry.update();
 
