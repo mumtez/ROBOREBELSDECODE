@@ -25,7 +25,7 @@ public class BaseCloseAuto {
   public enum Pattern {
     GPP, PGP, PPG
   }
-  private Pattern curPattern = Pattern.GPP;
+  private Pattern pattern = Pattern.GPP;
   public static double CYCLE_TIMER = 800;
   public static double TRANSFER_TIMER = 550; //500
 
@@ -165,11 +165,11 @@ public class BaseCloseAuto {
     switch (pathState) {
       case PRELOAD:
 
-        if (curPattern == Pattern.PGP) { //0 = gpp, 1 = pgp, 2 = ppg
+        if (pattern == Pattern.PGP) { //0 = gpp, 1 = pgp, 2 = ppg
           cycle(TRANSFER_TIMER);
           cycle(TRANSFER_TIMER);
         }
-        if (curPattern == Pattern.PPG) {
+        if (pattern == Pattern.PPG) {
           cycle(TRANSFER_TIMER);
         }
         robot.follower.followPath(shootPreLoad);
@@ -179,15 +179,15 @@ public class BaseCloseAuto {
         break;
 
       case PPG:
-        if (curPattern != Pattern.PPG) {
+        if (pattern != Pattern.PPG) {
           robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
         }
         intakeThree(preIntakePPG, intakePPG);
-        if (curPattern == Pattern.GPP) {
+        if (pattern == Pattern.GPP) {
           cycle(TRANSFER_TIMER_INTAKE);
           cycle(TRANSFER_TIMER_INTAKE);
         }
-        if (curPattern == Pattern.PGP) {
+        if (pattern == Pattern.PGP) {
           cycle(TRANSFER_TIMER_INTAKE);
 
         }
@@ -196,14 +196,14 @@ public class BaseCloseAuto {
         break;
 
       case PGP:
-        if (curPattern != Pattern.PGP) {
+        if (pattern != Pattern.PGP) {
           robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
         }
         intakeThree(preIntakePGP, intakePGP);
-        if (curPattern == Pattern.GPP) {
+        if (pattern == Pattern.GPP) {
           cycle(TRANSFER_TIMER_INTAKE);
         }
-        if (curPattern == Pattern.PPG) {
+        if (pattern == Pattern.PPG) {
           cycle(TRANSFER_TIMER_INTAKE);
           cycle(TRANSFER_TIMER_INTAKE);
         }
@@ -212,15 +212,15 @@ public class BaseCloseAuto {
         break;
 
       case GPP:
-        if (curPattern != Pattern.GPP) {
+        if (pattern != Pattern.GPP) {
           robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
         }
         intakeThree(preIntakeGPP, intakeGPP);
-        if (curPattern == Pattern.PGP) {
+        if (pattern == Pattern.PGP) {
           cycle(TRANSFER_TIMER_INTAKE);
           cycle(TRANSFER_TIMER_INTAKE);
         }
-        if (curPattern == Pattern.PPG) {
+        if (pattern == Pattern.PPG) {
           cycle(TRANSFER_TIMER_INTAKE);
         }
         shootThree(shootGPP);
@@ -364,14 +364,15 @@ public class BaseCloseAuto {
       telemetry.addData("ALLIANCE", robot.getAllianceColor());
       telemetry.addData("Tag", currentTag);
       if (currentTag == 21) {
-        curPattern = Pattern.GPP;
+        pattern = Pattern.GPP;
       }
       if (currentTag == 22) {
-        curPattern = Pattern.PGP;
+        pattern = Pattern.PGP;
       }
       if (currentTag == 23) {
-        curPattern = Pattern.PPG;
+        pattern = Pattern.PPG;
       }
+      telemetry.addData("Pattern", pattern);
       telemetry.update();
 
     }
@@ -379,16 +380,16 @@ public class BaseCloseAuto {
     // START
     robot.follower.setStartingPose(poseFromArr(START_RED));
 
-    if (curPattern == Pattern.GPP) {
+    if (pattern == Pattern.GPP) {
       pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP) // TODO LOOK AT THIS
           .iterator();
 
     }else
-    if (curPattern == Pattern.PGP) {
+    if (pattern == Pattern.PGP) {
       pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GPP, PathState.STOP)
           .iterator();
     }else
-    if (curPattern == Pattern.PPG) {
+    if (pattern == Pattern.PPG) {
       pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
           .iterator();
     }
