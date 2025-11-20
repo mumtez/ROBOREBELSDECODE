@@ -12,7 +12,6 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Limelight;
@@ -20,8 +19,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 public class Robot {
-
-  public final ElapsedTime stateTimer = new ElapsedTime();
 
   public Follower follower;
   public DcMotor fr, fl, br, bl;

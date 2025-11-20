@@ -15,23 +15,20 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.Subsystems.Pattern;
 
 @Configurable
 public class BaseCloseAuto {
 
+  // TODO: take care when naming variables that their names represent their usage properly.
   public static double INTAKE_TIMER = 600;
-
-  public enum Pattern {
-    GPP, PGP, PPG
-  }
-  private Pattern pattern = Pattern.GPP;
   public static double CYCLE_TIMER = 800;
-  public static double TRANSFER_TIMER = 550; //500
+  public static int TRANSFER_TIME_MS = 550; //500
 
-  public static double TRANSFER_TIMER_INTAKE = 1000; //TODO: tune
+  public static int TRANSFER_TIME_INTAKE_MS = 1000; //TODO: tune
 
   public static double[] START_RED = {113, 131, 180}; // initial rotation 37
-  public static double[] SHOOT_CONTROl = {72, 48, 0};
+  public static double[] SHOOT_CONTROL = {72, 48, 0};
 
   public static double[] INTAKE_PPG_START_RED = {83, 86, 0};
   public static double[] INTAKE_PPG_END_RED = {114, 86, 0};
@@ -42,11 +39,11 @@ public class BaseCloseAuto {
   public static double[] INTAKE_GPP_START_RED = {88, 40, 0};
   public static double[] INTAKE_GPP_END_RED = {110, 40, 0};
 
-
   public static int OUTTAKE_SERVO_UP_MS = 400;
   public static int OUTTAKE_SERVO_DOWN_MS = 400;
-  public static double INTAKE_DRIVE_SPEED = 0.3;
+  public static double INTAKE_DRIVE_MAX_POWER = 0.3;
 
+  private Pattern pattern = Pattern.GPP;
   public int currentTag = 21;
 
   PathChain
@@ -128,7 +125,7 @@ public class BaseCloseAuto {
         .setTimeoutConstraint(500)
         .build();
     shootPGP = robot.follower.pathBuilder()
-        .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(SHOOT_CONTROl),
+        .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(SHOOT_CONTROL),
             poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(INTAKE_PGP_END_RED).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
@@ -147,7 +144,7 @@ public class BaseCloseAuto {
         .setTimeoutConstraint(500)
         .build();
     shootGPP = robot.follower.pathBuilder()
-        .addPath(new BezierCurve(poseFromArr(INTAKE_GPP_END_RED), poseFromArr(SHOOT_CONTROl),
+        .addPath(new BezierCurve(poseFromArr(INTAKE_GPP_END_RED), poseFromArr(SHOOT_CONTROL),
             poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(INTAKE_GPP_END_RED).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
@@ -160,12 +157,17 @@ public class BaseCloseAuto {
       case PRELOAD:
 
         if (pattern == Pattern.PGP) { //0 = gpp, 1 = pgp, 2 = ppg
-          cycle(TRANSFER_TIMER);
-          cycle(TRANSFER_TIMER);
+          cycle(TRANSFER_TIME_MS);
+          cycle(TRANSFER_TIME_MS);
         }
         if (pattern == Pattern.PPG) {
-          cycle(TRANSFER_TIMER);
+          cycle(TRANSFER_TIME_MS);
         }
+
+        // TODO: why make an entire separate shootThree method just to do the same thing?
+        //  The other one just calls followPath a couple ms later in the cycle and with holdEnd=true.
+        //  If you don't want to hold end add in a parameter for it in the method and get rid of the extra one.
+        //  They are too similar to be separate.
         robot.follower.followPath(shootPreLoad);
         shootThree();
 
@@ -178,12 +180,11 @@ public class BaseCloseAuto {
         }
         intakeThree(preIntakePPG, intakePPG);
         if (pattern == Pattern.GPP) {
-          cycle(TRANSFER_TIMER_INTAKE);
-          cycle(TRANSFER_TIMER_INTAKE);
+          cycle(TRANSFER_TIME_INTAKE_MS);
+          cycle(TRANSFER_TIME_INTAKE_MS);
         }
         if (pattern == Pattern.PGP) {
-          cycle(TRANSFER_TIMER_INTAKE);
-
+          cycle(TRANSFER_TIME_INTAKE_MS);
         }
         shootThree(shootPPG);
         setPathState(pathOrder.next());
@@ -195,11 +196,11 @@ public class BaseCloseAuto {
         }
         intakeThree(preIntakePGP, intakePGP);
         if (pattern == Pattern.GPP) {
-          cycle(TRANSFER_TIMER_INTAKE);
+          cycle(TRANSFER_TIME_INTAKE_MS);
         }
         if (pattern == Pattern.PPG) {
-          cycle(TRANSFER_TIMER_INTAKE);
-          cycle(TRANSFER_TIMER_INTAKE);
+          cycle(TRANSFER_TIME_INTAKE_MS);
+          cycle(TRANSFER_TIME_INTAKE_MS);
         }
         shootThree(shootPGP);
         setPathState(pathOrder.next());
@@ -211,11 +212,11 @@ public class BaseCloseAuto {
         }
         intakeThree(preIntakeGPP, intakeGPP);
         if (pattern == Pattern.PGP) {
-          cycle(TRANSFER_TIMER_INTAKE);
-          cycle(TRANSFER_TIMER_INTAKE);
+          cycle(TRANSFER_TIME_INTAKE_MS);
+          cycle(TRANSFER_TIME_INTAKE_MS);
         }
         if (pattern == Pattern.PPG) {
-          cycle(TRANSFER_TIMER_INTAKE);
+          cycle(TRANSFER_TIME_INTAKE_MS);
         }
         shootThree(shootGPP);
         setPathState(pathOrder.next());
@@ -236,12 +237,13 @@ public class BaseCloseAuto {
     }
 
     robot.intake.setPower(Intake.POWER_INTAKE);
-    robot.follower.followPath(intake, INTAKE_DRIVE_SPEED, false);
+    robot.follower.followPath(intake, INTAKE_DRIVE_MAX_POWER, false);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
     }
   }
 
+  // TODO: see above todo on line 170
   private void shootThree() {
     ElapsedTime shootTimer = new ElapsedTime();
 
@@ -262,7 +264,6 @@ public class BaseCloseAuto {
     robot.intake.setPower(0);
     robot.outtake.setBase();
   }
-
 
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
@@ -297,7 +298,12 @@ public class BaseCloseAuto {
     }
   }
 
-  private void cycle(double transferTimer) {
+  // TODO: we should be able to do this while driving.
+  //  Make this a non-blocking routine in Robot controlled by a state machine.
+
+  // TODO 2: This method should also take in the current and target Patterns.
+  //  Try using the example in Pattern.java to simplify that implementation and above usages of cycle :)
+  private void cycle(int transferTimeMs) {
     ElapsedTime cycleTimer = new ElapsedTime();
     robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
 
@@ -325,16 +331,13 @@ public class BaseCloseAuto {
     }
     cycleTimer.reset();
     robot.intake.setPowerVertical(Intake.POWER_CYCLE_VERTICAL);
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < transferTimer) { //TODO: TEST TUNABLE HERE
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < transferTimeMs) { //TODO: TEST TUNABLE HERE
       // delay
       robot.updateAutoControls();
     }
 
     robot.intake.setPower(Intake.POWER_INTAKE);
   }
-
-
-
 
   private void reloadAndWait(ElapsedTime shootTimer) {
     robot.outtake.setBase();
@@ -358,8 +361,8 @@ public class BaseCloseAuto {
 
       switch (currentTag){
         case 21:
-        pattern = Pattern.GPP;
-        break;
+          pattern = Pattern.GPP;
+          break;
         case 22:
           pattern = Pattern.PGP;
           break;
@@ -377,18 +380,14 @@ public class BaseCloseAuto {
     // START
     robot.follower.setStartingPose(poseFromArr(START_RED));
 
+    // TODO: generally we would use switches on enums because the syntax is cleaner.
+    //  If we can upgrade the JDK version to 21 (or kotlin) then we could use the even nicer switch syntax!
     if (pattern == Pattern.GPP) {
-      pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP)
-          .iterator();
-
-    } else
-    if (pattern == Pattern.PGP) {
-      pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GPP, PathState.STOP)
-          .iterator();
-    } else
-    if (pattern == Pattern.PPG) {
-      pathOrder = List.of(PathState.PPG,PathState.GPP, PathState.PGP , PathState.STOP) //TODO: Test if right
-          .iterator();
+      pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP).iterator();
+    } else if (pattern == Pattern.PGP) {
+      pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GPP, PathState.STOP).iterator();
+    } else if (pattern == Pattern.PPG) { // TODO: Test if right
+      pathOrder = List.of(PathState.PPG,PathState.GPP, PathState.PGP , PathState.STOP).iterator();
     }
 
     // LOOP

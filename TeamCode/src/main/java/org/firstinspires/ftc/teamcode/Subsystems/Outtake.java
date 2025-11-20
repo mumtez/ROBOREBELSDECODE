@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 @Configurable
@@ -32,7 +31,6 @@ public class Outtake {
 
   // --- Variables ---
   private double targetVelocity = 0; // ticks/sec
-  private final ElapsedTime timer = new ElapsedTime();
 
   // --- Hardware ---
   public DcMotorEx flywheel;
@@ -83,8 +81,8 @@ public class Outtake {
     } else {
       rgb.setPosition(.3);
     }
-    currentVelocity = this.flywheel.getVelocity(); // ticks/sec
-    double error = this.targetVelocity - currentVelocity;
+    this.currentVelocity = this.flywheel.getVelocity(); // ticks/sec
+    double error = this.targetVelocity - this.currentVelocity;
 
     double output = (kV * this.targetVelocity) + (kP * error);
 
@@ -96,7 +94,7 @@ public class Outtake {
   }
 
   public double getCurrentVelocity() {
-    return currentVelocity;
+    return this.currentVelocity;
   }
 
   public boolean atTarget() {

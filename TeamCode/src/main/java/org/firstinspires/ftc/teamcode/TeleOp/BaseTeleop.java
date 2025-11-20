@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -49,7 +47,6 @@ public class BaseTeleop {
     }
 
     // --- START ---
-    robot.stateTimer.reset();
     while (opMode.opModeIsActive()) {
       updateGamepads();
       robot.intake.updateSampleColor();

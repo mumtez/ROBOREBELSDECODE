@@ -19,7 +19,7 @@ public class Limelight {
   public static double AIM_Kd = 0.001;
   public static double AIM_Ks = 0.00; // TODO tune
 
-  public static double DEADBAND = .4;
+  public static double AIM_DEADBAND = .4;
 
   public final Limelight3A limelight;
   private final AllianceColor currentColor;
@@ -37,10 +37,9 @@ public class Limelight {
     this.limelight.start();
   }
 
-  public LLResult updateGoal() { // Update the current goal tag for teleop
+  public void updateGoal() { // Update the current goal tag for teleop
     this.limelight.pipelineSwitch(currentColor.getLLPipelineTeleOP());
     currentGoal = this.limelight.getLatestResult();
-    return currentGoal;
   }
 
   // TODO: below is how you properly designate return types / method descriptions in java --
@@ -61,7 +60,7 @@ public class Limelight {
       lastCalculatedVel = calculatedVel;
       return calculatedVel;
     }
-    return lastCalculatedVel - 20;
+    return lastCalculatedVel - 20; // TODO what is going on here? why -20
   }
 
   public double updateAimPID() { // returns the turn power from pid for autoaiming
@@ -80,11 +79,11 @@ public class Limelight {
 
       // PID Output
 
-      if (Math.abs(error) < DEADBAND) {
+      if (Math.abs(error) < AIM_DEADBAND) {
         aimIntegral = 0;
-        aimLastError = error;
+        aimLastError = error; // TODO shouldn't aimLastError already be set to error? line 78
         return 0;
-      } // TODO: Try K_s with this also attempt tuning ks agian
+      } // TODO: Try K_s with this also attempt tuning ks again
 
       double output = AIM_Kp * error
           + AIM_Ki * aimIntegral
