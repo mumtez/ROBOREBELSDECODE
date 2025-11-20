@@ -28,7 +28,7 @@ public class BaseCloseAuto {
   public static double CYCLE_TIMER = 800;
   public static double TRANSFER_TIMER = 550; //500
 
-  public static double TRANSFER_TIMER_INTAKE = 1000; //TODO TUNE
+  public static double TRANSFER_TIMER_INTAKE = 1000; //TODO: tune
 
   public static double[] START_RED = {113, 131, 180}; // initial rotation 37
   public static double[] SHOOT_CONTROl = {72, 48, 0};
@@ -49,7 +49,6 @@ public class BaseCloseAuto {
 
   public int currentTag = 21;
 
-  // TODO: implement park
   PathChain
       shootPreLoad,
       preIntakePPG, intakePPG, shootPPG,
@@ -272,7 +271,7 @@ public class BaseCloseAuto {
     robot.intake.setPower(Intake.POWER_INTAKE);
     robot.outtake.setTargetVelocity(Outtake.medSpeed);
 
-    robot.follower.followPath(intakeToShoot, true); //TODO testing holdend
+    robot.follower.followPath(intakeToShoot, true);
     while (opMode.opModeIsActive() && (robot.follower.isBusy()) || !robot.outtake.atTarget()) {
       robot.updateAutoControls();
     }
@@ -326,7 +325,7 @@ public class BaseCloseAuto {
     }
     cycleTimer.reset();
     robot.intake.setPowerVertical(Intake.POWER_CYCLE_VERTICAL);
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < transferTimer) { // TODO TEST TUNABLE HERE
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < transferTimer) { //TODO: TEST TUNABLE HERE
       // delay
       robot.updateAutoControls();
     }
@@ -379,7 +378,7 @@ public class BaseCloseAuto {
     robot.follower.setStartingPose(poseFromArr(START_RED));
 
     if (pattern == Pattern.GPP) {
-      pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP) // TODO LOOK AT THIS
+      pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP)
           .iterator();
 
     }else
@@ -388,17 +387,17 @@ public class BaseCloseAuto {
           .iterator();
     }else
     if (pattern == Pattern.PPG) {
-      pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP)
+      pathOrder = List.of(PathState.PPG,PathState.GPP, PathState.PGP , PathState.STOP) //TODO: Test if right
           .iterator();
     }
 
     // LOOP
     while (this.opMode.opModeIsActive()) {
       robot.updateAutoControls();
-      robot.limelight.updateGoal();
       autonomousPathUpdate();
 
       telemetry.addData("Path State", pathState);
+      telemetry.addData("Pattern", pattern);
       telemetry.update();
     }
   }
