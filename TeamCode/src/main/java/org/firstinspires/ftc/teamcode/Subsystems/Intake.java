@@ -31,10 +31,7 @@ public class Intake {
   public static Direction intakeMotorAltDirection = Direction.REVERSE;
   public final DcMotor intakeMotor;
   public final DcMotor intakeMotorAlt;
-
-  // TODO: add second color sensor to robot config
   public final NormalizedColorSensor cs1, cs2;
-  // TODO: add gobilda rgb to robot config
 
   private BallColor currentBallColor = BallColor.NONE;
 

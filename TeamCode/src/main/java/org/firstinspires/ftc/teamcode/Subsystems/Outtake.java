@@ -17,11 +17,11 @@ public class Outtake {
 
   // --- PID constants (tune in Panels) ---
 
-  public static int medSpeed = 1280; // 1270
+  public static int medSpeed = 1280;
   public static int farSpeed = 1600;
 
   public static int cycleSpeed = 300;
-  public static double kP = 0.001;
+  public static double kP = 0.001; //TODO: Possible retune for this tomorrow
   public static double kV = 0.00039;
 
 
@@ -38,6 +38,7 @@ public class Outtake {
   public DcMotorEx flywheel;
   public ServoImplEx flapper;
   public final Servo rgb;
+  private double currentVelocity;
 
   // --- Constructor ---
   public Outtake(LinearOpMode opMode) {
@@ -82,8 +83,7 @@ public class Outtake {
     } else {
       rgb.setPosition(.3);
     }
-
-    double currentVelocity = this.getCurrentVelocity(); // ticks/sec
+    currentVelocity = this.flywheel.getVelocity(); // ticks/sec
     double error = this.targetVelocity - currentVelocity;
 
     double output = (kV * this.targetVelocity) + (kP * error);
@@ -96,7 +96,7 @@ public class Outtake {
   }
 
   public double getCurrentVelocity() {
-    return flywheel.getVelocity();
+    return currentVelocity;
   }
 
   public boolean atTarget() {

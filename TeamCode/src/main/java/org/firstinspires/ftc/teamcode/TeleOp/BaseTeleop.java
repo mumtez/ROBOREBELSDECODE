@@ -22,11 +22,6 @@ public class BaseTeleop {
   Gamepad currentGamepad2 = new Gamepad();
   Gamepad lastGamepad1 = new Gamepad();
   Gamepad lastGamepad2 = new Gamepad();
-
-  double distance;
-  double power;
-
-  LLResult currentTagResult;
   private boolean autoCalculateShootPower = true;
 
   public BaseTeleop(LinearOpMode opMode, Robot robot, double headingOffset) {
@@ -58,14 +53,14 @@ public class BaseTeleop {
     while (opMode.opModeIsActive()) {
       updateGamepads();
       robot.intake.updateSampleColor();
-      // currentTagResult = robot.limelight.updateGoal(); TODO Test
+      // currentTagResult = robot.limelight.updateGoal(); TODO: Test
 
       // DRIVETRAIN
       double x = currentGamepad1.left_stick_x;
       double y = -currentGamepad1.left_stick_y;
       double rx;
       if (currentGamepad1.right_bumper) {
-        currentTagResult = robot.limelight.updateGoal();
+        robot.limelight.updateGoal();
         rx = robot.limelight.updateAimPID(); // auto aim
       } else {
         rx = currentGamepad1.right_stick_x; // normal drive
@@ -150,20 +145,11 @@ public class BaseTeleop {
 
   private void updateTelemetry() {
     // TODO: do not re-read sensor values for telemetry. Cache values from updateSampleColor, etc if necessary!!
-    telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity()); // TODO: this makes a control hub call
+
+    telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());
-    telemetry.addData("Distance Estimate", distance);
-    telemetry.addData("Power Estimate", power);
-    telemetry.addLine("=== SENSORS ===");
-    NormalizedRGBA cs1Colors = robot.intake.cs1.getNormalizedColors(); // TODO: this makes a control hub call
-    NormalizedRGBA cs2Colors = robot.intake.cs2.getNormalizedColors(); // TODO: this makes a control hub call
-    telemetry.addData("Red 1", cs1Colors.red);
-    telemetry.addData("Green 1", cs1Colors.green);
-    telemetry.addData("Dist CM 1", robot.intake.readDistance(robot.intake.cs1)); // TODO: this makes a control hub call
-    telemetry.addData("Red 2", cs2Colors.red);
-    telemetry.addData("Green 2", cs2Colors.green);
-    telemetry.addData("Dist CM 2", robot.intake.readDistance(robot.intake.cs2)); // TODO: this makes a control hub call
+
 
     telemetry.update();
   }
