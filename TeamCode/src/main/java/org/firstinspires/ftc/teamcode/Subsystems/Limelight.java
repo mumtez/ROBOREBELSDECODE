@@ -19,6 +19,8 @@ public class Limelight {
   public static double AIM_Kd = 0.001;
   public static double AIM_Ks = 0.00; // TODO tune
 
+  public static double DEADBAND = .4;
+
   public final Limelight3A limelight;
   private final AllianceColor currentColor;
   private final ElapsedTime aimTimer = new ElapsedTime();
@@ -77,6 +79,13 @@ public class Limelight {
       aimLastError = error;
 
       // PID Output
+
+      if (Math.abs(error) < DEADBAND) {
+        aimIntegral = 0;
+        aimLastError = error;
+        return 0;
+      } //TODO: Try K_s with this also attempt tuning ks agian
+
       double output = AIM_Kp * error
           + AIM_Ki * aimIntegral
           + AIM_Kd * derivative
