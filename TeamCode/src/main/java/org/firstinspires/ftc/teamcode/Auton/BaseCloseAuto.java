@@ -26,7 +26,7 @@ public class BaseCloseAuto {
   public static double CYCLE_TIMER = 800;
   public static double TRANSFER_TIMER = 550; //500
 
-  public static double TRANSFER_TIMER_INTAKE = 1000; //500
+  public static double TRANSFER_TIMER_INTAKE = 1000; //TODO TUNE
 
   public static double[] START_RED = {113, 131, 180}; // initial rotation 37
   public static double[] SHOOT_CONTROl = {72, 48, 0};
