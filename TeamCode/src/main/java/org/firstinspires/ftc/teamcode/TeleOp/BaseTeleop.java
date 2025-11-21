@@ -95,6 +95,7 @@ public class BaseTeleop {
           robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
         } else if (currentGamepad2.dpad_left) {
           robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
+          robot.limelight.updateGoal();
         }
       }
       robot.outtake.updatePIDControl();
@@ -145,7 +146,6 @@ public class BaseTeleop {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());
-
 
     telemetry.update();
   }
