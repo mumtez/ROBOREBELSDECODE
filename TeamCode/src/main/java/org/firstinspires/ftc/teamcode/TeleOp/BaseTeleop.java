@@ -50,7 +50,7 @@ public class BaseTeleop {
     while (opMode.opModeIsActive()) {
       updateGamepads();
       robot.intake.updateSampleColor();
-      // currentTagResult = robot.limelight.updateGoal(); TODO: Test
+      // currentTagResult = robot.limelight.updateGoal();
 
       // DRIVETRAIN
       double x = currentGamepad1.left_stick_x;
@@ -141,7 +141,6 @@ public class BaseTeleop {
   }
 
   private void updateTelemetry() {
-    // TODO: do not re-read sensor values for telemetry. Cache values from updateSampleColor, etc if necessary!!
 
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());

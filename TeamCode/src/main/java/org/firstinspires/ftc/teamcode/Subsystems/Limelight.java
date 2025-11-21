@@ -60,7 +60,7 @@ public class Limelight {
       lastCalculatedVel = calculatedVel;
       return calculatedVel;
     }
-    return lastCalculatedVel - 20; // TODO what is going on here? why -20
+    return lastCalculatedVel - 20; // TODO FIX THIS BEFORE COMP
   }
 
   public double updateAimPID() { // returns the turn power from pid for autoaiming

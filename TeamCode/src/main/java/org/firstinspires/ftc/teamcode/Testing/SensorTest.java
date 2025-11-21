@@ -26,7 +26,7 @@ public class SensorTest extends LinearOpMode {
     limelight.pipelineSwitch(1);
     limelight.start();
     while (opModeIsActive()) {
-      LLResult result = limelight.getLatestResult(); //TODO demo limelight code actually have to put real logic
+      LLResult result = limelight.getLatestResult();
       List<FiducialResult> fiducials = result.getFiducialResults();
       if (result.isValid()) {
         Pose3D botPose = result.getBotpose();
