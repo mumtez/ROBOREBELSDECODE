@@ -156,7 +156,7 @@ public class BaseCloseAuto {
     switch (pathState) {
       case PRELOAD:
 
-        if (pattern == Pattern.PGP) { //0 = gpp, 1 = pgp, 2 = ppg
+        if (pattern == Pattern.PGP) {
           cycle(TRANSFER_TIME_MS);
           cycle(TRANSFER_TIME_MS);
         }
