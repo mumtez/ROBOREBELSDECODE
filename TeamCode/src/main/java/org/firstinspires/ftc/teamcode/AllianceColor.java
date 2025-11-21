@@ -27,7 +27,7 @@ public enum AllianceColor {
 
     @Override
     public int getLLPipelineTeleOP() {
-      return 2; //TODO make these in LL
+      return 2; // TODO: make these in LL
     }
 
     @Override

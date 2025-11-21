@@ -81,9 +81,8 @@ public class Limelight {
 
       if (Math.abs(error) < AIM_DEADBAND) {
         aimIntegral = 0;
-        aimLastError = error; // TODO shouldn't aimLastError already be set to error? line 78
         return 0;
-      } // TODO: Try K_s with this also attempt tuning ks again
+      }
 
       double output = AIM_Kp * error
           + AIM_Ki * aimIntegral

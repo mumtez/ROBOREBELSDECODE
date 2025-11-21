@@ -331,7 +331,7 @@ public class BaseCloseAuto {
     }
     cycleTimer.reset();
     robot.intake.setPowerVertical(Intake.POWER_CYCLE_VERTICAL);
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < transferTimeMs) { //TODO: TEST TUNABLE HERE
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < transferTimeMs) {
       // delay
       robot.updateAutoControls();
     }
