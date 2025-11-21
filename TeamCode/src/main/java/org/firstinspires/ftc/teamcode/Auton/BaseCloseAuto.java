@@ -23,11 +23,11 @@ public class BaseCloseAuto {
   // TODO: take care when naming variables that their names represent their usage properly.
   public static double INTAKE_TIMER = 600;
   public static double CYCLE_TIMER = 800;
-  public static int TRANSFER_TIME_MS = 550; //500
+  public static int TRANSFER_TIME_MS = 550;
 
-  public static int TRANSFER_TIME_INTAKE_MS = 1000; //TODO: tune
+  public static int TRANSFER_TIME_INTAKE_MS = 1000;
 
-  public static double[] START_RED = {114.25, 130, 180}; // initial rotation 37
+  public static double[] START_RED = {114.25, 130, 180};
   public static double[] SHOOT_CONTROL = {70, 46, 0};
 
   public static double[] INTAKE_PPG_START_RED = {83, 86, 0};
@@ -380,14 +380,17 @@ public class BaseCloseAuto {
     // START
     robot.follower.setStartingPose(poseFromArr(START_RED));
 
-    // TODO: generally we would use switches on enums because the syntax is cleaner.
     //  If we can upgrade the JDK version to 21 (or kotlin) then we could use the even nicer switch syntax!
-    if (pattern == Pattern.GPP) {
-      pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP).iterator();
-    } else if (pattern == Pattern.PGP) {
-      pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GPP, PathState.STOP).iterator();
-    } else if (pattern == Pattern.PPG) {
-      pathOrder = List.of(PathState.PPG, PathState.GPP, PathState.PGP, PathState.STOP).iterator();
+    switch (pattern) {
+      case GPP:
+        pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP).iterator();
+        break;
+      case PGP:
+        pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GPP, PathState.STOP).iterator();
+        break;
+      case PPG:
+        pathOrder = List.of(PathState.PPG, PathState.GPP, PathState.PGP, PathState.STOP).iterator();
+        break;
     }
 
     // LOOP
