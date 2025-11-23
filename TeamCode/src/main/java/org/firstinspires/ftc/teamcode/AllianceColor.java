@@ -32,7 +32,7 @@ public enum AllianceColor {
 
     @Override
     public int getAimPose() {
-      return -3;
+      return -1;
     }
   };
 
