@@ -55,12 +55,14 @@ public class BaseTeleop {
       // DRIVETRAIN
       double x = currentGamepad1.left_stick_x;
       double y = -currentGamepad1.left_stick_y;
+      float rotStickAvg = currentGamepad1.right_stick_x + currentGamepad2.right_stick_x;
       double rx;
       if (currentGamepad1.right_bumper) {
         robot.limelight.updateGoal();
-        rx = robot.limelight.updateAimPID(); // auto aim
+        rx = robot.limelight.updateAimPID(
+            rotStickAvg); // auto aim
       } else {
-        rx = currentGamepad1.right_stick_x; // normal drive
+        rx = rotStickAvg; // normal drive // TODO: Test this
       }
       this.fieldCentricDrive(x, y, rx);
 

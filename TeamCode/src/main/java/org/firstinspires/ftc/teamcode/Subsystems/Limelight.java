@@ -63,7 +63,7 @@ public class Limelight {
     return lastCalculatedVel; // TODO FIX THIS BEFORE COMP // -20 before
   }
 
-  public double updateAimPID() { // returns the turn power from pid for autoaiming
+  public double updateAimPID(float rot) { // returns the turn power from pid for autoaiming
     if (currentGoal != null && currentGoal.isValid()) {
       double dt = aimTimer.seconds();
       aimTimer.reset();
@@ -93,7 +93,7 @@ public class Limelight {
       output = Range.clip(output, -1.0, 1.0);
       return output;   // return turn power
     }
-    return -.5;
+    return rot;
   }
 
   public int getPatternIdAuto() { // only for auto just returns the tag id for patterns
