@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton;
+package org.firstinspires.ftc.teamcode.Auton.NineBall;
 
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.Pattern;
 
 @Configurable
-public class BaseCloseAuto {
+public class BaseClose9Indexed {
 
   // TODO: take care when naming variables that their names represent their usage properly.
   public static double INTAKE_TIMER = 600;
@@ -66,7 +66,7 @@ public class BaseCloseAuto {
   final LinearOpMode opMode;
   final Telemetry telemetry;
 
-  public BaseCloseAuto(LinearOpMode opMode, Robot robot, double[] shootPos) {
+  public BaseClose9Indexed(LinearOpMode opMode, Robot robot, double[] shootPos) {
     this.opMode = opMode;
     this.telemetry = opMode.telemetry;
     this.robot = robot;
