@@ -212,9 +212,7 @@ public class BaseClose12Indexed {
           robot.updateAutoControls();
           gateTimer.reset();
         }
-        while (gateTimer.milliseconds() < 1000) {
-          robot.updateAutoControls();
-        }
+
         robot.follower.followPath(shootOpenGate, true);
         shootThree();
         setPathState(pathOrder.next());
