@@ -31,17 +31,17 @@ public class BaseClose9Indexed {
   public static double[] SHOOT_CONTROL = {70, 46, 0};
 
   public static double[] INTAKE_PPG_START_RED = {83, 86, 0};
-  public static double[] INTAKE_PPG_END_RED = {114, 86, 0};
+  public static double[] INTAKE_PPG_END_RED = {116, 86, 0};
 
   public static double[] INTAKE_PGP_START_RED = {86, 60, 0};
-  public static double[] INTAKE_PGP_END_RED = {120, 60, 0};
+  public static double[] INTAKE_PGP_END_RED = {122, 60, 0};
 
   public static double[] INTAKE_GPP_START_RED = {83, 36, 0};
-  public static double[] INTAKE_GPP_END_RED = {120, 36, 0};
+  public static double[] INTAKE_GPP_END_RED = {121, 36, 0};
 
-  public static int OUTTAKE_SERVO_UP_MS = 200;
-  public static int OUTTAKE_SERVO_DOWN_MS = 400;
-  public static double INTAKE_DRIVE_MAX_POWER = 0.6;
+  public static int OUTTAKE_SERVO_UP_MS = 300;
+  public static int OUTTAKE_SERVO_DOWN_MS = 600;
+  public static double INTAKE_DRIVE_MAX_POWER = 0.7;
 
   private Pattern pattern = Pattern.GPP;
   public int currentTag = 21;
@@ -99,12 +99,12 @@ public class BaseClose9Indexed {
         .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_PPG_START_RED)))
         .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
             poseFromArr(INTAKE_PPG_START_RED).getHeading())
-        .setTimeoutConstraint(100)
+        .setTimeoutConstraint(50)
         .build();
     intakePPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_START_RED), poseFromArr(INTAKE_PPG_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PPG_START_RED).getHeading())
-        .setTimeoutConstraint(200)
+        .setTimeoutConstraint(500)
         .build();
     shootPPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_END_RED), poseFromArrNonMirror(shootPos)))
@@ -122,7 +122,7 @@ public class BaseClose9Indexed {
     intakePGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PGP_START_RED), poseFromArr(INTAKE_PGP_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PGP_START_RED).getHeading())
-        .setTimeoutConstraint(150)
+        .setTimeoutConstraint(500)
         .build();
     shootPGP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(SHOOT_CONTROL),
@@ -136,12 +136,12 @@ public class BaseClose9Indexed {
         .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_GPP_START_RED)))
         .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
             poseFromArr(INTAKE_GPP_START_RED).getHeading())
-        .setTimeoutConstraint(100)
+        .setTimeoutConstraint(50)
         .build();
     intakeGPP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_GPP_START_RED), poseFromArr(INTAKE_GPP_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_GPP_START_RED).getHeading())
-        .setTimeoutConstraint(200)
+        .setTimeoutConstraint(500)
         .build();
     shootGPP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_GPP_END_RED), poseFromArr(SHOOT_CONTROL),
@@ -330,6 +330,7 @@ public class BaseClose9Indexed {
       robot.updateAutoControls();
     }
     cycleTimer.reset();
+
     robot.intake.setPowerVertical(Intake.POWER_CYCLE_VERTICAL);
     while (opMode.opModeIsActive() && cycleTimer.milliseconds() < transferTimeMs) {
       // delay

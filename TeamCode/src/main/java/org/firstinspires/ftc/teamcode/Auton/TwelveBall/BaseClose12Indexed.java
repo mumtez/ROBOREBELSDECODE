@@ -23,7 +23,6 @@ public class BaseClose12Indexed {
   // TODO: take care when naming variables that their names represent their usage properly.
   public static double INTAKE_TIMER = 600;
   public static double CYCLE_TIMER = 800;
-  public static int TRANSFER_TIME_MS = 550;
 
   public static int TRANSFER_TIME_INTAKE_MS = 1000;
 
@@ -31,16 +30,16 @@ public class BaseClose12Indexed {
   public static double[] SHOOT_CONTROL = {70, 46, 0};
 
   public static double[] INTAKE_PPG_START_RED = {83, 86, 0};
-  public static double[] INTAKE_PPG_END_RED = {116, 86, 0};
+  public static double[] INTAKE_PPG_END_RED = {114, 86, 0};
 
   public static double[] OPEN_GATE_START = {110, 71, 90};
-  public static double[] OPEN_GATE_END = {119, 71, 90};
+  public static double[] OPEN_GATE_END = {118, 71, 90};
 
   public static double[] OPEN_GATE_CONTROL = {72, 72, 0};
 
 
   public static double[] INTAKE_PGP_START_RED = {86, 60, 0};
-  public static double[] INTAKE_PGP_END_RED = {120, 60, 0};
+  public static double[] INTAKE_PGP_END_RED = {121, 60, 0};
 
   public static double[] INTAKE_GPP_START_RED = {83, 36, 0};
   public static double[] INTAKE_GPP_END_RED = {120, 36, 0};
@@ -122,10 +121,7 @@ public class BaseClose12Indexed {
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_START), poseFromArr(OPEN_GATE_END)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_START).getHeading(),
             poseFromArr(OPEN_GATE_END).getHeading())
-        .setTimeoutConstraint(100)
-        .build();
-
-    shootOpenGate = robot.follower.pathBuilder()
+        .setTimeoutConstraint(3000)
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_END).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
@@ -148,7 +144,7 @@ public class BaseClose12Indexed {
     intakePGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PGP_START_RED), poseFromArr(INTAKE_PGP_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PGP_START_RED).getHeading())
-        .setTimeoutConstraint(200)
+        .setTimeoutConstraint(50)
         .build();
     shootPGP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(SHOOT_CONTROL),
@@ -162,12 +158,12 @@ public class BaseClose12Indexed {
         .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_GPP_START_RED)))
         .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
             poseFromArr(INTAKE_GPP_START_RED).getHeading())
-        .setTimeoutConstraint(200)
+        .setTimeoutConstraint(100)
         .build();
     intakeGPP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_GPP_START_RED), poseFromArr(INTAKE_GPP_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_GPP_START_RED).getHeading())
-        .setTimeoutConstraint(200)
+        .setTimeoutConstraint(50)
         .build();
     shootGPP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_GPP_END_RED), poseFromArr(SHOOT_CONTROL),
@@ -200,7 +196,12 @@ public class BaseClose12Indexed {
 
         intakeThree(preIntakePPG, intakePPG);
 
+        while (this.opMode.opModeIsActive() && robot.follower.isBusy()) {
+          robot.updateAutoControls();
+        }
+
         robot.follower.followPath(openGate, INTAKE_DRIVE_MAX_POWER, true);
+
         if (pattern == Pattern.GPP) {
           cycle(TRANSFER_TIME_INTAKE_MS);
           cycle(TRANSFER_TIME_INTAKE_MS);
@@ -208,12 +209,11 @@ public class BaseClose12Indexed {
         if (pattern == Pattern.PGP) {
           cycle(TRANSFER_TIME_INTAKE_MS);
         }
+
         while (this.opMode.opModeIsActive() && robot.follower.isBusy()) {
           robot.updateAutoControls();
-          gateTimer.reset();
         }
 
-        robot.follower.followPath(shootOpenGate, true);
         shootThree();
         setPathState(pathOrder.next());
         break;
@@ -360,6 +360,7 @@ public class BaseClose12Indexed {
       robot.updateAutoControls();
     }
     cycleTimer.reset();
+
     robot.intake.setPowerVertical(Intake.POWER_CYCLE_VERTICAL);
     while (opMode.opModeIsActive() && cycleTimer.milliseconds() < transferTimeMs) {
       // delay
@@ -368,6 +369,7 @@ public class BaseClose12Indexed {
 
     robot.intake.setPower(Intake.POWER_INTAKE);
   }
+
 
   private void reloadAndWait(ElapsedTime shootTimer) {
     robot.outtake.setBase();

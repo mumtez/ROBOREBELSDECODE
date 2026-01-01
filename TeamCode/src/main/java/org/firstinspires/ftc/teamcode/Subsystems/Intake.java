@@ -70,6 +70,13 @@ public class Intake {
     intakeMotorAlt.setPower(-pow);
   }
 
+  public void setPowerBack(double pow) {
+    intakeMotor.setPower(0);
+    intakeMotorAlt.setPower(pow);
+
+
+  }
+
   public BallColor updateSampleColor() {
     if (this.readDistance(cs1) < DIST_THRESHOLD_CM) {
       this.currentBallColor = readBallColor(cs1);
