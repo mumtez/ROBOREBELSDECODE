@@ -22,6 +22,8 @@ public class BaseClose9Indexed {
 
   // TODO: take care when naming variables that their names represent their usage properly.
   public static double INTAKE_TIMER = 600;
+
+  public static double FINAL_CYCLE_INTAKE = 200;
   public static double CYCLE_TIMER = 800;
   public static int TRANSFER_TIME_MS = 550;
 
@@ -34,14 +36,16 @@ public class BaseClose9Indexed {
   public static double[] INTAKE_PPG_END_RED = {116, 86, 0};
 
   public static double[] INTAKE_PGP_START_RED = {86, 60, 0};
-  public static double[] INTAKE_PGP_END_RED = {122, 60, 0};
+  public static double[] INTAKE_PGP_END_RED = {123, 60, 0};
 
   public static double[] INTAKE_GPP_START_RED = {83, 36, 0};
-  public static double[] INTAKE_GPP_END_RED = {121, 36, 0};
+  public static double[] INTAKE_GPP_END_RED = {122, 36, 0};
 
   public static int OUTTAKE_SERVO_UP_MS = 300;
   public static int OUTTAKE_SERVO_DOWN_MS = 600;
   public static double INTAKE_DRIVE_MAX_POWER = 0.7;
+
+  public static double[] PARK_POS = {83, 36, 0};
 
   private Pattern pattern = Pattern.GPP;
   public int currentTag = 21;
@@ -50,10 +54,11 @@ public class BaseClose9Indexed {
       shootPreLoad,
       preIntakePPG, intakePPG, shootPPG,
       preIntakePGP, intakePGP, shootPGP,
-      preIntakeGPP, intakeGPP, shootGPP;
+      preIntakeGPP, intakeGPP, shootGPP,
+      parkPath;
 
   public enum PathState {
-    PRELOAD, PPG, PGP, GPP, STOP
+    PRELOAD, PPG, PGP, GPP, STOP, PARK
   }
 
   private PathState pathState = PathState.PRELOAD;
@@ -150,6 +155,14 @@ public class BaseClose9Indexed {
             poseFromArrNonMirror(shootPos).getHeading())
         .setTimeoutConstraint(100)
         .build();
+    parkPath = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(PARK_POS)))
+        .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
+            poseFromArr(PARK_POS).getHeading())
+        .setTimeoutConstraint(50)
+        .build();
+
+
   }
 
   public void autonomousPathUpdate() {
@@ -221,12 +234,16 @@ public class BaseClose9Indexed {
         shootThree(shootGPP);
         setPathState(pathOrder.next());
         break;
+      case PARK:
 
+        robot.follower.followPath(parkPath);
+        break;
       case STOP:
         robot.intake.setPower(0);
         robot.outtake.setTargetVelocity(0);
         robot.outtake.setBase();
         break;
+
     }
   }
 
@@ -336,8 +353,14 @@ public class BaseClose9Indexed {
       // delay
       robot.updateAutoControls();
     }
-
+    cycleTimer.reset();
     robot.intake.setPower(Intake.POWER_INTAKE);
+
+    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < FINAL_CYCLE_INTAKE) {
+      // delay
+      robot.updateAutoControls();
+    }
+
   }
 
   private void reloadAndWait(ElapsedTime shootTimer) {
@@ -384,13 +407,13 @@ public class BaseClose9Indexed {
     //  If we can upgrade the JDK version to 21 (or kotlin) then we could use the even nicer switch syntax!
     switch (pattern) {
       case GPP:
-        pathOrder = List.of(PathState.GPP, PathState.PGP, /*PathState.PPG,*/ PathState.STOP).iterator();
+        pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP).iterator();
         break;
       case PGP:
-        pathOrder = List.of(PathState.PGP, PathState.PPG, /*PathState.GPP,*/ PathState.STOP).iterator();
+        pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GPP, PathState.STOP).iterator();
         break;
       case PPG:
-        pathOrder = List.of(PathState.PPG, PathState.GPP, /*PathState.PGP,*/ PathState.STOP).iterator();
+        pathOrder = List.of(PathState.PPG, PathState.GPP, PathState.PGP, PathState.STOP).iterator();
         break;
     }
 

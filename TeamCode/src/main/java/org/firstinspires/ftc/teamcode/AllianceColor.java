@@ -32,8 +32,8 @@ public enum AllianceColor {
 
     @Override
     public int getAimPose() {
-      return -1;
-    }
+      return 0;
+    } //-1
   };
 
   public abstract Pose poseFromArray(double[] arr);
