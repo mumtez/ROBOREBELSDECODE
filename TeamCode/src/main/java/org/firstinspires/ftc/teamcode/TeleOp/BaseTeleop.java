@@ -59,8 +59,7 @@ public class BaseTeleop {
       double rx;
       if (currentGamepad1.right_bumper) {
         robot.limelight.updateGoal();
-        rx = robot.limelight.updateAimPID(
-            rotStickAvg); // auto aim
+        rx = robot.limelight.updateAimPID(rotStickAvg); // auto aim
       } else {
         rx = rotStickAvg; // normal drive // TODO: Test this
       }
