@@ -62,19 +62,7 @@ public class Intake {
 
   public void setPower(double pow) {
     intakeMotor.setPower(pow);
-    intakeMotorAlt.setPower(pow);
-  }
-
-  public void setPowerVertical(double pow) {
-    intakeMotor.setPower(pow);
-    intakeMotorAlt.setPower(-pow);
-  }
-
-  public void setPowerBack(double pow) {
-    intakeMotor.setPower(0);
-    intakeMotorAlt.setPower(pow);
-
-
+    intakeMotorAlt.setPower(pow); // TODO TEST THIS
   }
 
   public BallColor updateSampleColor() {

@@ -69,6 +69,8 @@ public class BaseTeleop {
       // OUTTAKE
       if (currentGamepad2.triangle) {
         robot.outtake.setShoot();
+      } else if (currentGamepad2.square) {
+        robot.outtake.setCycle();
       } else {
         robot.outtake.setBase();
       }

@@ -27,14 +27,19 @@ public class Outtake {
   public static double SHOOT_POS = 0.7;
   public static double SHOOT_BASE = 0.95;
 
+  public static double CYCLE_BASE = 0.7;
+  public static double CYCLE_BALL = 0.95; //TODO TUNE
+
   public static Direction flywheelMotorDirection = Direction.REVERSE;
 
   // --- Variables ---
   private double targetVelocity = 0; // ticks/sec
 
   // --- Hardware ---
-  public DcMotorEx flywheel;
+  public DcMotorEx flywheel1;
+  public DcMotorEx flywheel2;
   public ServoImplEx flapper;
+  public ServoImplEx cycler;
   public final Servo rgb;
   private double currentVelocity;
 
@@ -43,16 +48,22 @@ public class Outtake {
     HardwareMap hardwareMap = opMode.hardwareMap;
     rgb = hardwareMap.servo.get("rgb");
     rgb.setPosition(.5);
-    flywheel = hardwareMap.get(DcMotorEx.class, "flywheel");
-    flywheel.setDirection(flywheelMotorDirection);
-    flywheel.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
-    flywheel.setMode(RunMode.RUN_WITHOUT_ENCODER);
+    flywheel2 = hardwareMap.get(DcMotorEx.class, "flywheel2");
+    flywheel2.setDirection(flywheelMotorDirection);
+    flywheel2.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
+    flywheel2.setMode(RunMode.RUN_WITHOUT_ENCODER);
+    flywheel1 = hardwareMap.get(DcMotorEx.class, "flywheel1");
+    flywheel1.setDirection(flywheelMotorDirection);
+    flywheel1.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
+    flywheel1.setMode(RunMode.RUN_WITHOUT_ENCODER);
     flapper = hardwareMap.get(ServoImplEx.class, "flapper");
+    cycler = hardwareMap.get(ServoImplEx.class, "cycler");
 
   }
 
   public void setPower(double pow) {
-    this.flywheel.setPower(pow);
+    this.flywheel1.setPower(pow);
+    this.flywheel2.setPower(pow); // TODO CHANGE THIS BEFORE TESTING
   }
 
   // --- Set target velocity ---
@@ -66,6 +77,12 @@ public class Outtake {
 
   public void setBase() {
     flapper.setPosition(SHOOT_BASE);
+    cycler.setPosition(CYCLE_BASE);
+  }
+
+  public void setCycle() {
+    cycler.setPosition(CYCLE_BALL);
+    flapper.setPosition(SHOOT_POS);
   }
 
   public void setServoPos(double pos) {
@@ -81,7 +98,7 @@ public class Outtake {
     } else {
       rgb.setPosition(.3);
     }
-    this.currentVelocity = this.flywheel.getVelocity(); // ticks/sec
+    this.currentVelocity = this.flywheel1.getVelocity(); // ticks/sec
     double error = this.targetVelocity - this.currentVelocity;
 
     double output = (kV * this.targetVelocity) + (kP * error);
