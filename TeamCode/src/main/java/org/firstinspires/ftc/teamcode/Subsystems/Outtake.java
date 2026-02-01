@@ -27,7 +27,7 @@ public class Outtake {
   public static double SHOOT_BASE = 1;
   public static double SHOOT_CYCLE = .52;
 
-  public static double SHOOT_POS = 0.38;
+  public static double SHOOT_POS = 0.39;
 
 
   public static double CYCLE_BASE = 1;
