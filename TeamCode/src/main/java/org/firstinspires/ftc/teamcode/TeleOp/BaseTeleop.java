@@ -70,7 +70,10 @@ public class BaseTeleop {
       if (currentGamepad2.triangle) {
         robot.outtake.setShoot();
       } else if (currentGamepad2.square) {
-        robot.outtake.setCycle();
+        robot.outtake.setCyclePos();
+        if (currentGamepad2.x) {
+          robot.outtake.cycleOut();
+        }
       } else {
         robot.outtake.setBase();
       }
@@ -109,10 +112,8 @@ public class BaseTeleop {
         robot.intake.setPower(currentGamepad1.right_trigger - currentGamepad1.left_trigger);
       } else if (currentGamepad2.right_trigger > 0.05 || currentGamepad2.left_trigger > 0.05) {
         robot.intake.setPower(currentGamepad2.right_trigger - currentGamepad2.left_trigger);
-      } else if (currentGamepad2.left_bumper) {
-        robot.intake.setPowerVertical(-.6);
       } else {
-        robot.intake.setPowerVertical(0);
+        robot.intake.setPower(0);
       }
 
       // TELEMETRY

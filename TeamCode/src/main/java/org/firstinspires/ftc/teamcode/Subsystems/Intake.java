@@ -28,7 +28,7 @@ public class Intake {
   public static final double POWER_INTAKE = 1;
 
   public static Direction intakeMotorDirection = Direction.FORWARD;
-  public static Direction intakeMotorAltDirection = Direction.REVERSE;
+  public static Direction intakeMotorAltDirection = Direction.FORWARD;
   public final DcMotor intakeMotor;
   public final DcMotor intakeMotorAlt;
   public final NormalizedColorSensor cs1, cs2;

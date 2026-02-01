@@ -41,9 +41,9 @@ public class Constants {
       .leftEncoder_HardwareMapName("br")
       .rightEncoder_HardwareMapName("fl")
       .strafeEncoder_HardwareMapName("intakealt")
-      .leftEncoderDirection(Encoder.REVERSE)
-      .rightEncoderDirection(Encoder.REVERSE)
-      .strafeEncoderDirection(Encoder.REVERSE);
+      .leftEncoderDirection(Encoder.FORWARD)
+      .rightEncoderDirection(Encoder.FORWARD)
+      .strafeEncoderDirection(Encoder.FORWARD);
   public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
   public static Follower createFollower(HardwareMap hardwareMap) {

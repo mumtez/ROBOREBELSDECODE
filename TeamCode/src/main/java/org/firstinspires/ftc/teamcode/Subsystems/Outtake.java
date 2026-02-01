@@ -20,17 +20,20 @@ public class Outtake {
   public static int farSpeed = 1600;
 
   public static int cycleSpeed = 300;
-  public static double kP = 0.002; // .0025 //m001
-  public static double kV = 0.00039; // .00037
+  public static double kP = 0.002; // TODO Tune
+  public static double kV = 0.00039;
 
 
-  public static double SHOOT_POS = 0.7;
-  public static double SHOOT_BASE = 0.95;
+  public static double SHOOT_BASE = 1;
+  public static double SHOOT_CYCLE = .52;
 
-  public static double CYCLE_BASE = 0.7;
-  public static double CYCLE_BALL = 0.95; //TODO TUNE
+  public static double SHOOT_POS = 0.38;
 
-  public static Direction flywheelMotorDirection = Direction.REVERSE;
+
+  public static double CYCLE_BASE = 1;
+  public static double CYCLE_DEPLOY = 0;
+
+  public static Direction flywheelMotorDirection = Direction.FORWARD;
 
   // --- Variables ---
   private double targetVelocity = 0; // ticks/sec
@@ -73,6 +76,7 @@ public class Outtake {
 
   public void setShoot() {
     flapper.setPosition(SHOOT_POS);
+    cycler.setPosition(CYCLE_BASE);
   }
 
   public void setBase() {
@@ -80,13 +84,22 @@ public class Outtake {
     cycler.setPosition(CYCLE_BASE);
   }
 
-  public void setCycle() {
-    cycler.setPosition(CYCLE_BALL);
-    flapper.setPosition(SHOOT_POS);
+  public void setCyclePos() {
+    flapper.setPosition(SHOOT_CYCLE);
   }
 
-  public void setServoPos(double pos) {
+  public void cycleOut() {
+
+    cycler.setPosition(CYCLE_DEPLOY);
+
+  }
+
+  public void setFlapperPos(double pos) {
     flapper.setPosition(pos);
+  }
+
+  public void setCyclerPos(double pos) {
+    cycler.setPosition(pos);
   }
 
   // --- Main PID update loop ---

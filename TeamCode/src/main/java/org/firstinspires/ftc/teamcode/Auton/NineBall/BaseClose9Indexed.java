@@ -306,10 +306,10 @@ public class BaseClose9Indexed {
 
 
   private void shootAndWait(ElapsedTime shootTimer) {
-    robot.outtake.setShoot();
+    robot.outtake.setShoot(); //TODO FIX
 
     shootTimer.reset();
-    while (opMode.opModeIsActive() && shootTimer.milliseconds() < OUTTAKE_SERVO_UP_MS) {
+    while (opMode.opModeIsActive()) {
       // delay
       robot.updateAutoControls();
     }
@@ -322,45 +322,7 @@ public class BaseClose9Indexed {
   //  Try using the example in Pattern.java to simplify that implementation and above usages of cycle :)
   private void cycle(int transferTimeMs) {
     ElapsedTime cycleTimer = new ElapsedTime();
-    robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
-
-    while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
-      // delay
-      robot.updateAutoControls();
-    }
-    cycleTimer.reset();
-    robot.outtake.setShoot();
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < OUTTAKE_SERVO_UP_MS) {
-      // delay
-      robot.updateAutoControls();
-    }
-    robot.outtake.setBase();
-
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < CYCLE_TIMER) {
-      // delay
-      robot.updateAutoControls();
-    }
-    robot.intake.setPower(Intake.POWER_INTAKE);
-    cycleTimer.reset();
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < INTAKE_TIMER) {
-      // delay
-      robot.updateAutoControls();
-    }
-    cycleTimer.reset();
-
-    robot.intake.setPowerVertical(Intake.POWER_CYCLE_VERTICAL);
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < transferTimeMs) {
-      // delay
-      robot.updateAutoControls();
-    }
-    cycleTimer.reset();
-    robot.intake.setPower(Intake.POWER_INTAKE);
-
-    while (opMode.opModeIsActive() && cycleTimer.milliseconds() < FINAL_CYCLE_INTAKE) {
-      // delay
-      robot.updateAutoControls();
-    }
-
+    //TODO POPULATE
   }
 
   private void reloadAndWait(ElapsedTime shootTimer) {

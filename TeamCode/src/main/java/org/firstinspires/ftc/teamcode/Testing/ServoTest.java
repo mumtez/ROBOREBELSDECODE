@@ -11,7 +11,9 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 public class ServoTest extends LinearOpMode {
 
   Robot robot;
-  public static double SERVO_TEST_POS = Outtake.SHOOT_POS;
+  public static double OUTTAKE_TEST_POS = Outtake.SHOOT_BASE;
+  public static double CYCLER_TEST_POS = Outtake.CYCLE_BASE;
+
 
   @Override
   public void runOpMode() throws InterruptedException {
@@ -20,7 +22,8 @@ public class ServoTest extends LinearOpMode {
     waitForStart();
     // LOOP
     while (opModeIsActive()) {
-      robot.outtake.setServoPos(SERVO_TEST_POS);
+      robot.outtake.setFlapperPos(OUTTAKE_TEST_POS);
+      robot.outtake.setCyclerPos(CYCLER_TEST_POS);
 
       if (gamepad1.a) {
         robot.fl.setPower(1);
