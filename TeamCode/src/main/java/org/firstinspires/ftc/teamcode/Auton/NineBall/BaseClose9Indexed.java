@@ -39,8 +39,6 @@ public class BaseClose9Indexed {
   public static double[] INTAKE_GPP_START_RED = {83, 36, 0};
   public static double[] INTAKE_GPP_END_RED = {122, 36, 0};
 
-  public static int OUTTAKE_SERVO_UP_MS = 300;
-  public static int OUTTAKE_SERVO_DOWN_MS = 600;
   public static double INTAKE_DRIVE_MAX_POWER = 0.7;
 
   public static double[] PARK_POS = {83, 36, 0};
@@ -256,57 +254,12 @@ public class BaseClose9Indexed {
 
   // TODO: see above todo on line 170
   private void shootThree() {
-    ElapsedTime shootTimer = new ElapsedTime();
 
-    robot.outtake.setBase();
-    robot.intake.setPower(Intake.POWER_INTAKE);
-    robot.outtake.setTargetVelocity(Outtake.medSpeed);
-
-    while (opMode.opModeIsActive() && (robot.follower.isBusy()) || !robot.outtake.atTarget()) {
-      robot.updateAutoControls();
-    }
-
-    shootAndWait(shootTimer);
-    reloadAndWait(shootTimer);
-    shootAndWait(shootTimer);
-    reloadAndWait(shootTimer);
-    shootAndWait(shootTimer);
-
-    robot.intake.setPower(0);
-    robot.outtake.setBase();
   }
 
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
 
-    robot.outtake.setBase();
-    robot.intake.setPower(Intake.POWER_INTAKE);
-    robot.outtake.setTargetVelocity(Outtake.medSpeed);
-
-    robot.follower.followPath(intakeToShoot, true);
-    while (opMode.opModeIsActive() && (robot.follower.isBusy()) || !robot.outtake.atTarget()) {
-      robot.updateAutoControls();
-    }
-
-    shootAndWait(shootTimer);
-    reloadAndWait(shootTimer);
-    shootAndWait(shootTimer);
-    reloadAndWait(shootTimer);
-    shootAndWait(shootTimer);
-
-    robot.intake.setPower(0);
-    robot.outtake.setBase();
-  }
-
-
-  private void shootAndWait(ElapsedTime shootTimer) {
-    robot.outtake.setShoot(); //TODO FIX
-
-    shootTimer.reset();
-    while (opMode.opModeIsActive()) {
-      // delay
-      robot.updateAutoControls();
-    }
   }
 
   // TODO: we should be able to do this while driving.
@@ -314,7 +267,6 @@ public class BaseClose9Indexed {
 
   // TODO 2: This method should also take in the current and target Patterns.
   //  Try using the example in Pattern.java to simplify that implementation and above usages of cycle :)
-
 
 
   public void run() {

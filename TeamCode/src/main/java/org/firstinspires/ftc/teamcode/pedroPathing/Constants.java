@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
 
-  public static FollowerConstants followerConstants = new FollowerConstants().mass(11.285)
+  public static FollowerConstants followerConstants = new FollowerConstants().mass(12.1)
       .forwardZeroPowerAcceleration(-41.2).lateralZeroPowerAcceleration(-67.735)
       .headingPIDFCoefficients(new PIDFCoefficients(1.6, 0, .07, 0))
       .translationalPIDFCoefficients(new PIDFCoefficients(.18, 0, 0.02, 0))
@@ -37,7 +37,7 @@ public class Constants {
       .turnTicksToInches(-.001989436789)
       .leftPodY(7.5)
       .rightPodY(-7.5)
-      .strafePodX(-2.5)
+      .strafePodX(-3)
       .leftEncoder_HardwareMapName("br")
       .rightEncoder_HardwareMapName("fl")
       .strafeEncoder_HardwareMapName("intakealt")

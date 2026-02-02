@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -38,6 +37,7 @@ public class BaseTeleop {
     // --- START ---
     while (opMode.opModeIsActive()) {
       robot.intake.updateSampleColor();
+      robot.intake.updateAutoCycle();
       // currentTagResult = robot.limelight.updateGoal();
 
       // DRIVETRAIN
@@ -57,8 +57,8 @@ public class BaseTeleop {
       if (this.opMode.gamepad2.triangle) {
         robot.intake.setCyclePosition(FlapperState.SHOOT);
       } else if (this.opMode.gamepad2.squareWasPressed()) {
-          robot.intake.cycleIncrementByNum(1);
-      } else {
+        robot.intake.cycleIncrementByNum(1);
+      } else if (robot.intake.isCycleFinished()) {
         robot.intake.setCyclePosition(FlapperState.LOCKED);
       }
 
