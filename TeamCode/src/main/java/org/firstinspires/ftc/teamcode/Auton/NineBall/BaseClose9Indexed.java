@@ -14,6 +14,7 @@ import java.util.List;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake.FlapperState;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.Pattern;
 
@@ -21,10 +22,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Pattern;
 public class BaseClose9Indexed {
 
   // TODO: take care when naming variables that their names represent their usage properly.
-  public static double INTAKE_TIMER = 600;
 
-  public static double FINAL_CYCLE_INTAKE = 200;
-  public static double CYCLE_TIMER = 800;
   public static int TRANSFER_TIME_MS = 550;
 
   public static int TRANSFER_TIME_INTAKE_MS = 1000;
@@ -170,11 +168,10 @@ public class BaseClose9Indexed {
       case PRELOAD:
 
         if (pattern == Pattern.PGP) {
-          cycle(TRANSFER_TIME_MS);
-          cycle(TRANSFER_TIME_MS);
+          robot.intake.cycle(2);
         }
         if (pattern == Pattern.PPG) {
-          cycle(TRANSFER_TIME_MS);
+          robot.intake.cycle(1);
         }
 
         // TODO: why make an entire separate shootThree method just to do the same thing?
@@ -193,11 +190,10 @@ public class BaseClose9Indexed {
         }
         intakeThree(preIntakePPG, intakePPG);
         if (pattern == Pattern.GPP) {
-          cycle(TRANSFER_TIME_INTAKE_MS);
-          cycle(TRANSFER_TIME_INTAKE_MS);
+          robot.intake.cycle(2);
         }
         if (pattern == Pattern.PGP) {
-          cycle(TRANSFER_TIME_INTAKE_MS);
+          robot.intake.cycle(1);
         }
         shootThree(shootPPG);
         setPathState(pathOrder.next());
@@ -209,11 +205,10 @@ public class BaseClose9Indexed {
         }
         intakeThree(preIntakePGP, intakePGP);
         if (pattern == Pattern.GPP) {
-          cycle(TRANSFER_TIME_INTAKE_MS);
+          robot.intake.cycle(1);
         }
         if (pattern == Pattern.PPG) {
-          cycle(TRANSFER_TIME_INTAKE_MS);
-          cycle(TRANSFER_TIME_INTAKE_MS);
+          robot.intake.cycle(2);
         }
         shootThree(shootPGP);
         setPathState(pathOrder.next());
@@ -225,11 +220,10 @@ public class BaseClose9Indexed {
         }
         intakeThree(preIntakeGPP, intakeGPP);
         if (pattern == Pattern.PGP) {
-          cycle(TRANSFER_TIME_INTAKE_MS);
-          cycle(TRANSFER_TIME_INTAKE_MS);
+          robot.intake.cycle(2);
         }
         if (pattern == Pattern.PPG) {
-          cycle(TRANSFER_TIME_INTAKE_MS);
+          robot.intake.cycle(1);
         }
         shootThree(shootGPP);
         setPathState(pathOrder.next());
@@ -241,7 +235,7 @@ public class BaseClose9Indexed {
       case STOP:
         robot.intake.setPower(0);
         robot.outtake.setTargetVelocity(0);
-        robot.outtake.setBase();
+        robot.intake.setCyclePosition(FlapperState.LOCKED);
         break;
 
     }
@@ -320,21 +314,8 @@ public class BaseClose9Indexed {
 
   // TODO 2: This method should also take in the current and target Patterns.
   //  Try using the example in Pattern.java to simplify that implementation and above usages of cycle :)
-  private void cycle(int transferTimeMs) {
-    ElapsedTime cycleTimer = new ElapsedTime();
-    //TODO POPULATE
-  }
 
-  private void reloadAndWait(ElapsedTime shootTimer) {
-    robot.outtake.setBase();
 
-    shootTimer.reset();
-    while (opMode.opModeIsActive()
-        && (shootTimer.milliseconds() < OUTTAKE_SERVO_DOWN_MS || !robot.outtake.atTarget())) {
-      // delay
-      robot.updateAutoControls();
-    }
-  }
 
   public void run() {
     // INIT

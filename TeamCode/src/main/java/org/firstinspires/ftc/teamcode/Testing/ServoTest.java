@@ -4,6 +4,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 @Configurable
@@ -11,8 +12,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 public class ServoTest extends LinearOpMode {
 
   Robot robot;
-  public static double OUTTAKE_TEST_POS = Outtake.SHOOT_BASE;
-  public static double CYCLER_TEST_POS = Outtake.CYCLE_BASE;
+  public static double OUTTAKE_TEST_POS = Intake.SHOOT_BASE;
+  public static double CYCLER_TEST_POS = Intake.CYCLE_BASE;
 
 
   @Override
@@ -22,8 +23,8 @@ public class ServoTest extends LinearOpMode {
     waitForStart();
     // LOOP
     while (opModeIsActive()) {
-      robot.outtake.setFlapperPos(OUTTAKE_TEST_POS);
-      robot.outtake.setCyclerPos(CYCLER_TEST_POS);
+      robot.intake.setFlapperPos(OUTTAKE_TEST_POS);
+      robot.intake.setCyclerPos(CYCLER_TEST_POS);
 
       if (gamepad1.a) {
         robot.fl.setPower(1);

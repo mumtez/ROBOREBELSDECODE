@@ -24,14 +24,7 @@ public class Outtake {
   public static double kV = 0.00039;
 
 
-  public static double SHOOT_BASE = 1;
-  public static double SHOOT_CYCLE = .52;
 
-  public static double SHOOT_POS = 0.39;
-
-
-  public static double CYCLE_BASE = 1;
-  public static double CYCLE_DEPLOY = 0;
 
   public static Direction flywheelMotorDirection = Direction.FORWARD;
 
@@ -41,8 +34,7 @@ public class Outtake {
   // --- Hardware ---
   public DcMotorEx flywheel1;
   public DcMotorEx flywheel2;
-  public ServoImplEx flapper;
-  public ServoImplEx cycler;
+
   public final Servo rgb;
   private double currentVelocity;
 
@@ -59,8 +51,7 @@ public class Outtake {
     flywheel1.setDirection(flywheelMotorDirection);
     flywheel1.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     flywheel1.setMode(RunMode.RUN_WITHOUT_ENCODER);
-    flapper = hardwareMap.get(ServoImplEx.class, "flapper");
-    cycler = hardwareMap.get(ServoImplEx.class, "cycler");
+
 
   }
 
@@ -74,33 +65,9 @@ public class Outtake {
     targetVelocity = Math.max(targetTicksPerSec, 0);
   }
 
-  public void setShoot() {
-    flapper.setPosition(SHOOT_POS);
-    cycler.setPosition(CYCLE_BASE);
-  }
 
-  public void setBase() {
-    flapper.setPosition(SHOOT_BASE);
-    cycler.setPosition(CYCLE_BASE);
-  }
 
-  public void setCyclePos() {
-    flapper.setPosition(SHOOT_CYCLE);
-  }
 
-  public void cycleOut() {
-
-    cycler.setPosition(CYCLE_DEPLOY);
-
-  }
-
-  public void setFlapperPos(double pos) {
-    flapper.setPosition(pos);
-  }
-
-  public void setCyclerPos(double pos) {
-    cycler.setPosition(pos);
-  }
 
   // --- Main PID update loop ---
   public double updatePIDControl() {

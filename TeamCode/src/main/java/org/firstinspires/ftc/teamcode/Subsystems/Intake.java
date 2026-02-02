@@ -11,7 +11,9 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
 import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.hardware.SwitchableLight;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Configurable
@@ -23,8 +25,6 @@ public class Intake {
   public static final float GREEN_THRESHOLD = .022f;
   public static final float RED_THRESHOLD = .014f;
 
-  public static final double POWER_CYCLE_VERTICAL = -.6;
-
   public static final double POWER_INTAKE = 1;
 
   public static Direction intakeMotorDirection = Direction.FORWARD;
@@ -34,6 +34,32 @@ public class Intake {
   public final NormalizedColorSensor cs1, cs2;
 
   private BallColor currentBallColor = BallColor.NONE;
+
+  private enum CycleState {PENDING, OPEN, CLOSE, CLOSE_DELAY}
+
+  public static int OPEN_DELAY = 300;
+
+  public static int CLOSE_DELAY = 300;
+
+  private CycleState cycleState = CycleState.PENDING;
+
+  ElapsedTime cycleTimer = new ElapsedTime();
+
+  private int remainingCycles = 0;
+
+  public static double SHOOT_BASE = 1;
+  public static double SHOOT_CYCLE = .52;
+
+  public static double SHOOT_POS = 0.39;
+
+
+  public static double CYCLE_BASE = 1;
+  public static double CYCLE_DEPLOY = 0;
+
+  public ServoImplEx gate;
+  public ServoImplEx cycler;
+
+  public enum FlapperState {CYCLE, SHOOT, LOCKED}
 
   public Intake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -46,6 +72,9 @@ public class Intake {
     intakeMotorAlt.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
     intakeMotor.setMode(RunMode.RUN_WITHOUT_ENCODER);
     intakeMotorAlt.setMode(RunMode.RUN_WITHOUT_ENCODER);
+
+    gate = hardwareMap.get(ServoImplEx.class, "flapper");
+    cycler = hardwareMap.get(ServoImplEx.class, "cycler");
 
     cs1 = hardwareMap.get(NormalizedColorSensor.class, "color");
     cs1.setGain(COLOR_GAIN);
@@ -60,10 +89,89 @@ public class Intake {
 
   }
 
+
+  public void setCyclePosition(FlapperState state) {
+    switch (state) {
+      case CYCLE:
+        gate.setPosition(SHOOT_CYCLE);
+        cycler.setPosition(CYCLE_DEPLOY);
+        break;
+      case SHOOT:
+        gate.setPosition(SHOOT_POS);
+        cycler.setPosition(CYCLE_BASE);
+        break;
+      case LOCKED:
+        gate.setPosition(SHOOT_BASE);
+        cycler.setPosition(CYCLE_BASE);
+        break;
+    }
+  }
+
+  public void setFlapperPos(double pos) {
+    gate.setPosition(pos);
+  }
+
+  public void setCyclerPos(double pos) {
+    cycler.setPosition(pos);
+  }
+
   public void setPower(double pow) {
     intakeMotor.setPower(pow);
-    intakeMotorAlt.setPower(pow); // TODO TEST THIS
+    intakeMotorAlt.setPower(pow);
   }
+
+  public void cycle(int num) {
+    remainingCycles = num;
+  }
+
+  public void cycleIncrementByNum(int num) {
+    remainingCycles += num;
+  }
+
+  public boolean isCycleFinished() {
+    return this.cycleState == CycleState.PENDING;
+  }
+
+  public void updateAutoCycle() {
+    switch (cycleState) {
+      case PENDING:
+        if (remainingCycles > 0) {
+          this.cycleState = CycleState.OPEN;
+        }
+        break;
+      case OPEN:
+        remainingCycles -= 1;
+        this.setCyclePosition(FlapperState.CYCLE);
+        this.cycleTimer.reset();
+        this.cycleState = CycleState.CLOSE;
+        break;
+      case CLOSE:
+        if (this.cycleTimer.milliseconds() >= OPEN_DELAY) {
+          setCyclePosition(FlapperState.LOCKED);
+          this.cycleTimer.reset();
+          this.cycleState = CycleState.CLOSE_DELAY;
+        }
+        break;
+      case CLOSE_DELAY:
+        if (this.cycleTimer.milliseconds() >= CLOSE_DELAY) {
+          if (remainingCycles == 0) {
+            this.cycleState = CycleState.PENDING;
+          } else {
+            this.cycleState = CycleState.OPEN;
+          }
+
+        }
+
+        break;
+    }
+  }
+
+  public void cancelCycle() {
+    this.remainingCycles = 0;
+    this.cycleState = CycleState.PENDING;
+    setCyclePosition(FlapperState.LOCKED);
+  }
+
 
   public BallColor updateSampleColor() {
     if (this.readDistance(cs1) < DIST_THRESHOLD_CM) {

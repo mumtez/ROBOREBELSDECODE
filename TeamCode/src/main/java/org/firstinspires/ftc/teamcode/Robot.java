@@ -14,6 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import java.util.List;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake.FlapperState;
 import org.firstinspires.ftc.teamcode.Subsystems.Limelight;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -85,7 +86,7 @@ public class Robot {
   }
 
   public void initAuton() {
-    this.outtake.setBase();
+    this.intake.setCyclePosition(FlapperState.LOCKED);
   }
 
   public AllianceColor getAllianceColor() {
@@ -93,7 +94,8 @@ public class Robot {
   }
 
   public void updateAutoControls() {
-    follower.update();
-    outtake.updatePIDControl();
+    this.follower.update();
+    this.intake.updateAutoCycle();
+    this.outtake.updatePIDControl();
   }
 }
