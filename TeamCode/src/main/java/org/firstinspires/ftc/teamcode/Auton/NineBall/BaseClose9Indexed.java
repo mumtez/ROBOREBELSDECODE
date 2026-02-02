@@ -15,17 +15,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake.FlapperState;
-import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.Pattern;
 
 @Configurable
 public class BaseClose9Indexed {
 
-  // TODO: take care when naming variables that their names represent their usage properly.
+  private static double SHOOT_TIME = 1800;
 
-  public static int TRANSFER_TIME_MS = 550;
-
-  public static int TRANSFER_TIME_INTAKE_MS = 1000;
 
   public static double[] START_RED = {114.25, 130, 180};
   public static double[] SHOOT_CONTROL = {70, 46, 0};
@@ -164,7 +160,6 @@ public class BaseClose9Indexed {
   public void autonomousPathUpdate() {
     switch (pathState) {
       case PRELOAD:
-
         if (pattern == Pattern.PGP) {
           robot.intake.cycle(2);
         }
@@ -172,20 +167,13 @@ public class BaseClose9Indexed {
           robot.intake.cycle(1);
         }
 
-        // TODO: why make an entire separate shootThree method just to do the same thing?
-        //  The other one just calls followPath a couple ms later in the cycle and with holdEnd=true.
-        //  If you don't want to hold end add in a parameter for it in the method and get rid of the extra one.
-        //  They are too similar to be separate.
-        robot.follower.followPath(shootPreLoad);
-        shootThree();
+        shootThree(shootPreLoad);
 
         setPathState(pathOrder.next());
         break;
 
       case PPG:
-        if (pattern != Pattern.PPG) {
-          robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
-        }
+
         intakeThree(preIntakePPG, intakePPG);
         if (pattern == Pattern.GPP) {
           robot.intake.cycle(2);
@@ -193,14 +181,13 @@ public class BaseClose9Indexed {
         if (pattern == Pattern.PGP) {
           robot.intake.cycle(1);
         }
+
         shootThree(shootPPG);
         setPathState(pathOrder.next());
         break;
 
       case PGP:
-        if (pattern != Pattern.PGP) {
-          robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
-        }
+
         intakeThree(preIntakePGP, intakePGP);
         if (pattern == Pattern.GPP) {
           robot.intake.cycle(1);
@@ -213,9 +200,7 @@ public class BaseClose9Indexed {
         break;
 
       case GPP:
-        if (pattern != Pattern.GPP) {
-          robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
-        }
+
         intakeThree(preIntakeGPP, intakeGPP);
         if (pattern == Pattern.PGP) {
           robot.intake.cycle(2);
@@ -240,7 +225,7 @@ public class BaseClose9Indexed {
   }
 
   private void intakeThree(PathChain shootToIntake, PathChain intake) {
-    robot.follower.followPath(shootToIntake);
+    robot.follower.followPath(shootToIntake, true);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
     }
@@ -252,21 +237,22 @@ public class BaseClose9Indexed {
     }
   }
 
-  // TODO: see above todo on line 170
-  private void shootThree() {
-
-  }
-
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
-
+    while (opMode.opModeIsActive() && (robot.follower.isBusy() || !robot.intake.isCycleFinished())) {
+      robot.updateAutoControls();
+    }
+    robot.follower.followPath(intakeToShoot, true);
+    while (opMode.opModeIsActive() && robot.follower.isBusy()) {
+      robot.updateAutoControls();
+    }
+    shootTimer.reset();
+    robot.intake.setCyclePosition(FlapperState.SHOOT);
+    while (opMode.opModeIsActive() && shootTimer.milliseconds() < SHOOT_TIME) {
+      robot.updateAutoControls();
+    }
+    robot.intake.setCyclePosition(FlapperState.LOCKED);
   }
-
-  // TODO: we should be able to do this while driving.
-  //  Make this a non-blocking routine in Robot controlled by a state machine.
-
-  // TODO 2: This method should also take in the current and target Patterns.
-  //  Try using the example in Pattern.java to simplify that implementation and above usages of cycle :)
 
 
   public void run() {
