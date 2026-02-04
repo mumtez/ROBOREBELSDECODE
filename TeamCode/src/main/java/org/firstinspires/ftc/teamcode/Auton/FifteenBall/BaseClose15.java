@@ -33,6 +33,11 @@ public class BaseClose15 {
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
   public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
 
+  public static double[] OPEN_GATE_START = {118, 75, 90};
+  public static double[] OPEN_GATE_END = {125, 75, 90}; // TODO TEST USING INTAKE HERE
+
+  public static double[] OPEN_GATE_CONTROL = {72, 72, 0};
+
 
   public static double[] INTAKE_CLASSIFIER = {56, 36, 60};
 
@@ -49,7 +54,7 @@ public class BaseClose15 {
       shootPreLoad,
       preIntakePPG, intakePPG, shootPPG,
       preIntakePGP, intakePGP, shootPGP,
-      intakeClassifier, shootGPP,
+      intakeClassifier, shootGPP, openGate, shootGate,
       parkPath;
 
   public enum PathState {
@@ -145,6 +150,23 @@ public class BaseClose15 {
         .setTimeoutConstraint(50)
         .build();
 
+    openGate = robot.follower.pathBuilder()
+        .addPath(new BezierCurve(poseFromArr(INTAKE_PPG_END_RED), poseFromArr(OPEN_GATE_CONTROL),
+            poseFromArr(OPEN_GATE_START)))
+        .setLinearHeadingInterpolation(poseFromArr(INTAKE_PPG_END_RED).getHeading(),
+            poseFromArr(OPEN_GATE_START).getHeading())
+        .addPath(new BezierLine(poseFromArr(OPEN_GATE_START), poseFromArr(OPEN_GATE_END)))
+        .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_START).getHeading(),
+            poseFromArr(OPEN_GATE_END).getHeading())
+        .setTimeoutConstraint(2000)
+        .build();
+    shootGate = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArrNonMirror(shootPos)))
+        .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_END).getHeading(),
+            poseFromArrNonMirror(shootPos).getHeading())
+        .setTimeoutConstraint(100)
+        .build();
+
 
   }
 
@@ -156,20 +178,20 @@ public class BaseClose15 {
 
         setPathState(pathOrder.next());
         break;
-
-      case PPG:
-
-        intakeThree(preIntakePPG, intakePPG);
-
-        shootThree(shootPPG);
-        setPathState(pathOrder.next());
-        break;
-
       case PGP:
 
         intakeThree(preIntakePGP, intakePGP);
 
         shootThree(shootPGP);
+        setPathState(pathOrder.next());
+        break;
+      case PPG:
+
+        intakeThree(preIntakePPG, intakePPG);
+
+        robot.follower.followPath(openGate);
+
+        shootThree(shootPPG);
         setPathState(pathOrder.next());
         break;
 
@@ -229,8 +251,7 @@ public class BaseClose15 {
       robot.updateAutoControls();
     }
     robot.follower.followPath(intakeToShoot, true);
-    while (opMode.opModeIsActive() && (robot.follower.isBusy()
-        || !robot.intake.isCycleFinished())) { // Todo Test and in 12
+    while (opMode.opModeIsActive() && (robot.follower.isBusy())) { // Todo Test and in 12
       robot.updateAutoControls();
     }
     shootTimer.reset();
@@ -260,7 +281,7 @@ public class BaseClose15 {
     robot.outtake.setTargetVelocity(Outtake.medSpeed);
     robot.intake.setPower(1);
 
-    pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GATE, PathState.STOP).iterator();
+    pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GATE, PathState.STOP).iterator();
 
     // LOOP
     while (this.opMode.opModeIsActive()) {
