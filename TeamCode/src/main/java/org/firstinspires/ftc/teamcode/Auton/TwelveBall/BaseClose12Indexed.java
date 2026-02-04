@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton.NineBall;
+package org.firstinspires.ftc.teamcode.Auton.TwelveBall;
 
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -19,7 +19,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 import org.firstinspires.ftc.teamcode.Subsystems.Pattern;
 
 @Configurable
-public class BaseClose9Indexed {
+public class BaseClose12Indexed {
+
+  // TODO: take care when naming variables that their names represent their usage properly.
+
 
   private static double SHOOT_TIME = 1800;
 
@@ -30,15 +33,19 @@ public class BaseClose9Indexed {
   public static double[] INTAKE_PPG_START_RED = {89, 86, 0};
   public static double[] INTAKE_PPG_END_RED = {125, 86, 0};
 
+  public static double[] OPEN_GATE_START = {118, 75, 90};
+  public static double[] OPEN_GATE_END = {125, 75, 90};
+
+  public static double[] OPEN_GATE_CONTROL = {72, 72, 0};
+
+
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
   public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
 
   public static double[] INTAKE_GPP_START_RED = {89, 36, 0};
   public static double[] INTAKE_GPP_END_RED = {125, 36, 0};
 
-  public static double INTAKE_DRIVE_MAX_POWER = 1; // .7
-
-  public static double[] PARK_POS = {83, 36, 0};
+  public static double INTAKE_DRIVE_MAX_POWER = 1;
 
   private Pattern pattern = Pattern.GPP;
   public int currentTag = 21;
@@ -48,10 +55,10 @@ public class BaseClose9Indexed {
       preIntakePPG, intakePPG, shootPPG,
       preIntakePGP, intakePGP, shootPGP,
       preIntakeGPP, intakeGPP, shootGPP,
-      parkPath;
+      openGate, shootGate;
 
   public enum PathState {
-    PRELOAD, PPG, PGP, GPP, STOP, PARK
+    PRELOAD, PPG, PGP, GPP, STOP
   }
 
   private PathState pathState = PathState.PRELOAD;
@@ -64,7 +71,7 @@ public class BaseClose9Indexed {
   final LinearOpMode opMode;
   final Telemetry telemetry;
 
-  public BaseClose9Indexed(LinearOpMode opMode, Robot robot, double[] shootPos) {
+  public BaseClose12Indexed(LinearOpMode opMode, Robot robot, double[] shootPos) {
     this.opMode = opMode;
     this.telemetry = opMode.telemetry;
     this.robot = robot;
@@ -97,13 +104,31 @@ public class BaseClose9Indexed {
         .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_PPG_START_RED)))
         .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
             poseFromArr(INTAKE_PPG_START_RED).getHeading())
-        .setTimeoutConstraint(50)
+        .setTimeoutConstraint(100)
         .build();
     intakePPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_START_RED), poseFromArr(INTAKE_PPG_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PPG_START_RED).getHeading())
-        .setTimeoutConstraint(500)
+        .setTimeoutConstraint(50)
         .build();
+
+    openGate = robot.follower.pathBuilder()
+        .addPath(new BezierCurve(poseFromArr(INTAKE_PPG_END_RED), poseFromArr(OPEN_GATE_CONTROL),
+            poseFromArr(OPEN_GATE_START)))
+        .setLinearHeadingInterpolation(poseFromArr(INTAKE_PPG_END_RED).getHeading(),
+            poseFromArr(OPEN_GATE_START).getHeading())
+        .addPath(new BezierLine(poseFromArr(OPEN_GATE_START), poseFromArr(OPEN_GATE_END)))
+        .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_START).getHeading(),
+            poseFromArr(OPEN_GATE_END).getHeading())
+        .setTimeoutConstraint(2000)
+        .build();
+    shootGate = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArrNonMirror(shootPos)))
+        .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_END).getHeading(),
+            poseFromArrNonMirror(shootPos).getHeading())
+        .setTimeoutConstraint(100)
+        .build();
+
     shootPPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_END_RED), poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(INTAKE_PPG_END_RED).getHeading(),
@@ -115,12 +140,12 @@ public class BaseClose9Indexed {
         .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_PGP_START_RED)))
         .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
             poseFromArr(INTAKE_PGP_START_RED).getHeading())
-        .setTimeoutConstraint(50)
+        .setTimeoutConstraint(100)
         .build();
     intakePGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PGP_START_RED), poseFromArr(INTAKE_PGP_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PGP_START_RED).getHeading())
-        .setTimeoutConstraint(500)
+        .setTimeoutConstraint(50)
         .build();
     shootPGP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(SHOOT_CONTROL),
@@ -134,12 +159,12 @@ public class BaseClose9Indexed {
         .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_GPP_START_RED)))
         .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
             poseFromArr(INTAKE_GPP_START_RED).getHeading())
-        .setTimeoutConstraint(50)
+        .setTimeoutConstraint(100)
         .build();
     intakeGPP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_GPP_START_RED), poseFromArr(INTAKE_GPP_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_GPP_START_RED).getHeading())
-        .setTimeoutConstraint(500)
+        .setTimeoutConstraint(50)
         .build();
     shootGPP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_GPP_END_RED), poseFromArr(SHOOT_CONTROL),
@@ -148,25 +173,11 @@ public class BaseClose9Indexed {
             poseFromArrNonMirror(shootPos).getHeading())
         .setTimeoutConstraint(100)
         .build();
-    parkPath = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(PARK_POS)))
-        .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
-            poseFromArr(PARK_POS).getHeading())
-        .setTimeoutConstraint(50)
-        .build();
-
-
   }
 
   public void autonomousPathUpdate() {
     switch (pathState) {
       case PRELOAD:
-        if (pattern == Pattern.PGP) {
-          robot.intake.cycle(2);
-        }
-        if (pattern == Pattern.PPG) {
-          robot.intake.cycle(1);
-        }
 
         shootThree(shootPreLoad);
 
@@ -183,12 +194,17 @@ public class BaseClose9Indexed {
           robot.intake.cycle(1);
         }
 
-        shootThree(shootPPG);
+        robot.follower.followPath(openGate, INTAKE_DRIVE_MAX_POWER, true);
+
+        while (this.opMode.opModeIsActive() && robot.follower.isBusy()) {
+          robot.updateAutoControls();
+        }
+
+        shootThree(shootGate);
         setPathState(pathOrder.next());
         break;
 
       case PGP:
-
         intakeThree(preIntakePGP, intakePGP);
         if (pattern == Pattern.GPP) {
           robot.intake.cycle(1);
@@ -201,7 +217,6 @@ public class BaseClose9Indexed {
         break;
 
       case GPP:
-
         intakeThree(preIntakeGPP, intakeGPP);
         if (pattern == Pattern.PGP) {
           robot.intake.cycle(2);
@@ -212,21 +227,17 @@ public class BaseClose9Indexed {
         shootThree(shootGPP);
         setPathState(pathOrder.next());
         break;
-      case PARK:
 
-        robot.follower.followPath(parkPath);
-        break;
       case STOP:
         robot.intake.setPower(0);
         robot.outtake.setTargetVelocity(0);
         robot.intake.setCyclePosition(FlapperState.LOCKED);
         break;
-
     }
   }
 
   private void intakeThree(PathChain shootToIntake, PathChain intake) {
-    robot.follower.followPath(shootToIntake, true);
+    robot.follower.followPath(shootToIntake);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
     }
@@ -237,6 +248,7 @@ public class BaseClose9Indexed {
       robot.updateAutoControls();
     }
   }
+
 
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
@@ -291,10 +303,10 @@ public class BaseClose9Indexed {
     //  If we can upgrade the JDK version to 21 (or kotlin) then we could use the even nicer switch syntax!
     switch (pattern) {
       case GPP:
-        pathOrder = List.of(PathState.GPP, PathState.PGP, PathState.PPG, PathState.STOP).iterator();
+        pathOrder = List.of(PathState.PPG, PathState.GPP, PathState.PGP, PathState.STOP).iterator();
         break;
       case PGP:
-        pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GPP, PathState.STOP).iterator();
+        pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP).iterator();
         break;
       case PPG:
         pathOrder = List.of(PathState.PPG, PathState.GPP, PathState.PGP, PathState.STOP).iterator();

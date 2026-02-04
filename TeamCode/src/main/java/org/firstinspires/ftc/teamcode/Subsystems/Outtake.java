@@ -8,7 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.ServoImplEx;
 import com.qualcomm.robotcore.util.Range;
 
 @Configurable
@@ -16,14 +15,12 @@ public class Outtake {
 
   // --- PID constants (tune in Panels) ---
 
-  public static int medSpeed = 1340; // 1340
+  public static int medSpeed = 1380; // 1340
   public static int farSpeed = 1600;
 
   public static int cycleSpeed = 300;
-  public static double kP = 0.002; // TODO Tune
-  public static double kV = 0.00039;
-
-
+  public static double kP = 0.0025; //0.002
+  public static double kV = 0.00038; //0.00039
 
 
   public static Direction flywheelMotorDirection = Direction.FORWARD;
@@ -64,9 +61,6 @@ public class Outtake {
   public void setTargetVelocity(double targetTicksPerSec) {
     targetVelocity = Math.max(targetTicksPerSec, 0);
   }
-
-
-
 
 
   // --- Main PID update loop ---
