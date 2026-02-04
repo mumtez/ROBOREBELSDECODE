@@ -71,8 +71,9 @@ public class BaseTeleop {
       }
 
       if (this.opMode.gamepad1.dpad_down) {
+        
         robot.outtake.stop();
-        this.autoCalculateShootPower = false; // don't continue calculating and setting target if stopping
+
       } else if (autoCalculateShootPower) {
         if (this.opMode.gamepad1.right_bumper) {
           robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
