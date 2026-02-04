@@ -252,11 +252,11 @@ public class BaseClose12Indexed {
 
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
-    while (opMode.opModeIsActive() && (robot.follower.isBusy() || !robot.intake.isCycleFinished())) {
+    while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
       robot.updateAutoControls();
     }
     robot.follower.followPath(intakeToShoot, true);
-    while (opMode.opModeIsActive() && robot.follower.isBusy()) {
+    while (opMode.opModeIsActive() && (robot.follower.isBusy() || !robot.intake.isCycleFinished())) {
       robot.updateAutoControls();
     }
     shootTimer.reset();
