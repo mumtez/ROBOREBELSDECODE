@@ -306,7 +306,7 @@ public class BaseClose15 {
     robot.outtake.setTargetVelocity(Outtake.medSpeed);
     robot.intake.setPower(1);
 
-    pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GATE, PathState.STOP).iterator();
+    pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GATE, PathState.PARK, PathState.STOP).iterator();
 
     // LOOP
     while (this.opMode.opModeIsActive()) {

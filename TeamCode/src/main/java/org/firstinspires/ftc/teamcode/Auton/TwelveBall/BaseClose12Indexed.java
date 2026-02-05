@@ -47,6 +47,8 @@ public class BaseClose12Indexed {
   public static double[] INTAKE_GPP_START_RED = {89, 36, 0};
   public static double[] INTAKE_GPP_END_RED = {125, 36, 0};
 
+  public static double[] PARK_POS = {83, 36, 0};
+
   public static double INTAKE_DRIVE_MAX_POWER = .8;
 
   private Pattern pattern = Pattern.GPP;
@@ -57,10 +59,10 @@ public class BaseClose12Indexed {
       preIntakePPG, intakePPG, shootPPG,
       preIntakePGP, intakePGP, shootPGP,
       preIntakeGPP, intakeGPP, shootGPP,
-      openGate, shootGate;
+      openGate, shootGate, parkPath;
 
   public enum PathState {
-    PRELOAD, PPG, PGP, GPP, STOP
+    PRELOAD, PPG, PGP, GPP, PARK, STOP
   }
 
   private PathState pathState = PathState.PRELOAD;
@@ -111,6 +113,13 @@ public class BaseClose12Indexed {
     intakePPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_START_RED), poseFromArr(INTAKE_PPG_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PPG_START_RED).getHeading())
+        .setTimeoutConstraint(50)
+        .build();
+
+    parkPath = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(PARK_POS)))
+        .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
+            poseFromArr(PARK_POS).getHeading())
         .setTimeoutConstraint(50)
         .build();
 
@@ -235,6 +244,10 @@ public class BaseClose12Indexed {
         robot.outtake.setTargetVelocity(0);
         robot.intake.setCyclePosition(FlapperState.LOCKED);
         break;
+
+      case PARK:
+        robot.follower.followPath(parkPath);
+        break;
     }
   }
 
@@ -314,13 +327,13 @@ public class BaseClose12Indexed {
     //  If we can upgrade the JDK version to 21 (or kotlin) then we could use the even nicer switch syntax!
     switch (pattern) {
       case GPP:
-        pathOrder = List.of(PathState.PPG, PathState.GPP, PathState.PGP, PathState.STOP).iterator();
+        pathOrder = List.of(PathState.PPG, PathState.GPP, PathState.PGP, PathState.PARK, PathState.STOP).iterator();
         break;
       case PGP:
-        pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.STOP).iterator();
+        pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GPP, PathState.PARK, PathState.STOP).iterator();
         break;
       case PPG:
-        pathOrder = List.of(PathState.PPG, PathState.GPP, PathState.PGP, PathState.STOP).iterator();
+        pathOrder = List.of(PathState.PPG, PathState.GPP, PathState.PGP, PathState.PARK, PathState.STOP).iterator();
         break;
     }
 

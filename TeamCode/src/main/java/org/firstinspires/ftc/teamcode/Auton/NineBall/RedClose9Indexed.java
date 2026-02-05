@@ -2,11 +2,14 @@ package org.firstinspires.ftc.teamcode.Auton.NineBall;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Robot;
 
 @Configurable
+
+@Disabled
 @Autonomous(name = "RED CLOSE 9", group = "RED")
 public class RedClose9Indexed extends LinearOpMode {
 
