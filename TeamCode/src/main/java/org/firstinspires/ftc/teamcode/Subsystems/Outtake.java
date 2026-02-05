@@ -19,8 +19,8 @@ public class Outtake {
   public static int farSpeed = 1600;
 
   public static int cycleSpeed = 300;
-  public static double kP = 0.0025; //0.002
-  public static double kV = 0.00038; //0.00039
+  public static double kP = 0.002;
+  public static double kV = 0.000353; //0.00038
 
 
   public static Direction flywheelMotorDirection = Direction.FORWARD;

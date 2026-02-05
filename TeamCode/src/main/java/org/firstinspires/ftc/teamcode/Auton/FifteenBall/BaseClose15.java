@@ -20,30 +20,30 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 @Configurable
 public class BaseClose15 {
 
-  private static int INTAKE_TIMER = 4000;
-  private static double SHOOT_TIME = 1800;
+  private static int INTAKE_TIMER = 3000;
+  private static double SHOOT_TIME = 1400;
 
 
-  public static double[] START_RED = {114.25, 130, 180};
+  public static double[] START_RED = {114, 130, 39}; // 114.25, 130, 180
   public static double[] SHOOT_CONTROL = {70, 46, 0};
 
   public static double[] INTAKE_PPG_START_RED = {89, 86, 0};
-  public static double[] INTAKE_PPG_END_RED = {125, 86, 0};
+  public static double[] INTAKE_PPG_END_RED = {123, 86, 0};
 
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
-  public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
+  public static double[] INTAKE_PGP_END_RED = {131, 60, 0};
 
-  public static double[] OPEN_GATE_START = {118, 75, 90};
-  public static double[] OPEN_GATE_END = {125, 75, 90}; // TODO TEST USING INTAKE HERE
+  public static double[] OPEN_GATE_START = {118, 75, 0};
+  public static double[] OPEN_GATE_END = {124, 75, 0};
 
-  public static double[] OPEN_GATE_CONTROL = {72, 72, 0};
+  public static double[] OPEN_GATE_CONTROL = {95, 72, 0};
 
 
-  public static double[] INTAKE_CLASSIFIER = {56, 36, 60};
+  public static double[] INTAKE_CLASSIFIER = {128.5, 62, 25};
 
   int cycleCounter = 0;
 
-  public static int CYCLE_LIMIT = 3;
+  public static int CYCLE_LIMIT = 2;
 
   public static double INTAKE_DRIVE_MAX_POWER = 1;
 
@@ -54,8 +54,8 @@ public class BaseClose15 {
       shootPreLoad,
       preIntakePPG, intakePPG, shootPPG,
       preIntakePGP, intakePGP, shootPGP,
-      intakeClassifier, shootGPP, openGatePPG, shootGate,
-      parkPath;
+      intakeClassifier, openGatePPG, shootGate,
+      parkPath, shootGateIntake;
 
   public enum PathState {
     PRELOAD, GATE, PGP, PPG, STOP, PARK
@@ -97,7 +97,7 @@ public class BaseClose15 {
         .addPath(new BezierLine(poseFromArr(START_RED), poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(START_RED).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
-        .setTimeoutConstraint(100)
+        .setTimeoutConstraint(300)
         .build();
 
     preIntakePPG = robot.follower.pathBuilder()
@@ -109,7 +109,7 @@ public class BaseClose15 {
     intakePPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_START_RED), poseFromArr(INTAKE_PPG_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PPG_START_RED).getHeading())
-        .setTimeoutConstraint(500)
+        .setTimeoutConstraint(50)
         .build();
     shootPPG = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_END_RED), poseFromArrNonMirror(shootPos)))
@@ -127,7 +127,7 @@ public class BaseClose15 {
     intakePGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_PGP_START_RED), poseFromArr(INTAKE_PGP_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PGP_START_RED).getHeading())
-        .setTimeoutConstraint(500)
+        .setTimeoutConstraint(50)
         .build();
     shootPGP = robot.follower.pathBuilder()
         .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(SHOOT_CONTROL),
@@ -158,11 +158,18 @@ public class BaseClose15 {
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_START), poseFromArr(OPEN_GATE_END)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_START).getHeading(),
             poseFromArr(OPEN_GATE_END).getHeading())
-        .setTimeoutConstraint(2000)
+        .setTimeoutConstraint(3500)
         .build();
     shootGate = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_END).getHeading(),
+            poseFromArrNonMirror(shootPos).getHeading())
+        .setTimeoutConstraint(100)
+        .build();
+
+    shootGateIntake = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArr(INTAKE_CLASSIFIER), poseFromArrNonMirror(shootPos)))
+        .setLinearHeadingInterpolation(poseFromArr(INTAKE_CLASSIFIER).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
         .setTimeoutConstraint(100)
         .build();
@@ -189,9 +196,9 @@ public class BaseClose15 {
 
         intakeThree(preIntakePPG, intakePPG);
 
-        robot.follower.followPath(openGatePPG);
+        robot.follower.followPath(openGatePPG, .7, true);
 
-        shootThree(shootPPG);
+        shootThree(shootGate);
         setPathState(pathOrder.next());
         break;
 
@@ -199,7 +206,9 @@ public class BaseClose15 {
         cycleCounter++;
         intakeGate(intakeClassifier);
 
-        shootThree(shootGPP);
+        robot.intake.setPowerInverse(1);
+
+        shootThree(shootGateIntake);
 
         if (cycleCounter >= CYCLE_LIMIT) {
           setPathState(pathOrder.next());
@@ -243,10 +252,12 @@ public class BaseClose15 {
       robot.updateAutoControls();
     }
 
+
   }
 
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
+    robot.intake.setPower(Intake.POWER_INTAKE);
     while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
       robot.updateAutoControls();
     }

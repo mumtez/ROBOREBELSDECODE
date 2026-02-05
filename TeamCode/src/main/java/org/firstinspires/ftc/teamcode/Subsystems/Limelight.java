@@ -57,9 +57,9 @@ public class Limelight {
       distance = (((41.275) / Math.tan((Math.toRadians(currentGoal.getTy() + 1.0)))) / 100.0);
       calculatedVel = 20.0 * (Math.round(
           ((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
-              / 20.0)); //.2433 -> .2833
+              / 20.0));
       lastCalculatedVel = calculatedVel;
-      return calculatedVel + 60; // REMOVE
+      return calculatedVel;
     }
     return lastCalculatedVel;
   }

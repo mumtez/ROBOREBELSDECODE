@@ -37,9 +37,9 @@ public class Intake {
 
   private enum CycleState {PENDING, OPEN, CLOSE, CLOSE_DELAY}
 
-  public static int OPEN_DELAY = 300;
+  public static int OPEN_DELAY = 400;
 
-  public static int CLOSE_DELAY = 300;
+  public static int CLOSE_DELAY = 500;
 
   private CycleState cycleState = CycleState.PENDING;
 
@@ -117,6 +117,11 @@ public class Intake {
 
   public void setPower(double pow) {
     intakeMotor.setPower(pow);
+    intakeMotorAlt.setPower(pow);
+  }
+
+  public void setPowerInverse(double pow) {
+    intakeMotor.setPower(-pow);
     intakeMotorAlt.setPower(pow);
   }
 

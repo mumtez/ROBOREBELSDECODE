@@ -21,6 +21,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Pattern;
 @Configurable
 public class BaseClose12Indexed {
 
+  private static double SHOOT_POWER = .8;
+
   // TODO: take care when naming variables that their names represent their usage properly.
 
 
@@ -31,21 +33,21 @@ public class BaseClose12Indexed {
   public static double[] SHOOT_CONTROL = {70, 46, 0};
 
   public static double[] INTAKE_PPG_START_RED = {89, 86, 0};
-  public static double[] INTAKE_PPG_END_RED = {125, 86, 0};
+  public static double[] INTAKE_PPG_END_RED = {123, 86, 0};
 
-  public static double[] OPEN_GATE_START = {118, 75, 90};
-  public static double[] OPEN_GATE_END = {125, 75, 90};
+  public static double[] OPEN_GATE_START = {118, 75, 0};
+  public static double[] OPEN_GATE_END = {124, 75, 0};
 
-  public static double[] OPEN_GATE_CONTROL = {72, 72, 0};
+  public static double[] OPEN_GATE_CONTROL = {95, 80, 0};
 
 
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
-  public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
+  public static double[] INTAKE_PGP_END_RED = {131, 60, 0};
 
   public static double[] INTAKE_GPP_START_RED = {89, 36, 0};
   public static double[] INTAKE_GPP_END_RED = {125, 36, 0};
 
-  public static double INTAKE_DRIVE_MAX_POWER = 1;
+  public static double INTAKE_DRIVE_MAX_POWER = .8;
 
   private Pattern pattern = Pattern.GPP;
   public int currentTag = 21;
@@ -120,7 +122,7 @@ public class BaseClose12Indexed {
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_START), poseFromArr(OPEN_GATE_END)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_START).getHeading(),
             poseFromArr(OPEN_GATE_END).getHeading())
-        .setTimeoutConstraint(2000)
+        .setTimeoutConstraint(4500)
         .build();
     shootGate = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArrNonMirror(shootPos)))
@@ -237,6 +239,8 @@ public class BaseClose12Indexed {
   }
 
   private void intakeThree(PathChain shootToIntake, PathChain intake) {
+
+    ElapsedTime intakeTimer = new ElapsedTime();
     robot.follower.followPath(shootToIntake);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
@@ -247,6 +251,11 @@ public class BaseClose12Indexed {
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
     }
+    intakeTimer.reset();
+    while (opMode.opModeIsActive() && intakeTimer.milliseconds() <= 1000) {
+      robot.updateAutoControls();
+    }
+
   }
 
 
@@ -260,10 +269,12 @@ public class BaseClose12Indexed {
       robot.updateAutoControls();
     }
     shootTimer.reset();
+    robot.intake.setPower(SHOOT_POWER);
     robot.intake.setCyclePosition(FlapperState.SHOOT);
     while (opMode.opModeIsActive() && shootTimer.milliseconds() < SHOOT_TIME) {
       robot.updateAutoControls();
     }
+    robot.intake.setPower(1);
     robot.intake.setCyclePosition(FlapperState.LOCKED);
   }
 
