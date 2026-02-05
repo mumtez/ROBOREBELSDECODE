@@ -33,13 +33,15 @@ public class BaseClose15 {
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
   public static double[] INTAKE_PGP_END_RED = {131, 60, 0};
 
-  public static double[] OPEN_GATE_START = {118, 75, 0};
-  public static double[] OPEN_GATE_END = {124, 75, 0};
+  public static double[] OPEN_GATE_START = {118, 73, 0};
+  public static double[] OPEN_GATE_END = {123.5, 73, 0};
 
-  public static double[] OPEN_GATE_CONTROL = {95, 72, 0};
+  public static double[] OPEN_GATE_CONTROL_PPG = {105, 72, 0};
+
+  public static double[] OPEN_GATE_CONTROL_PGP = {105, 62, 0};
 
 
-  public static double[] INTAKE_CLASSIFIER = {128.5, 62, 25};
+  public static double[] INTAKE_CLASSIFIER = {127.5, 62, 23};
 
   int cycleCounter = 0;
 
@@ -47,7 +49,7 @@ public class BaseClose15 {
 
   public static double INTAKE_DRIVE_MAX_POWER = 1;
 
-  public static double[] PARK_POS = {83, 36, 0};
+  public static double[] PARK_POS = {89, 60, 0};
 
 
   PathChain
@@ -151,7 +153,7 @@ public class BaseClose15 {
         .build();
 
     openGatePPG = robot.follower.pathBuilder()
-        .addPath(new BezierCurve(poseFromArr(INTAKE_PPG_END_RED), poseFromArr(OPEN_GATE_CONTROL),
+        .addPath(new BezierCurve(poseFromArr(INTAKE_PPG_END_RED), poseFromArr(OPEN_GATE_CONTROL_PPG),
             poseFromArr(OPEN_GATE_START)))
         .setLinearHeadingInterpolation(poseFromArr(INTAKE_PPG_END_RED).getHeading(),
             poseFromArr(OPEN_GATE_START).getHeading())
@@ -162,7 +164,7 @@ public class BaseClose15 {
         .build();
 
     openGatePGP = robot.follower.pathBuilder()
-        .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(OPEN_GATE_CONTROL),
+        .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(OPEN_GATE_CONTROL_PGP),
             poseFromArr(OPEN_GATE_START)))
         .setLinearHeadingInterpolation(poseFromArr(INTAKE_PGP_END_RED).getHeading(),
             poseFromArr(OPEN_GATE_START).getHeading())
@@ -173,7 +175,8 @@ public class BaseClose15 {
         .build();
 
     shootGate = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArrNonMirror(shootPos)))
+        .addPath(new BezierLine(poseFromArr(OPEN_GATE_END),
+            poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_END).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
         .setTimeoutConstraint(100)
@@ -201,7 +204,7 @@ public class BaseClose15 {
 
         intakeThree(preIntakePGP, intakePGP);
 
-        robot.follower.followPath(openGatePGP, .7, true); // TODO TEST
+        robot.follower.followPath(openGatePGP, .8, true); // TODO TEST
 
         shootThree(shootGate);
         setPathState(pathOrder.next());
@@ -210,7 +213,7 @@ public class BaseClose15 {
 
         intakeThree(preIntakePPG, intakePPG);
 
-        robot.follower.followPath(openGatePPG, .7, true);
+        robot.follower.followPath(openGatePPG, .8, true);
 
         shootThree(shootGate);
         setPathState(pathOrder.next());
@@ -231,6 +234,10 @@ public class BaseClose15 {
       case PARK:
 
         robot.follower.followPath(parkPath);
+        while (opMode.opModeIsActive() && robot.follower.isBusy()) {
+          robot.updateAutoControls();
+        }
+        setPathState(pathOrder.next());
         break;
       case STOP:
         robot.intake.setPower(0);
@@ -306,7 +313,7 @@ public class BaseClose15 {
     robot.outtake.setTargetVelocity(Outtake.medSpeed);
     robot.intake.setPower(1);
 
-    pathOrder = List.of(PathState.PGP, PathState.PPG, PathState.GATE, PathState.PARK, PathState.STOP).iterator();
+    pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GATE, PathState.PARK, PathState.STOP).iterator();
 
     // LOOP
     while (this.opMode.opModeIsActive()) {

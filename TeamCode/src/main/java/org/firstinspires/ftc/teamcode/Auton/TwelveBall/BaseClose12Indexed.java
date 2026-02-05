@@ -47,7 +47,7 @@ public class BaseClose12Indexed {
   public static double[] INTAKE_GPP_START_RED = {89, 36, 0};
   public static double[] INTAKE_GPP_END_RED = {125, 36, 0};
 
-  public static double[] PARK_POS = {83, 36, 0};
+  public static double[] PARK_POS = {89, 60, 0};
 
   public static double INTAKE_DRIVE_MAX_POWER = .8;
 
@@ -247,6 +247,10 @@ public class BaseClose12Indexed {
 
       case PARK:
         robot.follower.followPath(parkPath);
+        while (opMode.opModeIsActive() && robot.follower.isBusy()) {
+          robot.updateAutoControls();
+        }
+        setPathState(pathOrder.next());
         break;
     }
   }
@@ -265,7 +269,7 @@ public class BaseClose12Indexed {
       robot.updateAutoControls();
     }
     intakeTimer.reset();
-    while (opMode.opModeIsActive() && intakeTimer.milliseconds() <= 1000) {
+    while (opMode.opModeIsActive() && intakeTimer.milliseconds() <= 600) {
       robot.updateAutoControls();
     }
 
