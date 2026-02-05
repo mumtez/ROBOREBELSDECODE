@@ -54,7 +54,7 @@ public class BaseClose15 {
       shootPreLoad,
       preIntakePPG, intakePPG, shootPPG,
       preIntakePGP, intakePGP, shootPGP,
-      intakeClassifier, openGatePPG, shootGate,
+      intakeClassifier, openGatePPG, openGatePGP, shootGate,
       parkPath, shootGateIntake;
 
   public enum PathState {
@@ -160,6 +160,18 @@ public class BaseClose15 {
             poseFromArr(OPEN_GATE_END).getHeading())
         .setTimeoutConstraint(3500)
         .build();
+
+    openGatePGP = robot.follower.pathBuilder()
+        .addPath(new BezierCurve(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(OPEN_GATE_CONTROL),
+            poseFromArr(OPEN_GATE_START)))
+        .setLinearHeadingInterpolation(poseFromArr(INTAKE_PGP_END_RED).getHeading(),
+            poseFromArr(OPEN_GATE_START).getHeading())
+        .addPath(new BezierLine(poseFromArr(OPEN_GATE_START), poseFromArr(OPEN_GATE_END)))
+        .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_START).getHeading(),
+            poseFromArr(OPEN_GATE_END).getHeading())
+        .setTimeoutConstraint(3500)
+        .build();
+
     shootGate = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_END).getHeading(),
@@ -189,7 +201,9 @@ public class BaseClose15 {
 
         intakeThree(preIntakePGP, intakePGP);
 
-        shootThree(shootPGP);
+        robot.follower.followPath(openGatePGP, .7, true); // TODO TEST
+
+        shootThree(shootGate);
         setPathState(pathOrder.next());
         break;
       case PPG:
