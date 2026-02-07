@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 @Autonomous(name = "RED CLOSE 9", group = "RED")
 public class RedClose9Indexed extends LinearOpMode {
 
-  public static double[] SHOOT_RED = {82, 90, 41};
+  public static double[] SHOOT_RED = {82, 90, 43};
 
   @Override
   public void runOpMode() throws InterruptedException {
