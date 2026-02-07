@@ -34,14 +34,14 @@ public class BaseClose15 {
   public static double[] INTAKE_PGP_END_RED = {131, 60, 0};
 
   public static double[] OPEN_GATE_START = {118, 73, 0};
-  public static double[] OPEN_GATE_END = {120, 73, 0};
+  public static double[] OPEN_GATE_END = {123, 73, 0};
 
   public static double[] OPEN_GATE_CONTROL_PPG = {105, 72, 0};
 
   public static double[] OPEN_GATE_CONTROL_PGP = {105, 62, 0};
 
 
-  public static double[] INTAKE_CLASSIFIER = {125.5, 60.5, 25};
+  public static double[] INTAKE_CLASSIFIER = {126.5, 60.5, 25};
 
   int cycleCounter = 0;
 

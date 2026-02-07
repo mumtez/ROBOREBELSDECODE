@@ -210,9 +210,10 @@ public class BaseClose12Indexed {
           robot.updateAutoControls();
         }
         ElapsedTime gateHoldTimer = new ElapsedTime();
-        while (this.opMode.opModeIsActive() && gateHoldTimer.milliseconds() < 200) {
+        while (this.opMode.opModeIsActive()
+            && gateHoldTimer.milliseconds() < 200) {
           robot.updateAutoControls();
-        } // TODO test
+        }
 
         shootThree(shootGate);
         setPathState(pathOrder.next());
