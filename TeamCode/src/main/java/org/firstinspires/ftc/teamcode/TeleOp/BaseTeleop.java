@@ -71,7 +71,7 @@ public class BaseTeleop {
       }
 
       if (this.opMode.gamepad1.dpad_down) {
-        
+
         robot.outtake.stop();
 
       } else if (autoCalculateShootPower) {
@@ -97,8 +97,14 @@ public class BaseTeleop {
         robot.intake.setPower(this.opMode.gamepad1.right_trigger - this.opMode.gamepad1.left_trigger);
       } else if (this.opMode.gamepad2.right_trigger > 0.05 || this.opMode.gamepad2.left_trigger > 0.05) {
         robot.intake.setPower(this.opMode.gamepad2.right_trigger - this.opMode.gamepad2.left_trigger);
+      } else if (this.opMode.gamepad2.left_bumper) {
+        robot.intake.setPowerInverse(1); //TODO Test
       } else {
         robot.intake.setPower(0);
+      }
+
+      if (this.opMode.gamepad2.left_bumper) {
+        robot.intake.setPowerInverse(1);
       }
 
       // TELEMETRY
