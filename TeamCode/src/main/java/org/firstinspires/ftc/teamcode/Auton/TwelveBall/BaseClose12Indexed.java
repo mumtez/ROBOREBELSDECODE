@@ -26,14 +26,14 @@ public class BaseClose12Indexed {
   // TODO: take care when naming variables that their names represent their usage properly.
 
 
-  private static double SHOOT_TIME = 1800;
+  private static double SHOOT_TIME = 2200;
 
 
   public static double[] START_RED = {114.25, 130, 180};
   public static double[] SHOOT_CONTROL = {70, 46, 0};
 
   public static double[] INTAKE_PPG_START_RED = {89, 86, 0};
-  public static double[] INTAKE_PPG_END_RED = {123, 86, 0};
+  public static double[] INTAKE_PPG_END_RED = {122, 86, 0};
 
   public static double[] OPEN_GATE_START = {118, 75, 0};
   public static double[] OPEN_GATE_END = {124, 75, 0};
@@ -45,7 +45,7 @@ public class BaseClose12Indexed {
   public static double[] INTAKE_PGP_END_RED = {131, 60, 0};
 
   public static double[] INTAKE_GPP_START_RED = {89, 36, 0};
-  public static double[] INTAKE_GPP_END_RED = {125, 36, 0};
+  public static double[] INTAKE_GPP_END_RED = {131, 36, 0};
 
   public static double[] PARK_POS = {89, 60, 0};
 
