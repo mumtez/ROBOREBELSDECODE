@@ -131,7 +131,7 @@ public class BaseClose12Indexed {
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_START), poseFromArr(OPEN_GATE_END)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_START).getHeading(),
             poseFromArr(OPEN_GATE_END).getHeading())
-        .setTimeoutConstraint(4500)
+        .setTimeoutConstraint(200) //TODO Test
         .build();
     shootGate = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArrNonMirror(shootPos)))
@@ -206,10 +206,13 @@ public class BaseClose12Indexed {
         }
 
         robot.follower.followPath(openGate, INTAKE_DRIVE_MAX_POWER, true);
-
         while (this.opMode.opModeIsActive() && robot.follower.isBusy()) {
           robot.updateAutoControls();
         }
+        ElapsedTime gateHoldTimer = new ElapsedTime();
+        while (this.opMode.opModeIsActive() && gateHoldTimer.milliseconds() < 200) {
+          robot.updateAutoControls();
+        } // TODO test
 
         shootThree(shootGate);
         setPathState(pathOrder.next());
