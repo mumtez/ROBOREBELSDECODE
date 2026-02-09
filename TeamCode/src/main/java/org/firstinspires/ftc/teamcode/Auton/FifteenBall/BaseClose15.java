@@ -20,7 +20,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 @Configurable
 public class BaseClose15 {
 
-  private static int INTAKE_TIMER = 3000;
+  private static final double INTAKE_TIMER_GATE = 2000;
+
   private static double SHOOT_TIME = 1400;
 
 
@@ -31,10 +32,10 @@ public class BaseClose15 {
   public static double[] INTAKE_PPG_END_RED = {122, 86, 0};
 
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
-  public static double[] INTAKE_PGP_END_RED = {131, 60, 0};
+  public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
 
-  public static double[] OPEN_GATE_START = {118, 73, 0};
-  public static double[] OPEN_GATE_END = {123, 73, 0};
+  public static double[] OPEN_GATE_START = {118, 74, 0};
+  public static double[] OPEN_GATE_END = {122.75, 74, 0}; //TODO 73
 
   public static double[] OPEN_GATE_CONTROL_PPG = {105, 72, 0};
 
@@ -45,7 +46,7 @@ public class BaseClose15 {
 
   int cycleCounter = 0;
 
-  public static int CYCLE_LIMIT = 2;
+  public static int CYCLE_LIMIT = 1;
 
   public static double INTAKE_DRIVE_MAX_POWER = 1;
 
@@ -269,7 +270,7 @@ public class BaseClose15 {
     }
 
     robot.intake.setPower(Intake.POWER_INTAKE);
-    while (opMode.opModeIsActive() && gateIntakeTimer.milliseconds() <= INTAKE_TIMER) {
+    while (opMode.opModeIsActive() && gateIntakeTimer.milliseconds() <= INTAKE_TIMER_GATE) {
       robot.updateAutoControls();
     }
 
