@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -15,6 +16,8 @@ public class BaseTeleop {
   final LinearOpMode opMode;
   final Telemetry telemetry;
   double headingOffset;
+
+  Vector botVelocity = new Vector();
 
   private boolean autoCalculateShootPower = true;
 
@@ -38,7 +41,12 @@ public class BaseTeleop {
     while (opMode.opModeIsActive()) {
       robot.intake.updateSampleColor();
       robot.intake.updateAutoCycle();
-      // currentTagResult = robot.limelight.updateGoal();
+      robot.follower.update();
+
+      botVelocity = robot.follower.getVelocity();
+      botVelocity.rotateVector(-robot.follower.getHeading());
+
+      robot.limelight.updateVelAim(botVelocity.getXComponent(), botVelocity.getYComponent());
 
       // DRIVETRAIN
       double x = this.opMode.gamepad1.left_stick_x;
@@ -142,6 +150,9 @@ public class BaseTeleop {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());
+
+    telemetry.addData("X VEL", botVelocity.getXComponent());
+    telemetry.addData("Y VEL", botVelocity.getYComponent());
 
     telemetry.update();
   }

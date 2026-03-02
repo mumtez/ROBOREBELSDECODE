@@ -30,6 +30,11 @@ public class Limelight {
   private double aimIntegral = 0;
   private double aimLastError = 0;
 
+  private double xVelocity;
+
+  private double yVelocity;
+
+
   public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
     HardwareMap hardwareMap = opMode.hardwareMap;
     currentColor = color;
@@ -40,6 +45,11 @@ public class Limelight {
   public void updateGoal() { // Update the current goal tag for teleop
     this.limelight.pipelineSwitch(currentColor.getLLPipelineTeleOP());
     currentGoal = this.limelight.getLatestResult();
+  }
+
+  public void updateVelAim(double xVelocity, double yVelocity) {
+    this.xVelocity = xVelocity;
+    this.yVelocity = yVelocity;
   }
 
   // TODO: below is how you properly designate return types / method descriptions in java --
@@ -69,6 +79,7 @@ public class Limelight {
   }
 
   public double updateAimPID(float rot) { // returns the turn power from pid for autoaiming
+
     if (currentGoal != null && currentGoal.isValid()) {
       double dt = aimTimer.seconds();
       aimTimer.reset();
@@ -100,6 +111,7 @@ public class Limelight {
     }
     return rot;
   }
+
 
   public int getPatternIdAuto() { // only for auto just returns the tag id for patterns
     this.limelight.pipelineSwitch(0);

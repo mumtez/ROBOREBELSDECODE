@@ -274,7 +274,6 @@ public class BaseClose15 {
       robot.updateAutoControls();
     }
 
-
   }
 
   private void shootThree(PathChain intakeToShoot) {
