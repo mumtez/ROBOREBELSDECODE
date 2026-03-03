@@ -70,9 +70,10 @@ public class Limelight {
     if (currentGoal != null && currentGoal.isValid()) {
 
       calculatedVel = (20.0 * (Math.round(
-          -(yVelocity * 100.0) +
-              (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037) / 20.0))
-          - 120.0;
+          (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
+              - yVelocity * 100)
+              / 20.0))) - 120.0;
+
       lastCalculatedVel = calculatedVel;
 
       if (distance > 2.5) {
