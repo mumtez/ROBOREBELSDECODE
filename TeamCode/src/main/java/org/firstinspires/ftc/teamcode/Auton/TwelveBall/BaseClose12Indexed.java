@@ -332,7 +332,6 @@ public class BaseClose12Indexed {
     robot.outtake.setTargetVelocity(Outtake.medSpeed);
     robot.intake.setPower(1);
 
-    //  If we can upgrade the JDK version to 21 (or kotlin) then we could use the even nicer switch syntax!
     switch (pattern) {
       case GPP:
         pathOrder = List.of(PathState.PPG, PathState.GPP, PathState.PGP, PathState.PARK, PathState.STOP).iterator();

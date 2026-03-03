@@ -121,7 +121,7 @@ public class BaseTeleop {
   }
 
   private void fieldCentricDrive(double x, double y, double rx) {
-    if (this.opMode.gamepad1.left_bumper) {
+    if (this.opMode.gamepad1.leftBumperWasPressed()) {
       robot.imu.resetYaw();
       this.headingOffset = 0;
     }
