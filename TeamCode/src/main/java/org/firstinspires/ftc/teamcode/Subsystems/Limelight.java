@@ -80,7 +80,7 @@ public class Limelight {
 
       calculatedVel = (20.0 * (Math.round(
           (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
-              - vParallel * 100)
+              - vParallel * 253)
               / 20.0))) - 120.0;
 
       lastCalculatedVel = calculatedVel;
@@ -100,7 +100,7 @@ public class Limelight {
       aimTimer.reset();
 
       double leadAngleDeg =
-          Math.toDegrees(Math.atan((vPerpindicular * 0.268) / distance));
+          Math.toDegrees(Math.atan((vPerpindicular * Math.sqrt((2 * ((1.192 * distance) - .85)) / 9.46)) / distance));
 
       double error =
           currentGoal.getTx() - (currentColor.getAimPose() + leadAngleDeg); //TODO Test without y + distance
