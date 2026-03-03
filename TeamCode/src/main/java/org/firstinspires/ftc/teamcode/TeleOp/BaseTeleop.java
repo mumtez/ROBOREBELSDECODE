@@ -43,11 +43,6 @@ public class BaseTeleop {
       robot.intake.updateAutoCycle();
       robot.follower.update();
 
-      botVelocity = robot.follower.getVelocity();
-      botVelocity.rotateVector(-robot.follower.getHeading());
-
-      robot.limelight.updateVelAim(botVelocity.getXComponent(), botVelocity.getYComponent());
-
       // DRIVETRAIN
       double x = this.opMode.gamepad1.left_stick_x;
       double y = -this.opMode.gamepad1.left_stick_y;
@@ -55,6 +50,11 @@ public class BaseTeleop {
       double rx;
       if (this.opMode.gamepad1.right_bumper) {
         robot.limelight.updateGoal();
+        botVelocity = robot.follower.getVelocity();
+        botVelocity.rotateVector(-robot.follower.getHeading());
+        robot.limelight.updateVelAim((-botVelocity.getYComponent() * 2.54 / 40.0),
+            (botVelocity.getXComponent() * 2.54) / 40.0);
+
         rx = robot.limelight.updateAimPID(rotStickAvg); // auto aim
       } else {
         rx = rotStickAvg; // normal drive // TODO: Test this
@@ -85,6 +85,8 @@ public class BaseTeleop {
       } else if (autoCalculateShootPower) {
         if (this.opMode.gamepad1.right_bumper) {
           robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
+        } else {
+          robot.outtake.setTargetVelocity(400);
         }
       } else {
         if (this.opMode.gamepad2.dpad_up) {
@@ -150,9 +152,6 @@ public class BaseTeleop {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());
-
-    telemetry.addData("X VEL", botVelocity.getXComponent());
-    telemetry.addData("Y VEL", botVelocity.getYComponent());
 
     telemetry.update();
   }

@@ -34,6 +34,8 @@ public class Limelight {
 
   private double yVelocity;
 
+  public double distance;
+
 
   public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -50,6 +52,9 @@ public class Limelight {
   public void updateVelAim(double xVelocity, double yVelocity) {
     this.xVelocity = xVelocity;
     this.yVelocity = yVelocity;
+    if (currentGoal != null && currentGoal.isValid()) {
+      this.distance = (((41.275) / Math.tan((Math.toRadians(currentGoal.getTy() + 1.0)))) / 100.0);
+    }
   }
 
   // TODO: below is how you properly designate return types / method descriptions in java --
@@ -61,14 +66,15 @@ public class Limelight {
    * @return the target power for the shooter, or the last calculated power if no valid reading
    */
   public double calculateTargetVelocity() {
-    double distance;
     double calculatedVel;
     if (currentGoal != null && currentGoal.isValid()) {
-      distance = (((41.275) / Math.tan((Math.toRadians(currentGoal.getTy() + 1.0)))) / 100.0);
-      calculatedVel = 20.0 * (Math.round(
-          ((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
-              / 20.0));
+
+      calculatedVel = (20.0 * (Math.round(
+          -(yVelocity * 100.0) +
+              (distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037) / 20.0))
+          - 120.0;
       lastCalculatedVel = calculatedVel;
+
       if (distance > 2.5) {
         return calculatedVel + 80;
 
@@ -79,12 +85,13 @@ public class Limelight {
   }
 
   public double updateAimPID(float rot) { // returns the turn power from pid for autoaiming
-
     if (currentGoal != null && currentGoal.isValid()) {
       double dt = aimTimer.seconds();
       aimTimer.reset();
 
-      double error = currentGoal.getTx() - currentColor.getAimPose();
+      double error = currentGoal.getTx() - (currentColor.getAimPose() +
+          Math.toDegrees(Math.atan((this.xVelocity * .268) / ((this.yVelocity * .268) + this.distance)))
+      );
 
       // Integral
       aimIntegral += error * dt;

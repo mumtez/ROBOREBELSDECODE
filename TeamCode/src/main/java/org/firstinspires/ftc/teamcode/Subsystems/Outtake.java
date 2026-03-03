@@ -78,7 +78,7 @@ public class Outtake {
     double output = (kV * this.targetVelocity) + (kP * error);
 
     // limit power range
-    output = Range.clip(output, -0.2, 1.0);
+    output = Range.clip(output, -.2, 1.0);
 
     this.setPower(output);
     return output;
