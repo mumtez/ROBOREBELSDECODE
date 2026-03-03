@@ -22,7 +22,10 @@ public enum AllianceColor {
   BLUE {
     @Override
     public Pose poseFromArray(double[] arr) {
-      return new Pose(arr[0], arr[1], Math.toRadians(arr[2])).mirror();
+
+      //TODO: latest pedro made mirror use 141.5 field length
+      // overwriting to 144 which was the pre-patch value to retain your previous tuning
+      return new Pose(arr[0], arr[1], Math.toRadians(arr[2])).mirror(144);
     }
 
     @Override
