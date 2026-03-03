@@ -49,15 +49,16 @@ public class BaseTeleop {
       float rotStickAvg = this.opMode.gamepad1.right_stick_x + this.opMode.gamepad2.right_stick_x;
       double rx;
       if (this.opMode.gamepad1.right_bumper) {
-        robot.limelight.updateGoal();
+
         botVelocity = robot.follower.getVelocity();
         botVelocity.rotateVector(-robot.follower.getHeading());
-        robot.limelight.updateVelAim((-botVelocity.getYComponent() * 2.54 / 40.0),
-            (botVelocity.getXComponent() * 2.54) / 40.0);
+
+        robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
+            (botVelocity.getXComponent() * 2.54) / 100.0); //TODO Test changed from 40.0
 
         rx = robot.limelight.updateAimPID(rotStickAvg); // auto aim
       } else {
-        rx = rotStickAvg; // normal drive // TODO: Test this
+        rx = rotStickAvg; // normal drive
       }
       this.fieldCentricDrive(x, y, rx);
 
@@ -95,9 +96,6 @@ public class BaseTeleop {
           robot.outtake.setTargetVelocity(Outtake.medSpeed);
         } else if (this.opMode.gamepad2.dpad_right) {
           robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
-        } else if (this.opMode.gamepad2.dpad_left) {
-          robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
-          robot.limelight.updateGoal();
         }
       }
       robot.outtake.updatePIDControl();

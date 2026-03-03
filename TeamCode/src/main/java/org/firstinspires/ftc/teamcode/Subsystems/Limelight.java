@@ -30,31 +30,40 @@ public class Limelight {
   private double aimIntegral = 0;
   private double aimLastError = 0;
 
-  private double xVelocity;
 
-  private double yVelocity;
+  private double vParallel;
+  private double vPerpindicular;
+
 
   public double distance;
 
 
   public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
     HardwareMap hardwareMap = opMode.hardwareMap;
-    currentColor = color;
-    limelight = hardwareMap.get(Limelight3A.class, "limelight");
+    this.currentColor = color;
+    this.limelight = hardwareMap.get(Limelight3A.class, "limelight");
     this.limelight.start();
   }
 
-  public void updateGoal() { // Update the current goal tag for teleop
-    this.limelight.pipelineSwitch(currentColor.getLLPipelineTeleOP());
-    currentGoal = this.limelight.getLatestResult();
-  }
+  public void updateAim(double xVelocity, double yVelocity) {
+    // Update goal
+    this.limelight.pipelineSwitch(this.currentColor.getLLPipelineTeleOP());
+    this.currentGoal = this.limelight.getLatestResult();
 
-  public void updateVelAim(double xVelocity, double yVelocity) {
-    this.xVelocity = xVelocity;
-    this.yVelocity = yVelocity;
+    // Update Velocities and Angles
+    double txRad = Math.toRadians(currentGoal.getTx());
+
+    this.vParallel =
+        yVelocity * Math.cos(txRad)
+            + xVelocity * Math.sin(txRad); // applying rotation matrix to get velocities relative to the goal
+    this.vPerpindicular =
+        xVelocity * Math.cos(txRad)
+            - yVelocity * Math.sin(txRad);
+
     if (currentGoal != null && currentGoal.isValid()) {
       this.distance = (((41.275) / Math.tan((Math.toRadians(currentGoal.getTy() + 1.0)))) / 100.0);
     }
+
   }
 
   // TODO: below is how you properly designate return types / method descriptions in java --
@@ -71,7 +80,7 @@ public class Limelight {
 
       calculatedVel = (20.0 * (Math.round(
           (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
-              - yVelocity * 100)
+              - vParallel * 100)
               / 20.0))) - 120.0;
 
       lastCalculatedVel = calculatedVel;
@@ -90,9 +99,11 @@ public class Limelight {
       double dt = aimTimer.seconds();
       aimTimer.reset();
 
-      double error = currentGoal.getTx() - (currentColor.getAimPose() +
-          Math.toDegrees(Math.atan((this.xVelocity * .268) / ((this.yVelocity * .268) + this.distance)))
-      );
+      double leadAngleDeg =
+          Math.toDegrees(Math.atan((vPerpindicular * 0.268) / distance));
+
+      double error =
+          currentGoal.getTx() - (currentColor.getAimPose() + leadAngleDeg); //TODO Test without y + distance
 
       // Integral
       aimIntegral += error * dt;
