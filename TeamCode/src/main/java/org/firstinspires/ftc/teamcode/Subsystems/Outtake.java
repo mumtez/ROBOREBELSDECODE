@@ -51,7 +51,7 @@ public class Outtake {
 
   public void setPower(double pow) {
     this.flywheel1.setPower(pow);
-    this.flywheel2.setPower(pow); // TODO CHANGE THIS BEFORE TESTING
+    this.flywheel2.setPower(pow);
   }
 
   // --- Set target velocity ---
