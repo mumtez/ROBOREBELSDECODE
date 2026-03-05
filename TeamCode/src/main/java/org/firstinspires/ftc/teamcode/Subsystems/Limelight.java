@@ -22,7 +22,7 @@ public class Limelight {
 
   public static double AIM_DEADBAND = .4;
 
-  public static double AIM_RGB_THRESHOLD = 1;
+  public static double AIM_RGB_THRESHOLD = 2;
 
 
   public final Limelight3A limelight;
@@ -112,7 +112,7 @@ public class Limelight {
           Math.toDegrees(Math.atan((vPerpindicular * Math.sqrt((2 * ((1.192 * distance) - .85)) / 9.46)) / distance));
 
       double error =
-          currentGoal.getTx() - (currentColor.getAimPose() + leadAngleDeg);
+          currentGoal.getTx() - (currentColor.getAimPose() + leadAngleDeg * 1.25);
 
       // Integral
       aimIntegral += error * dt;
