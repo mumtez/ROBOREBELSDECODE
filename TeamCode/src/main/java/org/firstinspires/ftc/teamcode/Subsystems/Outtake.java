@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 @Configurable
@@ -32,14 +31,12 @@ public class Outtake {
   public DcMotorEx flywheel1;
   public DcMotorEx flywheel2;
 
-  public final Servo rgb;
   private double currentVelocity;
 
   // --- Constructor ---
   public Outtake(LinearOpMode opMode) {
     HardwareMap hardwareMap = opMode.hardwareMap;
-    rgb = hardwareMap.servo.get("rgb");
-    rgb.setPosition(.5);
+
     flywheel2 = hardwareMap.get(DcMotorEx.class, "flywheel2");
     flywheel2.setDirection(flywheelMotorDirection);
     flywheel2.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
@@ -65,13 +62,7 @@ public class Outtake {
 
   // --- Main PID update loop ---
   public double updatePIDControl() {
-    if (this.atTarget(20) && targetVelocity != 0) {
-      rgb.setPosition(.5);
-    } else if (this.atTarget(100) && targetVelocity != 0) {
-      rgb.setPosition(.375);
-    } else {
-      rgb.setPosition(.3);
-    }
+
     this.currentVelocity = this.flywheel1.getVelocity(); // ticks/sec
     double error = this.targetVelocity - this.currentVelocity;
 

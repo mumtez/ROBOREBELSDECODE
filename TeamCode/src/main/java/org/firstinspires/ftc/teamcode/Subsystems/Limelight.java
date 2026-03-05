@@ -6,6 +6,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes.FiducialResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 import java.util.List;
@@ -24,6 +25,8 @@ public class Limelight {
   public final Limelight3A limelight;
   private final AllianceColor currentColor;
   private final ElapsedTime aimTimer = new ElapsedTime();
+
+  public final Servo rgb;
 
   private LLResult currentGoal;
   private double lastCalculatedVel = Outtake.medSpeed;
@@ -45,6 +48,9 @@ public class Limelight {
     this.currentColor = color;
     this.limelight = hardwareMap.get(Limelight3A.class, "limelight");
     this.limelight.start();
+
+    this.rgb = hardwareMap.servo.get("rgb");
+    this.rgb.setPosition(.5);
   }
 
   public void updateAim(double xVelocity, double yVelocity) {
@@ -120,7 +126,10 @@ public class Limelight {
 
       if (Math.abs(error) < AIM_DEADBAND) {
         aimIntegral = 0;
+        rgb.setPosition(.5);
         return 0;
+      } else {
+        rgb.setPosition(.277);
       }
 
       double output = AIM_Kp * error
