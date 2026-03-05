@@ -22,6 +22,9 @@ public class Limelight {
 
   public static double AIM_DEADBAND = .4;
 
+  public static double AIM_RGB_THRESHOLD = 1;
+
+
   public final Limelight3A limelight;
   private final AllianceColor currentColor;
   private final ElapsedTime aimTimer = new ElapsedTime();
@@ -34,7 +37,6 @@ public class Limelight {
   private double aimLastError = 0;
 
 
-  private double vParallel;
   private double vPerpindicular;
 
   private double yVelocity;
@@ -61,12 +63,9 @@ public class Limelight {
     // Update Velocities and Angles
     double txRad = Math.toRadians(currentGoal.getTx());
 
-    this.vParallel =
-        yVelocity * Math.cos(txRad)
-            + xVelocity * Math.sin(txRad); // applying rotation matrix to get velocities relative to the goal
     this.vPerpindicular =
         xVelocity * Math.cos(txRad)
-            - yVelocity * Math.sin(txRad);
+            - yVelocity * Math.sin(txRad); // applying rotation matrix to get velocities relative to the goal
 
     this.yVelocity = yVelocity;
 
@@ -113,7 +112,7 @@ public class Limelight {
           Math.toDegrees(Math.atan((vPerpindicular * Math.sqrt((2 * ((1.192 * distance) - .85)) / 9.46)) / distance));
 
       double error =
-          currentGoal.getTx() - (currentColor.getAimPose() + leadAngleDeg); //TODO Test without y + distance
+          currentGoal.getTx() - (currentColor.getAimPose() + leadAngleDeg);
 
       // Integral
       aimIntegral += error * dt;
@@ -126,8 +125,11 @@ public class Limelight {
 
       if (Math.abs(error) < AIM_DEADBAND) {
         aimIntegral = 0;
-        rgb.setPosition(.5);
         return 0;
+      }
+
+      if (Math.abs(error) < AIM_RGB_THRESHOLD) {
+        rgb.setPosition(.5);
       } else {
         rgb.setPosition(.277);
       }
