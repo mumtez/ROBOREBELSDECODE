@@ -34,6 +34,8 @@ public class Limelight {
   private double vParallel;
   private double vPerpindicular;
 
+  private double yVelocity;
+
 
   public double distance;
 
@@ -60,6 +62,8 @@ public class Limelight {
         xVelocity * Math.cos(txRad)
             - yVelocity * Math.sin(txRad);
 
+    this.yVelocity = yVelocity;
+
     if (currentGoal != null && currentGoal.isValid()) {
       this.distance = (((41.275) / Math.tan((Math.toRadians(currentGoal.getTy() + 1.0)))) / 100.0);
     }
@@ -80,8 +84,8 @@ public class Limelight {
 
       calculatedVel = (20.0 * (Math.round(
           (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
-              - vParallel * 253)
-              / 20.0))) - 120.0;
+              - yVelocity * 253)
+              / 20.0))) - 140.0;
 
       lastCalculatedVel = calculatedVel;
 
