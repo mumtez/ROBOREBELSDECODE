@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 import java.util.List;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake.FlapperState;
@@ -24,6 +25,14 @@ public class Robot {
   public Follower follower;
   public DcMotor fr, fl, br, bl;
   public IMU imu;
+
+  public ServoImplEx tiltA, tiltB;
+
+  public static double TILT_A_FOLDED = 0.48;
+
+  public static double TILT_A_DEPLOYED = 0.72;
+  public static double TILT_B_FOLDED = 0.78;
+  public static double TILT_B_DEPLOYED = .5;
 
   public Outtake outtake;
   public Intake intake;
@@ -78,6 +87,11 @@ public class Robot {
     opMode.telemetry.addData("IMU Initialized", true);
     opMode.telemetry.update();
 
+    // Init Lift
+
+    tiltA = hardwareMap.get(ServoImplEx.class, "tiltA");
+    tiltB = hardwareMap.get(ServoImplEx.class, "tiltB");
+
     // Init Subsystems
     outtake = new Outtake(opMode);
     intake = new Intake(opMode);
@@ -87,6 +101,23 @@ public class Robot {
 
   public void initAuton() {
     this.intake.setCyclePosition(FlapperState.LOCKED);
+    this.setTiltFolded();
+  }
+
+
+  public void setTiltFolded() {
+    this.tiltA.setPosition(TILT_A_FOLDED);
+    this.tiltB.setPosition(TILT_B_FOLDED);
+  }
+
+  public void setTiltDeployed() {
+    this.tiltA.setPosition(TILT_A_DEPLOYED);
+    this.tiltB.setPosition(TILT_B_DEPLOYED);
+  }
+
+  public void setTiltPos(double posA, double posB) {
+    this.tiltA.setPosition(posA);
+    this.tiltB.setPosition(posB);
   }
 
   public AllianceColor getAllianceColor() {

@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 @Configurable
 @TeleOp(name = "SERVO TESTING", group = "TESTING")
@@ -14,6 +13,9 @@ public class ServoTest extends LinearOpMode {
   Robot robot;
   public static double OUTTAKE_TEST_POS = Intake.SHOOT_BASE;
   public static double CYCLER_TEST_POS = Intake.CYCLE_BASE;
+
+  public static double TILT_A_TEST_POS = Robot.TILT_A_FOLDED;
+  public static double TILT_B_TEST_POS = Robot.TILT_B_FOLDED;
 
 
   @Override
@@ -25,6 +27,8 @@ public class ServoTest extends LinearOpMode {
     while (opModeIsActive()) {
       robot.intake.setFlapperPos(OUTTAKE_TEST_POS);
       robot.intake.setCyclerPos(CYCLER_TEST_POS);
+
+      robot.setTiltPos(TILT_A_TEST_POS, TILT_B_TEST_POS);
 
       if (gamepad1.a) {
         robot.fl.setPower(1);

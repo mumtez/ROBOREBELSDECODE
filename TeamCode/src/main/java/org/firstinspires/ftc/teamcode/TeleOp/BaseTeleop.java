@@ -38,6 +38,7 @@ public class BaseTeleop {
     }
 
     // --- START ---
+    robot.setTiltFolded();
     while (opMode.opModeIsActive()) {
       robot.intake.updateSampleColor();
       robot.intake.updateAutoCycle();
@@ -116,6 +117,12 @@ public class BaseTeleop {
 
       if (this.opMode.gamepad2.left_bumper) {
         robot.intake.setPowerInverse(1);
+      }
+
+      if (this.opMode.gamepad1.dpadUpWasPressed()) {
+        robot.setTiltDeployed();
+      } else if (this.opMode.gamepad1.dpadLeftWasPressed()) {
+        robot.setTiltFolded();
       }
 
       // TELEMETRY
