@@ -14,7 +14,7 @@ public class Outtake {
 
   // --- PID constants (tune in Panels) ---
 
-  public static int medSpeed = 1360; //1380
+  public static int medSpeed = 1280; //1380
   public static int farSpeed = 1600;
 
   public static int cycleSpeed = 300;
