@@ -22,7 +22,7 @@ public class Limelight {
 
   public static double AIM_DEADBAND = .4;
 
-  public static double AIM_RGB_THRESHOLD = 2;
+  public static double AIM_RGB_THRESHOLD = 4;
 
 
   public final Limelight3A limelight;

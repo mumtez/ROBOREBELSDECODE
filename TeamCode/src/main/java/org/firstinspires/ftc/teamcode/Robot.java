@@ -28,11 +28,11 @@ public class Robot {
 
   public ServoImplEx tiltA, tiltB;
 
-  public static double TILT_A_FOLDED = 0.48;
+  public static double TILT_A_FOLDED = .98;
 
-  public static double TILT_A_DEPLOYED = 0.72;
-  public static double TILT_B_FOLDED = 0.78;
-  public static double TILT_B_DEPLOYED = .5;
+  public static double TILT_A_DEPLOYED = .4;
+  public static double TILT_B_FOLDED = .08;
+  public static double TILT_B_DEPLOYED = .6;
 
   public Outtake outtake;
   public Intake intake;
