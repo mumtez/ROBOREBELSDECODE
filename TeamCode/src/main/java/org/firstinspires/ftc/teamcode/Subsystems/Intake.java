@@ -50,7 +50,6 @@ public class Intake {
   public ServoImplEx gate;
   public ServoImplEx cycler;
 
-  public ServoImplEx intakeServo;
 
   public enum FlapperState {CYCLE, SHOOT, LOCKED}
 
@@ -68,8 +67,6 @@ public class Intake {
 
     gate = hardwareMap.get(ServoImplEx.class, "flapper");
     cycler = hardwareMap.get(ServoImplEx.class, "cycler");
-
-    intakeServo = hardwareMap.get(ServoImplEx.class, "intakeServo");
 
 
   }

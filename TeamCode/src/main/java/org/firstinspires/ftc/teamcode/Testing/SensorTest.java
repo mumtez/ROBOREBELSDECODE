@@ -45,7 +45,6 @@ public class SensorTest extends LinearOpMode {
         }
       }
 
-      telemetry.addData("INTAKE COLOR", robot.intake.updateSampleColor());
       telemetry.update();
     }
   }

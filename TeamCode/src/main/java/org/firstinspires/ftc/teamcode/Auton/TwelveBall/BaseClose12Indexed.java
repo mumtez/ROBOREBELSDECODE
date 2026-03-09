@@ -36,16 +36,16 @@ public class BaseClose12Indexed {
   public static double[] INTAKE_PPG_END_RED = {122, 86, 0};
 
   public static double[] OPEN_GATE_START = {118, 75, 0};
-  public static double[] OPEN_GATE_END = {124, 75, 0};
+  public static double[] OPEN_GATE_END = {121, 75, 0};
 
   public static double[] OPEN_GATE_CONTROL = {95, 80, 0};
 
 
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
-  public static double[] INTAKE_PGP_END_RED = {131, 60, 0};
+  public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
 
   public static double[] INTAKE_GPP_START_RED = {89, 36, 0};
-  public static double[] INTAKE_GPP_END_RED = {131, 36, 0};
+  public static double[] INTAKE_GPP_END_RED = {125, 36, 0};
 
   public static double[] PARK_POS = {89, 60, 0};
 
@@ -273,7 +273,7 @@ public class BaseClose12Indexed {
       robot.updateAutoControls();
     }
     intakeTimer.reset();
-    while (opMode.opModeIsActive() && intakeTimer.milliseconds() <= 600) {
+    while (opMode.opModeIsActive() && intakeTimer.milliseconds() <= 300) {
       robot.updateAutoControls();
     }
 

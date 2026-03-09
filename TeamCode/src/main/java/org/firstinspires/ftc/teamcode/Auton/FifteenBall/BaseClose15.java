@@ -20,10 +20,16 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 @Configurable
 public class BaseClose15 {
 
-  private static double INTAKE_TIMER_GATE = 4000;
+  private static double INTAKE_TIMER_GATE = 1200;
+
+  private static double INTAKE_TIMER_MOVE = 200;
+
+  private static double INTAKE_TIMER = 300;
+
+
   private static double GATE_DRIVE_MAX_POWER = .8;
 
-  private static double SHOOT_TIME = 1400;
+  private static double SHOOT_TIME = 1100;
 
 
   public static double[] START_RED = {114, 130, 39}; // 114.25, 130, 180
@@ -44,6 +50,7 @@ public class BaseClose15 {
 
 
   public static double[] INTAKE_CLASSIFIER = {126.5, 60.5, 25};
+  public static double[] INTAKE_CLASSIFIER_TWO = {130.5, 52.5, 35};
 
   int cycleCounter = 0;
 
@@ -51,14 +58,14 @@ public class BaseClose15 {
 
   public static double INTAKE_DRIVE_MAX_POWER = 1;
 
-  public static double[] PARK_POS = {89, 60, 0};
+  public static double[] PARK_POS = {80, 110, 0};
 
 
   PathChain
       shootPreLoad,
       preIntakePPG, intakePPG, shootPPG,
       preIntakePGP, intakePGP, shootPGP,
-      intakeClassifier, openGatePPG, openGatePGP, shootGate,
+      intakeClassifier, intakeClassifierTwo, openGatePPG, openGatePGP, shootGate,
       parkPath, shootGateIntake;
 
   public enum PathState {
@@ -119,7 +126,7 @@ public class BaseClose15 {
         .addPath(new BezierLine(poseFromArr(INTAKE_PPG_END_RED), poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(INTAKE_PPG_END_RED).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
-        .setTimeoutConstraint(100)
+        .setTimeoutConstraint(300)
         .build();
 
     preIntakePGP = robot.follower.pathBuilder()
@@ -138,14 +145,20 @@ public class BaseClose15 {
             poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(INTAKE_PGP_END_RED).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
-        .setTimeoutConstraint(100)
+        .setTimeoutConstraint(300)
         .build();
 
     intakeClassifier = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(shootPos), poseFromArr(INTAKE_CLASSIFIER)))
         .setLinearHeadingInterpolation(poseFromArr(shootPos).getHeading(), poseFromArr(INTAKE_CLASSIFIER).getHeading())
+
         .setTimeoutConstraint(50)
         .build();
+
+    intakeClassifierTwo = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArr(INTAKE_CLASSIFIER), poseFromArr(INTAKE_CLASSIFIER_TWO)))
+        .setLinearHeadingInterpolation(poseFromArr(INTAKE_CLASSIFIER).getHeading(),
+            poseFromArr(INTAKE_CLASSIFIER_TWO).getHeading()).setTimeoutConstraint(50).build();
 
     parkPath = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(PARK_POS)))
@@ -162,7 +175,7 @@ public class BaseClose15 {
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_START), poseFromArr(OPEN_GATE_END)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_START).getHeading(),
             poseFromArr(OPEN_GATE_END).getHeading())
-        .setTimeoutConstraint(3500)
+        .setTimeoutConstraint(100)
         .build();
 
     openGatePGP = robot.follower.pathBuilder()
@@ -173,7 +186,7 @@ public class BaseClose15 {
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_START), poseFromArr(OPEN_GATE_END)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_START).getHeading(),
             poseFromArr(OPEN_GATE_END).getHeading())
-        .setTimeoutConstraint(3500)
+        .setTimeoutConstraint(100)
         .build();
 
     shootGate = robot.follower.pathBuilder()
@@ -181,14 +194,14 @@ public class BaseClose15 {
             poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_END).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
-        .setTimeoutConstraint(100)
+        .setTimeoutConstraint(300)
         .build();
 
     shootGateIntake = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArr(INTAKE_CLASSIFIER), poseFromArrNonMirror(shootPos)))
-        .setLinearHeadingInterpolation(poseFromArr(INTAKE_CLASSIFIER).getHeading(),
+        .addPath(new BezierLine(poseFromArr(INTAKE_CLASSIFIER_TWO), poseFromArrNonMirror(shootPos)))
+        .setLinearHeadingInterpolation(poseFromArr(INTAKE_CLASSIFIER_TWO).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
-        .setTimeoutConstraint(100)
+        .setTimeoutConstraint(300)
         .build();
 
 
@@ -226,7 +239,7 @@ public class BaseClose15 {
 
       case GATE:
         cycleCounter++;
-        intakeGate(intakeClassifier);
+        intakeGate(intakeClassifier, intakeClassifierTwo);
 
         robot.intake.setPowerInverse(1);
 
@@ -254,6 +267,7 @@ public class BaseClose15 {
   }
 
   private void intakeThree(PathChain shootToIntake, PathChain intake) {
+
     robot.intake.setPower(Intake.POWER_INTAKE);
     robot.follower.followPath(shootToIntake, true);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
@@ -264,16 +278,30 @@ public class BaseClose15 {
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
     }
+    ElapsedTime intakeTimer = new ElapsedTime();
+    while (opMode.opModeIsActive() && intakeTimer.milliseconds() <= INTAKE_TIMER) {
+      robot.updateAutoControls();
+    }
+
   }
 
-  private void intakeGate(PathChain shootToIntake) {
+  private void intakeGate(PathChain shootToIntake, PathChain intakeToIntakeTwo) {
     ElapsedTime gateIntakeTimer = new ElapsedTime();
     robot.intake.setPower(Intake.POWER_INTAKE);
     robot.follower.followPath(shootToIntake, true);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
     }
+    gateIntakeTimer.reset();
+    while (opMode.opModeIsActive() && gateIntakeTimer.milliseconds() <= INTAKE_TIMER_MOVE) {
+      robot.updateAutoControls();
+    }
+    robot.follower.followPath(intakeToIntakeTwo, true);
 
+    while (opMode.opModeIsActive() && robot.follower.isBusy()) {
+      robot.updateAutoControls();
+    }
+    gateIntakeTimer.reset();
     while (opMode.opModeIsActive() && gateIntakeTimer.milliseconds() <= INTAKE_TIMER_GATE) {
       robot.updateAutoControls();
     }

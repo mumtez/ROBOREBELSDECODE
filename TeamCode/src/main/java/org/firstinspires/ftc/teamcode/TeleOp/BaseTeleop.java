@@ -40,7 +40,6 @@ public class BaseTeleop {
     // --- START ---
     robot.setTiltFolded();
     while (opMode.opModeIsActive()) {
-      robot.intake.updateSampleColor();
       robot.intake.updateAutoCycle();
       robot.follower.update();
 
@@ -91,7 +90,7 @@ public class BaseTeleop {
         if (this.opMode.gamepad1.right_bumper) {
           robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
         } else {
-          robot.outtake.setTargetVelocity(400);
+          robot.outtake.setTargetVelocity(1000); // 400
         }
       } else {
         if (this.opMode.gamepad2.dpad_up) {
