@@ -20,7 +20,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 @Configurable
 public class BaseClose15 {
 
-  private static final double INTAKE_TIMER_GATE = 4000;
+  private static double INTAKE_TIMER_GATE = 4000;
+  private static double GATE_DRIVE_MAX_POWER = .8;
 
   private static double SHOOT_TIME = 1400;
 
@@ -46,7 +47,7 @@ public class BaseClose15 {
 
   int cycleCounter = 0;
 
-  public static int CYCLE_LIMIT = 1;
+  public static int CYCLE_LIMIT = 2;
 
   public static double INTAKE_DRIVE_MAX_POWER = 1;
 
@@ -207,7 +208,7 @@ public class BaseClose15 {
 
         robot.intake.setPowerInverse(1); // TODO TEST ALL 2
 
-        robot.follower.followPath(openGatePGP, .8, true);
+        robot.follower.followPath(openGatePGP, GATE_DRIVE_MAX_POWER, true);
 
         shootThree(shootGate);
         setPathState(pathOrder.next());
@@ -217,7 +218,7 @@ public class BaseClose15 {
         intakeThree(preIntakePPG, intakePPG);
         robot.intake.setPowerInverse(1); // TODO TEST ALL 2
 
-        robot.follower.followPath(openGatePPG, .8, true);
+        robot.follower.followPath(openGatePPG, GATE_DRIVE_MAX_POWER, true);
 
         shootThree(shootGate);
         setPathState(pathOrder.next());
@@ -253,12 +254,12 @@ public class BaseClose15 {
   }
 
   private void intakeThree(PathChain shootToIntake, PathChain intake) {
+    robot.intake.setPower(Intake.POWER_INTAKE);
     robot.follower.followPath(shootToIntake, true);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
     }
 
-    robot.intake.setPower(Intake.POWER_INTAKE);
     robot.follower.followPath(intake, INTAKE_DRIVE_MAX_POWER, false);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
@@ -267,12 +268,12 @@ public class BaseClose15 {
 
   private void intakeGate(PathChain shootToIntake) {
     ElapsedTime gateIntakeTimer = new ElapsedTime();
+    robot.intake.setPower(Intake.POWER_INTAKE);
     robot.follower.followPath(shootToIntake, true);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
     }
 
-    robot.intake.setPower(Intake.POWER_INTAKE);
     while (opMode.opModeIsActive() && gateIntakeTimer.milliseconds() <= INTAKE_TIMER_GATE) {
       robot.updateAutoControls();
     }
