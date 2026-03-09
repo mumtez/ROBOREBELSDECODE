@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 @Configurable
 public class BaseClose15 {
 
-  private static final double INTAKE_TIMER_GATE = 2000;
+  private static final double INTAKE_TIMER_GATE = 4000;
 
   private static double SHOOT_TIME = 1400;
 
@@ -35,7 +35,7 @@ public class BaseClose15 {
   public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
 
   public static double[] OPEN_GATE_START = {118, 74, 0};
-  public static double[] OPEN_GATE_END = {122.75, 74, 0}; //TODO 73
+  public static double[] OPEN_GATE_END = {122.75, 74, 0};
 
   public static double[] OPEN_GATE_CONTROL_PPG = {105, 72, 0};
 
@@ -205,7 +205,9 @@ public class BaseClose15 {
 
         intakeThree(preIntakePGP, intakePGP);
 
-        robot.follower.followPath(openGatePGP, .8, true); // TODO TEST
+        robot.intake.setPowerInverse(1); // TODO TEST ALL 2
+
+        robot.follower.followPath(openGatePGP, .8, true);
 
         shootThree(shootGate);
         setPathState(pathOrder.next());
@@ -213,6 +215,7 @@ public class BaseClose15 {
       case PPG:
 
         intakeThree(preIntakePPG, intakePPG);
+        robot.intake.setPowerInverse(1); // TODO TEST ALL 2
 
         robot.follower.followPath(openGatePPG, .8, true);
 
@@ -278,12 +281,12 @@ public class BaseClose15 {
 
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
-    robot.intake.setPower(Intake.POWER_INTAKE);
+    // robot.intake.setPower(Intake.POWER_INTAKE); // TODO test without this
     while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
       robot.updateAutoControls();
     }
     robot.follower.followPath(intakeToShoot, true);
-    while (opMode.opModeIsActive() && (robot.follower.isBusy())) { // Todo Test and in 12
+    while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
       robot.updateAutoControls();
     }
     shootTimer.reset();
