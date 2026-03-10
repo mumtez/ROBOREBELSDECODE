@@ -140,6 +140,7 @@ public class BaseFar15 {
       case PRELOAD:
         ElapsedTime preloadTimer = new ElapsedTime();
         robot.follower.followPath(shootPreLoad);
+
         while (opMode.opModeIsActive() && robot.follower.isBusy()) {
           robot.updateAutoControls();
           botVelocity = robot.follower.getVelocity();
@@ -149,11 +150,16 @@ public class BaseFar15 {
                   / 100.0);
           robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
         }
+
         preloadTimer.reset();
         while (opMode.opModeIsActive() && preloadTimer.milliseconds() < PRELOAD_SHOOT_TIME) {
           robot.updateAutoControls();
         }
+        
         robot.intake.setCyclePosition(FlapperState.LOCKED);
+        robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
+            (botVelocity.getXComponent() * 2.54)
+                / 100.0);
         robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
 
         setPathState(pathOrder.next());
