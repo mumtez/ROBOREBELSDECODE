@@ -36,14 +36,10 @@ public class Limelight {
   private double aimIntegral = 0;
   private double aimLastError = 0;
 
-
-  private double vPerpindicular;
-
+  private double vPerpendicular;
   private double yVelocity;
 
-
   public double distance;
-
 
   public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -63,7 +59,7 @@ public class Limelight {
     // Update Velocities and Angles
     double txRad = Math.toRadians(currentGoal.getTx());
 
-    this.vPerpindicular =
+    this.vPerpendicular =
         xVelocity * Math.cos(txRad)
             - yVelocity * Math.sin(txRad); // applying rotation matrix to get velocities relative to the goal
 
@@ -74,9 +70,6 @@ public class Limelight {
     }
 
   }
-
-  // TODO: below is how you properly designate return types / method descriptions in java --
-  //        do the same for other methods.
 
   /**
    * Calculates the target velocity for the shooter based on the current teleop goal tag reading
@@ -103,16 +96,24 @@ public class Limelight {
     return lastCalculatedVel;
   }
 
+  private double calculateLeadAngleDegrees() {
+    return Math.toDegrees(Math.atan((vPerpendicular * Math.sqrt((2 * ((1.192 * distance) - .85)) / 9.46)) / distance));
+  }
+
+  public double calculateError() {
+    return currentGoal.getTx() - (currentColor.getAimPose() + this.calculateLeadAngleDegrees() * 1.25);
+  }
+
+  public boolean hasValidTarget() {
+    return currentGoal != null && currentGoal.isValid();
+  }
+
   public double updateAimPID(float rot) { // returns the turn power from pid for autoaiming
-    if (currentGoal != null && currentGoal.isValid()) {
+    if (this.hasValidTarget()) {
       double dt = aimTimer.seconds();
       aimTimer.reset();
 
-      double leadAngleDeg =
-          Math.toDegrees(Math.atan((vPerpindicular * Math.sqrt((2 * ((1.192 * distance) - .85)) / 9.46)) / distance));
-
-      double error =
-          currentGoal.getTx() - (currentColor.getAimPose() + leadAngleDeg * 1.25);
+      double error = this.calculateError();
 
       // Integral
       aimIntegral += error * dt;
@@ -145,7 +146,6 @@ public class Limelight {
     }
     return rot;
   }
-
 
   public int getPatternIdAuto() { // only for auto just returns the tag id for patterns
     this.limelight.pipelineSwitch(0);
