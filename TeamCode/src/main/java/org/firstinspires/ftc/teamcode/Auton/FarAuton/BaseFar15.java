@@ -26,7 +26,7 @@ public class BaseFar15 {
 
   private static double SHOOT_TIME = 1100;
 
-  private static double PRELOAD_SHOOT_TIME = 300;
+  private static double PRELOAD_SHOOT_TIME = 1100;
 
 
   public static double[] START_RED = {88, 8, 90};
@@ -100,7 +100,6 @@ public class BaseFar15 {
         .addPath(new BezierLine(poseFromArr(START_RED), poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(START_RED).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
-        .addParametricCallback(.3, () -> robot.intake.setCyclePosition(FlapperState.SHOOT))
         .setTimeoutConstraint(300)
 
         .build();
@@ -138,29 +137,29 @@ public class BaseFar15 {
   public void autonomousPathUpdate() {
     switch (pathState) {
       case PRELOAD:
+
         ElapsedTime preloadTimer = new ElapsedTime();
         robot.follower.followPath(shootPreLoad);
 
         while (opMode.opModeIsActive() && robot.follower.isBusy()) {
           robot.updateAutoControls();
-          botVelocity = robot.follower.getVelocity();
-          botVelocity.rotateVector(-robot.follower.getHeading());
-          robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
-              (botVelocity.getXComponent() * 2.54)
-                  / 100.0);
-          robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
+
+
         }
+
+        robot.limelight.updateAim(0, 0);
+        robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
+        while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
+          robot.updateAutoControls();
+        }
+        robot.intake.setCyclePosition(FlapperState.SHOOT);
 
         preloadTimer.reset();
         while (opMode.opModeIsActive() && preloadTimer.milliseconds() < PRELOAD_SHOOT_TIME) {
           robot.updateAutoControls();
         }
-        
+
         robot.intake.setCyclePosition(FlapperState.LOCKED);
-        robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
-            (botVelocity.getXComponent() * 2.54)
-                / 100.0);
-        robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
 
         setPathState(pathOrder.next());
         break;

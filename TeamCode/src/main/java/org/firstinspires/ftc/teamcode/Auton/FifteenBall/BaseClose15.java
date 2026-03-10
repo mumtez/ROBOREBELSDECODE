@@ -32,7 +32,7 @@ public class BaseClose15 {
 
   private static double SHOOT_TIME = 1100;
 
-  private static double PRELOAD_SHOOT_TIME = 300;
+  private static double PRELOAD_SHOOT_TIME = 600;
 
 
   public static double[] START_RED = {114, 130, 39}; // 114.25, 130, 180
@@ -114,7 +114,7 @@ public class BaseClose15 {
         .addPath(new BezierLine(poseFromArr(START_RED), poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(START_RED).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
-        .addParametricCallback(.3, () -> robot.intake.setCyclePosition(FlapperState.SHOOT))
+        .addParametricCallback(.6, () -> robot.intake.setCyclePosition(FlapperState.SHOOT))
         .setTimeoutConstraint(300)
 
         .build();
@@ -227,7 +227,7 @@ public class BaseClose15 {
           robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
               (botVelocity.getXComponent() * 2.54)
                   / 100.0);
-          robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
+          robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity() - 100);
         }
         preloadTimer.reset();
         while (opMode.opModeIsActive() && preloadTimer.milliseconds() < PRELOAD_SHOOT_TIME) {
