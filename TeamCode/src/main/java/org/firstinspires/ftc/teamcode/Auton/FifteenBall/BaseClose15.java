@@ -5,6 +5,7 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -30,6 +31,8 @@ public class BaseClose15 {
   private static double GATE_DRIVE_MAX_POWER = .8;
 
   private static double SHOOT_TIME = 1100;
+
+  private static double PRELOAD_SHOOT_TIME = 300;
 
 
   public static double[] START_RED = {114, 130, 39}; // 114.25, 130, 180
@@ -82,6 +85,9 @@ public class BaseClose15 {
   final LinearOpMode opMode;
   final Telemetry telemetry;
 
+  Vector botVelocity = new Vector();
+
+
   public BaseClose15(LinearOpMode opMode, Robot robot, double[] shootPos) {
     this.opMode = opMode;
     this.telemetry = opMode.telemetry;
@@ -108,7 +114,9 @@ public class BaseClose15 {
         .addPath(new BezierLine(poseFromArr(START_RED), poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(START_RED).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
+        .addParametricCallback(.3, () -> robot.intake.setCyclePosition(FlapperState.SHOOT))
         .setTimeoutConstraint(300)
+
         .build();
 
     preIntakePPG = robot.follower.pathBuilder()
@@ -210,8 +218,23 @@ public class BaseClose15 {
   public void autonomousPathUpdate() {
     switch (pathState) {
       case PRELOAD:
-
-        shootThree(shootPreLoad);
+        ElapsedTime preloadTimer = new ElapsedTime();
+        robot.follower.followPath(shootPreLoad);
+        while (opMode.opModeIsActive() && robot.follower.isBusy()) {
+          robot.updateAutoControls();
+          botVelocity = robot.follower.getVelocity();
+          botVelocity.rotateVector(-robot.follower.getHeading());
+          robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
+              (botVelocity.getXComponent() * 2.54)
+                  / 100.0);
+          robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
+        }
+        preloadTimer.reset();
+        while (opMode.opModeIsActive() && preloadTimer.milliseconds() < PRELOAD_SHOOT_TIME) {
+          robot.updateAutoControls();
+        }
+        robot.intake.setCyclePosition(FlapperState.LOCKED);
+        robot.outtake.setTargetVelocity(Outtake.medSpeed);
 
         setPathState(pathOrder.next());
         break;
@@ -219,7 +242,7 @@ public class BaseClose15 {
 
         intakeThree(preIntakePGP, intakePGP);
 
-        robot.intake.setPowerInverse(1); // TODO TEST ALL 2
+        robot.intake.setPowerInverse(1);
 
         robot.follower.followPath(openGatePGP, GATE_DRIVE_MAX_POWER, true);
 
@@ -229,7 +252,7 @@ public class BaseClose15 {
       case PPG:
 
         intakeThree(preIntakePPG, intakePPG);
-        robot.intake.setPowerInverse(1); // TODO TEST ALL 2
+        robot.intake.setPowerInverse(1);
 
         robot.follower.followPath(openGatePPG, GATE_DRIVE_MAX_POWER, true);
 
@@ -342,7 +365,7 @@ public class BaseClose15 {
 
     // START
     robot.follower.setStartingPose(poseFromArr(START_RED));
-    robot.outtake.setTargetVelocity(Outtake.medSpeed);
+    // TODO add back if moving doesnt work
     robot.intake.setPower(1);
 
     pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GATE, PathState.PARK, PathState.STOP).iterator();
