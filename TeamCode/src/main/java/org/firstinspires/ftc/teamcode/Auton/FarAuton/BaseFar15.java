@@ -125,11 +125,10 @@ public class BaseFar15 {
   }
 
   public void autonomousPathUpdate() {
-    // TODO: add if (global timer >= 29s && pathState !== PARK) --> setPathState(PARK)
     if (globalTimer.seconds() >= 29 && pathState != PathState.PARK) {
       pathState = PathState.PARK;
     }
-    
+
     switch (pathState) {
       case PRELOAD:
         ElapsedTime preloadTimer = new ElapsedTime();
