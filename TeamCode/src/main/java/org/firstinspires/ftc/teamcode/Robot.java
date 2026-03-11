@@ -104,7 +104,6 @@ public class Robot {
     this.setTiltFolded();
   }
 
-
   public void setTiltFolded() {
     this.tiltA.setPosition(TILT_A_FOLDED);
     this.tiltB.setPosition(TILT_B_FOLDED);

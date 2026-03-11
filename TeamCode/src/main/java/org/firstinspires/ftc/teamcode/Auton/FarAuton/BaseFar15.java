@@ -5,7 +5,6 @@ import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.Vector;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -16,46 +15,29 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake.FlapperState;
+import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 @Configurable
 public class BaseFar15 {
 
+  public static double INTAKE_TIMER = 300;
+  public static double SHOOT_TIME = 1100;
+  public static double PRELOAD_SHOOT_TIME = 1100;
 
-  private static double INTAKE_TIMER = 300;
-
-
-  private static double SHOOT_TIME = 1100;
-
-  private static double PRELOAD_SHOOT_TIME = 1100;
+  public static int CYCLE_LIMIT = 5;
+  public static double INTAKE_DRIVE_MAX_POWER = 1;
 
 
   public static double[] START_RED = {88, 8, 90};
-
-
   public static double[] INTAKE_HP_START_RED = {118, 12, 0};
-
   public static double[] INTAKE_HP_MIDDLE_RED = {131, 12, 0};
-
   public static double[] INTAKE_HP_CONTROL_RED = {100, 16, 0};
-
-
   public static double[] INTAKE_HP_END_RED = {131, 20, 0};
-
+  public static double[] PARK_POS = {80, 110, 0};
 
   int cycleCounter = 0;
 
-  public static int CYCLE_LIMIT = 5;
-
-  public static double INTAKE_DRIVE_MAX_POWER = 1;
-
-  public static double[] PARK_POS = {80, 110, 0};
-
-
-  PathChain
-      shootPreLoad,
-      preIntakeHP, intakeHP, shootHP,
-
-  parkPath;
+  PathChain shootPreLoad, preIntakeHP, intakeHP, shootHP, parkPath;
 
   public enum PathState {
     PRELOAD, CYCLE, STOP, PARK
@@ -65,14 +47,11 @@ public class BaseFar15 {
   private Iterator<PathState> pathOrder;
 
   private final Timer pathTimer = new Timer();
-  private final double[] shootPos; // This is the one non mirrored point
+  private final double[] shootPos; // This is the one non-mirrored point
 
   final Robot robot;
   final LinearOpMode opMode;
   final Telemetry telemetry;
-
-  Vector botVelocity = new Vector();
-
 
   public BaseFar15(LinearOpMode opMode, Robot robot, double[] shootPos) {
     this.opMode = opMode;
@@ -95,63 +74,71 @@ public class BaseFar15 {
   }
 
   void buildPaths() {
-
     shootPreLoad = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(START_RED), poseFromArrNonMirror(shootPos)))
-        .setLinearHeadingInterpolation(poseFromArr(START_RED).getHeading(),
-            poseFromArrNonMirror(shootPos).getHeading())
+        .setLinearHeadingInterpolation(
+            poseFromArr(START_RED).getHeading(),
+            poseFromArrNonMirror(shootPos).getHeading()
+        )
         .setTimeoutConstraint(300)
-
         .build();
 
     preIntakeHP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_HP_START_RED)))
-        .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
-            poseFromArr(INTAKE_HP_START_RED).getHeading())
+        .setLinearHeadingInterpolation(
+            poseFromArrNonMirror(shootPos).getHeading(),
+            poseFromArr(INTAKE_HP_START_RED).getHeading()
+        )
         .setTimeoutConstraint(50)
         .build();
+
     intakeHP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_HP_START_RED), poseFromArr(INTAKE_HP_MIDDLE_RED)))
-        .addPath(new BezierCurve(poseFromArr(INTAKE_HP_MIDDLE_RED), poseFromArr(INTAKE_HP_CONTROL_RED),
-            poseFromArr(INTAKE_HP_END_RED)))
+        .addPath(new BezierCurve(
+            poseFromArr(INTAKE_HP_MIDDLE_RED),
+            poseFromArr(INTAKE_HP_CONTROL_RED),
+            poseFromArr(INTAKE_HP_END_RED))
+        )
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_HP_START_RED).getHeading())
         .setTimeoutConstraint(50)
         .build();
+
     shootHP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_HP_END_RED), poseFromArrNonMirror(shootPos)))
-        .setLinearHeadingInterpolation(poseFromArr(INTAKE_HP_END_RED).getHeading(),
-            poseFromArrNonMirror(shootPos).getHeading())
+        .setLinearHeadingInterpolation(
+            poseFromArr(INTAKE_HP_END_RED).getHeading(),
+            poseFromArrNonMirror(shootPos).getHeading()
+        )
         .setTimeoutConstraint(300)
         .build();
 
     parkPath = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(PARK_POS)))
-        .setLinearHeadingInterpolation(poseFromArrNonMirror(shootPos).getHeading(),
-            poseFromArr(PARK_POS).getHeading())
+        .setLinearHeadingInterpolation(
+            poseFromArrNonMirror(shootPos).getHeading(),
+            poseFromArr(PARK_POS).getHeading()
+        )
         .setTimeoutConstraint(50)
         .build();
-
-
   }
 
   public void autonomousPathUpdate() {
+    // TODO: add if (global timer >= 29s && pathState !== PARK) --> setPathState(PARK)
+
     switch (pathState) {
       case PRELOAD:
-
         ElapsedTime preloadTimer = new ElapsedTime();
-        robot.follower.followPath(shootPreLoad);
 
+        robot.follower.followPath(shootPreLoad);
         while (opMode.opModeIsActive() && robot.follower.isBusy()) {
           robot.updateAutoControls();
-
-
         }
 
         robot.limelight.updateAim(0, 0);
         robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
-        while (opMode.opModeIsActive() && !robot.outtake.atTarget()) {
+        do {
           robot.updateAutoControls();
-        }
+        } while (opMode.opModeIsActive() && !robot.outtake.atTarget());
         robot.intake.setCyclePosition(FlapperState.SHOOT);
 
         preloadTimer.reset();
@@ -176,14 +163,15 @@ public class BaseFar15 {
           setPathState(pathOrder.next());
         }
         break;
-      case PARK:
 
+      case PARK:
         robot.follower.followPath(parkPath);
         while (opMode.opModeIsActive() && robot.follower.isBusy()) {
           robot.updateAutoControls();
         }
         setPathState(pathOrder.next());
         break;
+
       case STOP:
         robot.intake.setPower(0);
         robot.outtake.setTargetVelocity(0);
@@ -194,7 +182,6 @@ public class BaseFar15 {
   }
 
   private void intakeThree(PathChain shootToIntake, PathChain intake) {
-
     robot.intake.setPower(Intake.POWER_INTAKE);
     robot.follower.followPath(shootToIntake, true);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
@@ -209,24 +196,25 @@ public class BaseFar15 {
     while (opMode.opModeIsActive() && intakeTimer.milliseconds() <= INTAKE_TIMER) {
       robot.updateAutoControls();
     }
-
   }
 
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
-    // robot.intake.setPower(Intake.POWER_INTAKE); // TODO test without this
-    while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
+    while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
     }
+
     robot.follower.followPath(intakeToShoot, true);
-    while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
+    while (opMode.opModeIsActive() && robot.follower.isBusy()) {
       robot.updateAutoControls();
     }
+
     shootTimer.reset();
     robot.intake.setCyclePosition(FlapperState.SHOOT);
     while (opMode.opModeIsActive() && shootTimer.milliseconds() < SHOOT_TIME) {
       robot.updateAutoControls();
     }
+
     robot.intake.setCyclePosition(FlapperState.LOCKED);
   }
 
@@ -235,18 +223,15 @@ public class BaseFar15 {
     // INIT
     buildPaths();
     robot.initAuton();
+    this.opMode.waitForStart();
 
-    // INIT LOOP
-    while (this.opMode.opModeInInit()) {
-
-    }
-
+    // START
     telemetry.addData("ALLIANCE", robot.getAllianceColor());
     telemetry.update();
 
     // START
     robot.follower.setStartingPose(poseFromArr(START_RED));
-    // TODO add back if moving doesnt work
+    robot.outtake.setTargetVelocity(Outtake.farSpeed);
     robot.intake.setPower(1);
 
     pathOrder = List.of(PathState.CYCLE, PathState.PARK, PathState.STOP).iterator();
@@ -258,7 +243,6 @@ public class BaseFar15 {
 
       telemetry.addData("Path State", pathState);
       telemetry.addData("Current Cycle", cycleCounter);
-
       telemetry.update();
     }
   }
