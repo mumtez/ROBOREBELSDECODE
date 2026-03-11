@@ -32,8 +32,6 @@ public class BaseClose15 {
 
   private static double SHOOT_TIME = 1100;
 
-  private static double PRELOAD_SHOOT_TIME = 600;
-
 
   public static double[] START_RED = {114, 130, 39}; // 114.25, 130, 180
   public static double[] SHOOT_CONTROL = {70, 46, 0};
@@ -61,7 +59,7 @@ public class BaseClose15 {
 
   public static double INTAKE_DRIVE_MAX_POWER = 1;
 
-  public static double[] PARK_POS = {80, 110, 0};
+  public static double[] PARK_POS = {90, 70, 0};
 
 
   PathChain
