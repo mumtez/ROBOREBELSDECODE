@@ -47,7 +47,7 @@ public class LimelightHeadingInterpolator implements HeadingInterpolator {
     }
 
     double currentHeading = follower.getHeading();
-    double targetAngleDeg = limelight.calculateError();
+    double targetAngleDeg = limelight.calculateErrorNoConstant();
     return MathFunctions.normalizeAngle(currentHeading - Math.toRadians(targetAngleDeg));
   }
 }

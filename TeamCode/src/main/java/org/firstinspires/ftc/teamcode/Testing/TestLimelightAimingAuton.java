@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake.FlapperState;
 import org.firstinspires.ftc.teamcode.pedroPathing.custom.LimelightHeadingInterpolator;
 
 @Configurable
@@ -35,6 +35,7 @@ public class TestLimelightAimingAuton extends LinearOpMode {
         .addPath(new BezierLine(startPose, endPose))
         .setHeadingInterpolation(new LimelightHeadingInterpolator(robot.limelight, robot.follower, FALLBACK_ANGLE))
         .setHeadingConstraint(Math.toRadians(180)) // Required since we are not going to the end pose heading
+        .addParametricCallback(.5, () -> robot.intake.setCyclePosition(FlapperState.SHOOT))
         .build();
 
     PathChain path2 = robot.follower.pathBuilder()
@@ -46,11 +47,13 @@ public class TestLimelightAimingAuton extends LinearOpMode {
     waitForStart();
 
     robot.follower.setStartingPose(startPose);
-    robot.outtake.setTargetVelocity(Outtake.medSpeed);
+
+    robot.intake.setPower(1);
 
     robot.follower.followPath(path1);
     while (opModeIsActive() && robot.follower.isBusy()) {
       robot.follower.update();
+      robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
       sendTelemetry();
     }
 

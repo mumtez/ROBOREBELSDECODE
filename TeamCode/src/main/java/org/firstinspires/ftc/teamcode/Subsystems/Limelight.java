@@ -104,6 +104,10 @@ public class Limelight {
     return currentGoal.getTx() - (currentColor.getAimPose() + this.calculateLeadAngleDegrees() * 1.25);
   }
 
+  public double calculateErrorNoConstant() {
+    return currentGoal.getTx() - (currentColor.getAimPose() + this.calculateLeadAngleDegrees());
+  }
+
   public boolean hasValidTarget() {
     return currentGoal != null && currentGoal.isValid();
   }

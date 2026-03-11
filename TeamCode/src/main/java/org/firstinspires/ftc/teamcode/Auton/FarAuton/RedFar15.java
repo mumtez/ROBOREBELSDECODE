@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 @Autonomous(name = "RED FAR", group = "RED")
 public class RedFar15 extends LinearOpMode {
 
-  public static double[] SHOOT_RED = {84, 12, 66};
+  public static double[] SHOOT_RED = {84, 12, 67.5};
 
   @Override
   public void runOpMode() throws InterruptedException {
