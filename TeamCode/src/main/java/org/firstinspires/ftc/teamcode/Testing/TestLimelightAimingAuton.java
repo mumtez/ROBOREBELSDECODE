@@ -19,7 +19,7 @@ public class TestLimelightAimingAuton extends LinearOpMode {
 
   public static double[] START_POSE = {0, 0, 0};
   public static double[] END_POSE = {25, 25, 0};
-  public static double FALLBACK_ANGLE = 0;
+  public static double FALLBACK_ANGLE = 135;
 
   Robot robot;
 
