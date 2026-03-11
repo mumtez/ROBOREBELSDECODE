@@ -49,6 +49,8 @@ public class BaseFar15 {
   private final Timer pathTimer = new Timer();
   private final double[] shootPos; // This is the one non-mirrored point
 
+  ElapsedTime globalTimer = new ElapsedTime();
+
   final Robot robot;
   final LinearOpMode opMode;
   final Telemetry telemetry;
@@ -124,7 +126,10 @@ public class BaseFar15 {
 
   public void autonomousPathUpdate() {
     // TODO: add if (global timer >= 29s && pathState !== PARK) --> setPathState(PARK)
-
+    if (globalTimer.seconds() >= 29 && pathState != PathState.PARK) {
+      pathState = PathState.PARK;
+    }
+    
     switch (pathState) {
       case PRELOAD:
         ElapsedTime preloadTimer = new ElapsedTime();
@@ -235,6 +240,8 @@ public class BaseFar15 {
     robot.intake.setPower(1);
 
     pathOrder = List.of(PathState.CYCLE, PathState.PARK, PathState.STOP).iterator();
+
+    globalTimer.reset();
 
     // LOOP
     while (this.opMode.opModeIsActive()) {
