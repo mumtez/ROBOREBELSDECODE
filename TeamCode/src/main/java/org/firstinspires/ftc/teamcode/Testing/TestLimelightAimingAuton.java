@@ -35,25 +35,23 @@ public class TestLimelightAimingAuton extends LinearOpMode {
         .addPath(new BezierLine(startPose, endPose))
         .setHeadingInterpolation(new LimelightHeadingInterpolator(robot.limelight, robot.follower, FALLBACK_ANGLE))
         .setHeadingConstraint(Math.toRadians(180)) // Required since we are not going to the end pose heading
-        .addParametricCallback(.5, () -> robot.intake.setCyclePosition(FlapperState.SHOOT))
         .build();
 
     PathChain path2 = robot.follower.pathBuilder()
         .addPath(new BezierLine(endPose, startPose))
         .setHeadingInterpolation(new LimelightHeadingInterpolator(robot.limelight, robot.follower, FALLBACK_ANGLE))
         .setHeadingConstraint(Math.toRadians(180)) // Required since we are not going to the end pose heading
+        .addParametricCallback(.5, () -> robot.intake.setCyclePosition(FlapperState.SHOOT))
+
         .build();
 
     waitForStart();
 
     robot.follower.setStartingPose(startPose);
 
-    robot.intake.setPower(1);
-
     robot.follower.followPath(path1);
     while (opModeIsActive() && robot.follower.isBusy()) {
       robot.follower.update();
-      robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
       sendTelemetry();
     }
 

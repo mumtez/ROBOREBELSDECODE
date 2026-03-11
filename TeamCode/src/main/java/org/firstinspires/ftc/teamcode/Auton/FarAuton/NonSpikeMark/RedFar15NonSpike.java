@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton.TwelveBall;
+package org.firstinspires.ftc.teamcode.Auton.FarAuton.NonSpikeMark;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -7,14 +7,14 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Robot;
 
 @Configurable
-@Autonomous(name = "RED CLOSE 12", group = "RED")
-public class RedClose12Indexed extends LinearOpMode {
+@Autonomous(name = "RED FAR NO SPIKE", group = "RED")
+public class RedFar15NonSpike extends LinearOpMode {
 
-  public static double[] SHOOT_RED = {82, 90, 42};
+  public static double[] SHOOT_RED = {90, 12, 67};
 
   @Override
   public void runOpMode() throws InterruptedException {
     Robot robot = new Robot(this, AllianceColor.RED);
-    new BaseClose12Indexed(this, robot, SHOOT_RED).run();
+    new BaseFar15NonSpike(this, robot, SHOOT_RED).run();
   }
 }

@@ -16,8 +16,8 @@ public enum AllianceColor {
 
     @Override
     public int getAimPose() {
-      return -3;
-    } //-4
+      return -4;
+    } //-3
   },
   BLUE {
     @Override

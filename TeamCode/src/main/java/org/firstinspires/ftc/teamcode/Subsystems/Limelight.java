@@ -88,10 +88,10 @@ public class Limelight {
       lastCalculatedVel = calculatedVel;
 
       if (distance > 2.5) {
-        return calculatedVel + 80;
+        return calculatedVel + 60;
 
       }
-      return calculatedVel + 20;
+      return calculatedVel;
     }
     return lastCalculatedVel;
   }

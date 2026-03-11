@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton.FarAuton;
+package org.firstinspires.ftc.teamcode.Auton.FarAuton.SpikeMark;
 
 
 import com.bylazar.configurables.annotations.Configurable;
@@ -18,9 +18,9 @@ import org.firstinspires.ftc.teamcode.Subsystems.Intake.FlapperState;
 import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 
 @Configurable
-public class BaseFar15 {
+public class BaseFar15Spike {
 
-  public static double INTAKE_TIMER = 300;
+  public static double INTAKE_TIMER = 200;
   public static double SHOOT_TIME = 1100;
   public static double PRELOAD_SHOOT_TIME = 1100;
 
@@ -29,18 +29,24 @@ public class BaseFar15 {
 
 
   public static double[] START_RED = {88, 8, 90};
-  public static double[] INTAKE_HP_START_RED = {118, 12, 0};
+  public static double[] INTAKE_HP_START_RED = {118, 9, 0};
   public static double[] INTAKE_HP_MIDDLE_RED = {131, 9, 0};
   public static double[] INTAKE_HP_CONTROL_RED = {100, 16, 0};
   public static double[] INTAKE_HP_END_RED = {137, 23, 0};
-  public static double[] PARK_POS = {80, 110, 0};
+  public static double[] PARK_POS = {105, 37, 0};
+
+
+  public static double[] INTAKE_SPIKE_START_RED = {105, 37, 0};
+
+  public static double[] INTAKE_SPIKE_END_RED = {135, 37, 0};
+
 
   int cycleCounter = 0;
 
-  PathChain shootPreLoad, preIntakeHP, intakeHP, shootHP, parkPath;
+  PathChain shootPreLoad, preIntakeHP, intakeHP, shootHP, parkPath, intakeSpike, shootSpike;
 
   public enum PathState {
-    PRELOAD, CYCLE, STOP, PARK
+    PRELOAD, INTAKE, CYCLE, STOP, PARK
   }
 
   private PathState pathState = PathState.PRELOAD;
@@ -55,7 +61,7 @@ public class BaseFar15 {
   final LinearOpMode opMode;
   final Telemetry telemetry;
 
-  public BaseFar15(LinearOpMode opMode, Robot robot, double[] shootPos) {
+  public BaseFar15Spike(LinearOpMode opMode, Robot robot, double[] shootPos) {
     this.opMode = opMode;
     this.telemetry = opMode.telemetry;
     this.robot = robot;
@@ -94,6 +100,30 @@ public class BaseFar15 {
         .setTimeoutConstraint(50)
         .build();
 
+    intakeSpike = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_SPIKE_START_RED)))
+        .setLinearHeadingInterpolation(
+            poseFromArrNonMirror(shootPos).getHeading(),
+            poseFromArr(INTAKE_SPIKE_START_RED).getHeading()
+        )
+
+        .addPath(new BezierLine(poseFromArrNonMirror(INTAKE_SPIKE_START_RED), poseFromArr(INTAKE_SPIKE_END_RED)))
+        .setLinearHeadingInterpolation(
+            poseFromArrNonMirror(INTAKE_SPIKE_START_RED).getHeading(),
+            poseFromArr(INTAKE_SPIKE_END_RED).getHeading()
+        )
+        .setTimeoutConstraint(50)
+        .build();
+
+    shootSpike = robot.follower.pathBuilder()
+        .addPath(new BezierLine(poseFromArrNonMirror(INTAKE_SPIKE_END_RED), poseFromArr(shootPos)))
+        .setLinearHeadingInterpolation(
+            poseFromArrNonMirror(INTAKE_SPIKE_END_RED).getHeading(),
+            poseFromArr(shootPos).getHeading()
+        )
+        .setTimeoutConstraint(50)
+        .build();
+
     intakeHP = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_HP_START_RED), poseFromArr(INTAKE_HP_MIDDLE_RED)))
         .addPath(new BezierCurve(
@@ -125,7 +155,7 @@ public class BaseFar15 {
   }
 
   public void autonomousPathUpdate() {
-    if (globalTimer.seconds() >= 29 && pathState != PathState.PARK) {
+    if (globalTimer.seconds() >= 27 && pathState != PathState.PARK) {
       pathState = PathState.PARK;
     }
 
@@ -152,6 +182,13 @@ public class BaseFar15 {
 
         robot.intake.setCyclePosition(FlapperState.LOCKED);
 
+        setPathState(pathOrder.next());
+        break;
+
+      case INTAKE:
+        intakeThree(intakeSpike);
+
+        shootThree(shootSpike);
         setPathState(pathOrder.next());
         break;
 
@@ -202,6 +239,19 @@ public class BaseFar15 {
     }
   }
 
+  private void intakeThree(PathChain shootToIntake) {
+    robot.intake.setPower(Intake.POWER_INTAKE);
+    robot.follower.followPath(shootToIntake, true);
+    while (opMode.opModeIsActive() && robot.follower.isBusy()) {
+      robot.updateAutoControls();
+    }
+
+    ElapsedTime intakeTimer = new ElapsedTime();
+    while (opMode.opModeIsActive() && intakeTimer.milliseconds() <= INTAKE_TIMER) {
+      robot.updateAutoControls();
+    }
+  }
+
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
@@ -238,7 +288,7 @@ public class BaseFar15 {
     robot.outtake.setTargetVelocity(Outtake.farSpeed);
     robot.intake.setPower(1);
 
-    pathOrder = List.of(PathState.CYCLE, PathState.PARK, PathState.STOP).iterator();
+    pathOrder = List.of(PathState.INTAKE, PathState.CYCLE, PathState.PARK, PathState.STOP).iterator();
 
     globalTimer.reset();
 
