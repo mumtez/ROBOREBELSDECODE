@@ -114,7 +114,6 @@ public class BaseClose15 {
         .addPath(new BezierLine(poseFromArr(START_RED), poseFromArrNonMirror(shootPos)))
         .setLinearHeadingInterpolation(poseFromArr(START_RED).getHeading(),
             poseFromArrNonMirror(shootPos).getHeading())
-        .addParametricCallback(.6, () -> robot.intake.setCyclePosition(FlapperState.SHOOT))
         .setTimeoutConstraint(300)
 
         .build();
@@ -218,23 +217,7 @@ public class BaseClose15 {
   public void autonomousPathUpdate() {
     switch (pathState) {
       case PRELOAD:
-        ElapsedTime preloadTimer = new ElapsedTime();
-        robot.follower.followPath(shootPreLoad);
-        while (opMode.opModeIsActive() && robot.follower.isBusy()) {
-          robot.updateAutoControls();
-          botVelocity = robot.follower.getVelocity();
-          botVelocity.rotateVector(-robot.follower.getHeading());
-          robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
-              (botVelocity.getXComponent() * 2.54)
-                  / 100.0);
-          robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity() - 100);
-        }
-        preloadTimer.reset();
-        while (opMode.opModeIsActive() && preloadTimer.milliseconds() < PRELOAD_SHOOT_TIME) {
-          robot.updateAutoControls();
-        }
-        robot.intake.setCyclePosition(FlapperState.LOCKED);
-        robot.outtake.setTargetVelocity(Outtake.medSpeed);
+        shootThree(shootPreLoad);
 
         setPathState(pathOrder.next());
         break;
@@ -333,7 +316,6 @@ public class BaseClose15 {
 
   private void shootThree(PathChain intakeToShoot) {
     ElapsedTime shootTimer = new ElapsedTime();
-    // robot.intake.setPower(Intake.POWER_INTAKE); // TODO test without this
     while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
       robot.updateAutoControls();
     }
@@ -365,7 +347,7 @@ public class BaseClose15 {
 
     // START
     robot.follower.setStartingPose(poseFromArr(START_RED));
-    // TODO add back if moving doesnt work
+    robot.outtake.setTargetVelocity(Outtake.medSpeed);
     robot.intake.setPower(1);
 
     pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GATE, PathState.PARK, PathState.STOP).iterator();
