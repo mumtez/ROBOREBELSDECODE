@@ -131,7 +131,7 @@ public class BaseClose12Indexed {
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_START), poseFromArr(OPEN_GATE_END)))
         .setLinearHeadingInterpolation(poseFromArr(OPEN_GATE_START).getHeading(),
             poseFromArr(OPEN_GATE_END).getHeading())
-        .setTimeoutConstraint(200) //TODO Test
+        .setTimeoutConstraint(200)
         .build();
     shootGate = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArrNonMirror(shootPos)))
