@@ -155,7 +155,7 @@ public class BaseFar15Spike {
   }
 
   public void autonomousPathUpdate() {
-    if (globalTimer.seconds() >= 27 && pathState != PathState.PARK) {
+    if (globalTimer.seconds() >= 27 && pathState != PathState.PARK && pathState != PathState.STOP) {
       pathState = PathState.PARK;
     }
 

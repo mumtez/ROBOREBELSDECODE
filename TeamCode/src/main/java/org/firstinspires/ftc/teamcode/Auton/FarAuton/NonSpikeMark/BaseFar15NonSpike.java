@@ -125,7 +125,7 @@ public class BaseFar15NonSpike {
   }
 
   public void autonomousPathUpdate() {
-    if (globalTimer.seconds() >= 27 && pathState != PathState.PARK) {
+    if (globalTimer.seconds() >= 27 && pathState != PathState.PARK && pathState != PathState.STOP) {
       pathState = PathState.PARK;
     }
 
