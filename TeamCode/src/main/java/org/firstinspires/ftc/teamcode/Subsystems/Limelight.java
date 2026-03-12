@@ -163,4 +163,8 @@ public class Limelight {
     return 21;
   }
 
+  public void setPipeline(AllianceColor color) {
+    this.limelight.pipelineSwitch(color.getLLPipelineTeleOP());
+  }
+
 }

@@ -227,6 +227,7 @@ public class BaseFar15NonSpike {
     // INIT
     buildPaths();
     robot.initAuton();
+    robot.limelight.setPipeline(robot.getAllianceColor());
     this.opMode.waitForStart();
 
     // START

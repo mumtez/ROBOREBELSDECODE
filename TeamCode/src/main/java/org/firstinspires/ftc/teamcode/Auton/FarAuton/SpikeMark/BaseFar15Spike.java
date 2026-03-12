@@ -277,6 +277,7 @@ public class BaseFar15Spike {
     // INIT
     buildPaths();
     robot.initAuton();
+    robot.limelight.setPipeline(robot.getAllianceColor());
     this.opMode.waitForStart();
 
     // START

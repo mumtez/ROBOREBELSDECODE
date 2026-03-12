@@ -21,12 +21,11 @@ import org.firstinspires.ftc.teamcode.Subsystems.Pattern;
 @Configurable
 public class BaseClose12Indexed {
 
-  private static double SHOOT_POWER = .8;
-
-  // TODO: take care when naming variables that their names represent their usage properly.
-
+  private static double SHOOT_POWER = .7; // Testing this slightly slower
 
   private static double SHOOT_TIME = 2200;
+
+  private static double SHOOT_TIME_QUICK = 1100;
 
 
   public static double[] START_RED = {114.25, 130, 180};
@@ -190,7 +189,7 @@ public class BaseClose12Indexed {
     switch (pathState) {
       case PRELOAD:
 
-        shootThree(shootPreLoad);
+        shootThree(shootPreLoad, 1, SHOOT_TIME_QUICK);
 
         setPathState(pathOrder.next());
         break;
@@ -299,6 +298,25 @@ public class BaseClose12Indexed {
     robot.intake.setCyclePosition(FlapperState.LOCKED);
   }
 
+  private void shootThree(PathChain intakeToShoot, double shootPower, double shootTime) {
+    ElapsedTime shootTimer = new ElapsedTime();
+    while (opMode.opModeIsActive() && (robot.follower.isBusy())) {
+      robot.updateAutoControls();
+    }
+    robot.follower.followPath(intakeToShoot, true);
+    while (opMode.opModeIsActive() && (robot.follower.isBusy() || !robot.intake.isCycleFinished())) {
+      robot.updateAutoControls();
+    }
+    shootTimer.reset();
+    robot.intake.setPower(shootPower);
+    robot.intake.setCyclePosition(FlapperState.SHOOT);
+    while (opMode.opModeIsActive() && shootTimer.milliseconds() < shootTime) {
+      robot.updateAutoControls();
+    }
+    robot.intake.setPower(1);
+    robot.intake.setCyclePosition(FlapperState.LOCKED);
+  }
+
 
   public void run() {
     // INIT
@@ -329,7 +347,7 @@ public class BaseClose12Indexed {
 
     // START
     robot.follower.setStartingPose(poseFromArr(START_RED));
-    robot.outtake.setTargetVelocity(Outtake.medSpeed);
+    robot.outtake.setTargetVelocity(Outtake.medSpeed - 40);
     robot.intake.setPower(1);
 
     switch (pattern) {
