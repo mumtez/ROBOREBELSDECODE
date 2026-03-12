@@ -29,7 +29,7 @@ public class BaseClose12Indexed {
 
 
   public static double[] START_RED = {114.25, 130, 180};
-  public static double[] SHOOT_CONTROL = {70, 66, 0}; //46 = y
+  public static double[] SHOOT_CONTROL = {66, 60, 0}; //46 = y
 
   public static double[] INTAKE_PPG_START_RED = {89, 86, 0};
   public static double[] INTAKE_PPG_END_RED = {122, 86, 0};
