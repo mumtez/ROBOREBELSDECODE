@@ -30,9 +30,9 @@ public class Robot {
 
   public static double TILT_A_FOLDED = .98;
 
-  public static double TILT_A_DEPLOYED = .4;
+  public static double TILT_A_DEPLOYED = 0.49;
   public static double TILT_B_FOLDED = .08;
-  public static double TILT_B_DEPLOYED = .6;
+  public static double TILT_B_DEPLOYED = 0.55;
 
   public Outtake outtake;
   public Intake intake;

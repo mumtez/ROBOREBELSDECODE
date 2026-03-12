@@ -59,7 +59,7 @@ public class BaseClose15 {
 
   public static double INTAKE_DRIVE_MAX_POWER = 1;
 
-  public static double[] PARK_POS = {90, 70, 0};
+  public static double[] PARK_POS = {94, 65, 0};
 
 
   PathChain

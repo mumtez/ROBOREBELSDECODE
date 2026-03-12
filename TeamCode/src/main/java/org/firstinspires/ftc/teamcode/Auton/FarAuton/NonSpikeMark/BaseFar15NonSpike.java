@@ -29,7 +29,7 @@ public class BaseFar15NonSpike {
 
 
   public static double[] START_RED = {88, 8, 90};
-  public static double[] INTAKE_HP_START_RED = {118, 12, 0};
+  public static double[] INTAKE_HP_START_RED = {118, 9, 0};
   public static double[] INTAKE_HP_MIDDLE_RED = {131, 9, 0};
   public static double[] INTAKE_HP_CONTROL_RED = {100, 16, 0};
   public static double[] INTAKE_HP_END_RED = {137, 23, 0};

@@ -36,9 +36,9 @@ public class BaseFar15Spike {
   public static double[] PARK_POS = {105, 37, 0};
 
 
-  public static double[] INTAKE_SPIKE_START_RED = {105, 37, 0};
+  public static double[] INTAKE_SPIKE_START_RED = {105, 35, 0};
 
-  public static double[] INTAKE_SPIKE_END_RED = {135, 37, 0};
+  public static double[] INTAKE_SPIKE_END_RED = {135, 35, 0};
 
 
   int cycleCounter = 0;
