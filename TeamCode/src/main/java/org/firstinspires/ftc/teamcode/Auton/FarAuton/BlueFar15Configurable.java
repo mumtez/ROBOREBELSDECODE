@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton.FarAuton.SpikeMark;
+package org.firstinspires.ftc.teamcode.Auton.FarAuton;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -7,14 +7,14 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 import org.firstinspires.ftc.teamcode.Robot;
 
 @Configurable
-@Autonomous(name = "RED FAR SPIKE", group = "RED")
-public class RedFar15Spike extends LinearOpMode {
+@Autonomous(name = "BLUE FAR CONFIGURABLE", group = "BLUE")
+public class BlueFar15Configurable extends LinearOpMode {
 
-  public static double[] SHOOT_RED = {90, 15, 67};
+  public static double[] SHOOT_BLUE = {66, 15, 100};
 
   @Override
   public void runOpMode() throws InterruptedException {
-    Robot robot = new Robot(this, AllianceColor.RED);
-    new BaseFar15Spike(this, robot, SHOOT_RED).run();
+    Robot robot = new Robot(this, AllianceColor.BLUE);
+    new BaseFar15(this, robot, SHOOT_BLUE).run();
   }
 }

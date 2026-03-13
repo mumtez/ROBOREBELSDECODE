@@ -45,8 +45,6 @@ public class Outtake {
     flywheel1.setDirection(flywheelMotorDirection);
     flywheel1.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     flywheel1.setMode(RunMode.RUN_WITHOUT_ENCODER);
-
-
   }
 
   public void setPower(double pow) {
@@ -62,7 +60,6 @@ public class Outtake {
 
   // --- Main PID update loop ---
   public double updatePIDControl() {
-
     this.currentVelocity = this.flywheel1.getVelocity(); // ticks/sec
     double error = this.targetVelocity - this.currentVelocity;
 
