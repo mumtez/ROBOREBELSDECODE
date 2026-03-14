@@ -36,7 +36,7 @@ public class BaseClose15 extends BaseAuton {
   public static double[] OPEN_GATE_CONTROL_PGP = {105, 62, 0};
 
   public static double[] INTAKE_CLASSIFIER = {126.5, 60.5, 25};
-  public static double[] INTAKE_CLASSIFIER_TWO = {130.5, 52.5, 35};
+  public static double[] INTAKE_CLASSIFIER_TWO = {128.5, 52.5, 35}; //130.5
 
   public static double[] PARK_POS = {94, 65, 0};
 

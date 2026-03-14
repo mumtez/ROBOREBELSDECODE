@@ -210,6 +210,7 @@ public class BaseFar15 extends BaseAuton {
     robot.intake.setPower(Intake.POWER_INTAKE);
 
     List<PathState> paths = new ArrayList<>(List.of(PathState.CYCLE, PathState.PARK, PathState.STOP));
+
     if (this.spikePath) {
       paths.add(0, PathState.SPIKE);
     }
