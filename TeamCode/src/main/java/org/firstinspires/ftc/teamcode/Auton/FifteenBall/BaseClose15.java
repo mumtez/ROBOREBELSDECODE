@@ -109,9 +109,9 @@ public class BaseClose15 extends BaseAuton {
         .build();
 
     intakeClassifier = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArr(shootPos), poseFromArr(INTAKE_CLASSIFIER)))
+        .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_CLASSIFIER)))
         .setLinearHeadingInterpolation(
-            poseFromArr(shootPos).getHeading(),
+            poseFromArrNonMirror(shootPos).getHeading(), // TODO TEST FOR BLUE
             poseFromArr(INTAKE_CLASSIFIER).getHeading()
         )
         .setTimeoutConstraint(50)
