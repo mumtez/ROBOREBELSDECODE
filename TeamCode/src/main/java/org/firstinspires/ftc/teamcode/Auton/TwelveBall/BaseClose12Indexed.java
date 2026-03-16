@@ -27,7 +27,7 @@ public class BaseClose12Indexed extends BaseAuton {
 
   public static double[] OPEN_GATE_START = {118, 75, 0};
   public static double[] OPEN_GATE_CONTROL = {95, 80, 0};
-  public static double[] OPEN_GATE_END = {121, 75, 0};
+  public static double[] OPEN_GATE_END = {122, 75, 0};
 
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
   public static double[] INTAKE_PGP_END_RED = {125, 60, 0};

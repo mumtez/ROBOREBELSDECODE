@@ -83,12 +83,12 @@ public class Limelight {
       calculatedVel = (20.0 * (Math.round(
           (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
               - yVelocity * 253)
-              / 20.0))) - 140.0;
+              / 20.0))) - 100.0; // 140
 
       lastCalculatedVel = calculatedVel;
 
       if (distance > 2.5) {
-        return calculatedVel + 60;
+        return calculatedVel + 40;
 
       }
       return calculatedVel;

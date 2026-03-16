@@ -30,7 +30,7 @@ public class BaseClose15 extends BaseAuton {
   public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
 
   public static double[] OPEN_GATE_START = {118, 74, 0};
-  public static double[] OPEN_GATE_END = {122.75, 74, 0};
+  public static double[] OPEN_GATE_END = {123.75, 74, 0};
 
   public static double[] OPEN_GATE_CONTROL_PPG = {105, 72, 0};
   public static double[] OPEN_GATE_CONTROL_PGP = {105, 62, 0};

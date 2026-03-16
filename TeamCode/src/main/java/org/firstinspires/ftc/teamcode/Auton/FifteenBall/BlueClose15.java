@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 @Autonomous(name = "BLUE CLOSE 15", group = "BLUE")
 public class BlueClose15 extends LinearOpMode {
 
-  public static double[] SHOOT_BLUE = {60, 80, 128};
+  public static double[] SHOOT_BLUE = {60, 80, 132};
 
   @Override
   public void runOpMode() throws InterruptedException {
