@@ -57,13 +57,12 @@ public class BaseTeleop {
             (botVelocity.getXComponent() * 2.54)
                 / 100.0); // Getting velocities in inches / sec and converting to meters / sec
 
-        rx = robot.limelight.updateAimPID(rotStickAvg); // auto aim
+        robot.limelight.updateErrorAndTarget(robot.intake.getTurretPosDegrees()); // update things
+        robot.intake.setPowerTurret(robot.limelight.updateAimPID()); // auto aim turret
 
 
-      } else {
-        rx = rotStickAvg; // normal drive
       }
-      this.fieldCentricDrive(x, y, rx);
+      this.fieldCentricDrive(x, y, rotStickAvg);
 
       // OUTTAKE
       if (this.opMode.gamepad2.triangle) {
@@ -103,17 +102,11 @@ public class BaseTeleop {
 
       // INTAKE
       if (this.opMode.gamepad1.right_trigger > 0.05 || this.opMode.gamepad1.left_trigger > 0.05) {
-        robot.intake.setPower(this.opMode.gamepad1.right_trigger - this.opMode.gamepad1.left_trigger);
+        robot.intake.setIntakePower(this.opMode.gamepad1.right_trigger - this.opMode.gamepad1.left_trigger);
       } else if (this.opMode.gamepad2.right_trigger > 0.05 || this.opMode.gamepad2.left_trigger > 0.05) {
-        robot.intake.setPower(this.opMode.gamepad2.right_trigger - this.opMode.gamepad2.left_trigger);
-      } else if (this.opMode.gamepad2.left_bumper) {
-        robot.intake.setPowerInverse(1);
+        robot.intake.setIntakePower(this.opMode.gamepad2.right_trigger - this.opMode.gamepad2.left_trigger);
       } else {
-        robot.intake.setPower(0);
-      }
-
-      if (this.opMode.gamepad2.left_bumper) {
-        robot.intake.setPowerInverse(1);
+        robot.intake.setIntakePower(0);
       }
 
       if (this.opMode.gamepad1.dpadUpWasPressed()) {

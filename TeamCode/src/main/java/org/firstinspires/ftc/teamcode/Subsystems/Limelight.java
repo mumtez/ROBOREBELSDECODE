@@ -32,6 +32,8 @@ public class Limelight {
   public final Servo rgb;
 
   private LLResult currentGoal;
+
+  private double lastAimPos = 0;
   private double lastCalculatedVel = Outtake.medSpeed;
   private double aimIntegral = 0;
   private double aimLastError = 0;
@@ -39,7 +41,10 @@ public class Limelight {
   private double vPerpendicular;
   private double yVelocity;
 
+  private double target = 0;
+
   public double distance;
+  private double error;
 
   public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -101,10 +106,6 @@ public class Limelight {
   }
 
   public double calculateError() {
-    return currentGoal.getTx() - (currentColor.getAimPose() + this.calculateLeadAngleDegrees() * 1.25);
-  }
-
-  public double calculateErrorNoConstant() {
     return currentGoal.getTx() - (currentColor.getAimPose() + this.calculateLeadAngleDegrees());
   }
 
@@ -112,12 +113,35 @@ public class Limelight {
     return currentGoal != null && currentGoal.isValid();
   }
 
-  public double updateAimPID(float rot) { // returns the turn power from pid for autoaiming
+  public void updateErrorAndTarget(double turretPos) {
+    target = turretPos + this.calculateError();
+
+    // wrap
+    target = ((target % 360) + 360) % 360;
+
+    // define no-go zone (350 -> 10 wrap zone)
+    boolean inNoGo =
+        (target >= 350 || target <= 10);
+
+    if (inNoGo) {
+
+      double distToSafeA = Math.abs(target - 10);
+      double distToSafeB = Math.abs(target - 350);
+
+      if (distToSafeA < distToSafeB) {
+        target = 10;
+      } else {
+        target = 350;
+      }
+    }
+    error = target - turretPos;
+  }
+
+
+  public double updateAimPID() { // returns the turn power from pid for autoaiming
     if (this.hasValidTarget()) {
       double dt = aimTimer.seconds();
       aimTimer.reset();
-
-      double error = this.calculateError();
 
       // Integral
       aimIntegral += error * dt;
@@ -146,10 +170,12 @@ public class Limelight {
 
       // Clamp for safety
       output = Range.clip(output, -1.0, 1.0);
+      lastAimPos = output;
       return output;   // return turn power
     }
-    return rot;
+    return lastAimPos;
   }
+
 
   public int getPatternIdAuto() { // only for auto just returns the tag id for patterns
     this.limelight.pipelineSwitch(0);

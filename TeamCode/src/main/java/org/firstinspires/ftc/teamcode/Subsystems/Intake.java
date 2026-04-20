@@ -22,7 +22,7 @@ public class Intake {
   public static Direction intakeMotorDirection = Direction.FORWARD;
   public static Direction intakeMotorAltDirection = Direction.FORWARD;
   public final DcMotor intakeMotor;
-  public final DcMotor intakeMotorAlt;
+  public final DcMotor turret;
 
 
   private enum CycleState {PENDING, OPEN, CLOSE, CLOSE_DELAY}
@@ -38,13 +38,9 @@ public class Intake {
   private int remainingCycles = 0;
 
   public static double SHOOT_BASE = 1;
-  public static double SHOOT_CYCLE = .52;
-
-  public static double SHOOT_POS = 0.39;
 
 
   public static double CYCLE_BASE = 1;
-  public static double CYCLE_DEPLOY = 0;
 
 
   public ServoImplEx gate;
@@ -57,13 +53,18 @@ public class Intake {
     HardwareMap hardwareMap = opMode.hardwareMap;
 
     intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
-    intakeMotorAlt = hardwareMap.get(DcMotorEx.class, "intakealt");
+    turret = hardwareMap.get(DcMotorEx.class, "turret");
+
     intakeMotor.setDirection(intakeMotorDirection);
-    intakeMotorAlt.setDirection(intakeMotorAltDirection);
+    turret.setDirection(intakeMotorAltDirection);
+
     intakeMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-    intakeMotorAlt.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+    turret.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
+
     intakeMotor.setMode(RunMode.RUN_WITHOUT_ENCODER);
-    intakeMotorAlt.setMode(RunMode.RUN_WITHOUT_ENCODER);
+    turret.setMode(RunMode.RUN_WITHOUT_ENCODER);
+
+    turret.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
     gate = hardwareMap.get(ServoImplEx.class, "flapper");
     cycler = hardwareMap.get(ServoImplEx.class, "cycler");
@@ -75,16 +76,13 @@ public class Intake {
   public void setCyclePosition(FlapperState state) {
     switch (state) {
       case CYCLE:
-        gate.setPosition(SHOOT_CYCLE);
-        cycler.setPosition(CYCLE_DEPLOY);
+
         break;
       case SHOOT:
-        gate.setPosition(SHOOT_POS);
-        cycler.setPosition(CYCLE_BASE);
+
         break;
       case LOCKED:
-        gate.setPosition(SHOOT_BASE);
-        cycler.setPosition(CYCLE_BASE);
+
         break;
     }
   }
@@ -97,14 +95,16 @@ public class Intake {
     cycler.setPosition(pos);
   }
 
-  public void setPower(double pow) {
+  public void setIntakePower(double pow) {
     intakeMotor.setPower(pow);
-    intakeMotorAlt.setPower(pow);
   }
 
-  public void setPowerInverse(double pow) {
-    intakeMotor.setPower(-pow);
-    intakeMotorAlt.setPower(pow);
+  public void setPowerTurret(double pow) {
+    turret.setPower(pow);
+  }
+
+  public double getTurretPosDegrees() {
+    return turret.getCurrentPosition() * 2.6701388889;
   }
 
   public void cycle(int num) {

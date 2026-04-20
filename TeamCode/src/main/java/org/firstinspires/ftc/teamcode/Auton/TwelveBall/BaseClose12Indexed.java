@@ -263,7 +263,7 @@ public class BaseClose12Indexed extends BaseAuton {
         break;
 
       case STOP:
-        robot.intake.setPower(0);
+        robot.intake.setIntakePower(0);
         robot.outtake.setTargetVelocity(0);
         robot.intake.setCyclePosition(FlapperState.LOCKED);
         break;
@@ -307,7 +307,7 @@ public class BaseClose12Indexed extends BaseAuton {
     // START
     robot.follower.setStartingPose(poseFromArr(START_RED));
     robot.outtake.setTargetVelocity(Outtake.medSpeed - 40);
-    robot.intake.setPower(1);
+    robot.intake.setIntakePower(1);
 
     switch (pattern) {
       case GPP:

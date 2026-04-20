@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 @Configurable
 public class BaseFar15 extends BaseAuton {
 
- 
+
   public static int CYCLE_LIMIT = 5;
   public static double PRELOAD_SHOOT_TIME = 1100;
 
@@ -172,7 +172,7 @@ public class BaseFar15 extends BaseAuton {
         break;
 
       case STOP:
-        robot.intake.setPower(0);
+        robot.intake.setIntakePower(0);
         robot.outtake.setTargetVelocity(0);
         robot.intake.setCyclePosition(FlapperState.LOCKED);
         break;
@@ -207,7 +207,7 @@ public class BaseFar15 extends BaseAuton {
     globalTimer.reset();
     robot.follower.setStartingPose(poseFromArr(START_RED));
     robot.outtake.setTargetVelocity(Outtake.farSpeed);
-    robot.intake.setPower(Intake.POWER_INTAKE);
+    robot.intake.setIntakePower(Intake.POWER_INTAKE);
 
     List<PathState> paths = new ArrayList<>(List.of(PathState.CYCLE, PathState.PARK, PathState.STOP));
 

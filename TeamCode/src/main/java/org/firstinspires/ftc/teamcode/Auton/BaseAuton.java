@@ -81,7 +81,7 @@ public class BaseAuton {
 
     // Set intake speed + open shooting game
     ElapsedTime shootTimer = new ElapsedTime();
-    robot.intake.setPower(intakeShootPower);
+    robot.intake.setIntakePower(intakeShootPower);
     robot.intake.setCyclePosition(FlapperState.SHOOT);
 
     // Shoot for shootTime ms
@@ -90,20 +90,19 @@ public class BaseAuton {
     }
 
     // Stop the intake and close the shooting gate
-    robot.intake.setPower(
+    robot.intake.setIntakePower(
         0); // TODO: added this to try to save some power. Remove or add fix outside this method if breaks something.
     robot.intake.setCyclePosition(FlapperState.LOCKED);
   }
 
   /**
-   *
    * @param preIntake        NULLABLE - path to follow before intake path. If `null` skipped
    * @param intake           path along which to intake
    * @param intakeDrivePower max power to drive the intake path with
    * @param intakeTime       time to idle intaking after completing the intake path
    */
   public void intakeThree(PathChain preIntake, PathChain intake, double intakeDrivePower, int intakeTime) {
-    robot.intake.setPower(Intake.POWER_INTAKE);
+    robot.intake.setIntakePower(Intake.POWER_INTAKE);
 
     if (preIntake != null) {
       robot.follower.followPath(preIntake);

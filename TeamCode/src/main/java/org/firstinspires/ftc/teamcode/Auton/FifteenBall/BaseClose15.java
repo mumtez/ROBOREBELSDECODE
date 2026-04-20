@@ -196,7 +196,7 @@ public class BaseClose15 extends BaseAuton {
         break;
 
       case STOP:
-        robot.intake.setPower(0);
+        robot.intake.setIntakePower(0);
         robot.outtake.setTargetVelocity(0);
         robot.intake.setCyclePosition(FlapperState.LOCKED);
         break;
@@ -205,7 +205,7 @@ public class BaseClose15 extends BaseAuton {
 
   private void intakeGate(PathChain shootToIntake, PathChain intakeToIntakeTwo) {
     ElapsedTime gateIntakeTimer = new ElapsedTime();
-    robot.intake.setPower(Intake.POWER_INTAKE);
+    robot.intake.setIntakePower(Intake.POWER_INTAKE);
 
     robot.follower.followPath(shootToIntake, true);
     while (opMode.opModeIsActive() && robot.follower.isBusy()) {
@@ -241,7 +241,7 @@ public class BaseClose15 extends BaseAuton {
     // START
     robot.follower.setStartingPose(poseFromArr(START_RED));
     robot.outtake.setTargetVelocity(Outtake.medSpeed);
-    robot.intake.setPower(1);
+    robot.intake.setIntakePower(1);
 
     pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GATE, PathState.PARK, PathState.STOP).iterator();
 
