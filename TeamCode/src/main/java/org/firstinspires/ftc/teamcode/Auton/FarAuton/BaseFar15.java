@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 @Configurable
 public class BaseFar15 extends BaseAuton {
 
-
+ 
   public static int CYCLE_LIMIT = 5;
   public static double PRELOAD_SHOOT_TIME = 1100;
 
