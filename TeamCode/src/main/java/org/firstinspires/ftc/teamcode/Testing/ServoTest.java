@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 public class ServoTest extends LinearOpMode {
 
   Robot robot;
-  public static double OUTTAKE_TEST_POS = Intake.SHOOT_BASE;
-  public static double CYCLER_TEST_POS = Intake.CYCLE_BASE;
+  public static double OUTTAKE_TEST_POS = Intake.FLAPPER_LOCKED;
+  public static double CYCLER_TEST_POS = Intake.CYCLER_LOCKED;
 
   public static double TILT_A_TEST_POS = Robot.TILT_A_FOLDED;
   public static double TILT_B_TEST_POS = Robot.TILT_B_FOLDED;

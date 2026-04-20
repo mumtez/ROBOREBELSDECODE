@@ -31,16 +31,18 @@ public class Intake {
 
   public static int CLOSE_DELAY = 500;
 
+  public static double FLAPPER_SHOOT = 0;
+
+  public static double FLAPPER_LOCKED = 0;
+
+  public static double CYCLER_LOCKED = 0;
+
+
   private CycleState cycleState = CycleState.PENDING;
 
   ElapsedTime cycleTimer = new ElapsedTime();
 
   private int remainingCycles = 0;
-
-  public static double SHOOT_BASE = 1;
-
-
-  public static double CYCLE_BASE = 1;
 
 
   public ServoImplEx gate;
@@ -79,10 +81,10 @@ public class Intake {
 
         break;
       case SHOOT:
-
+        this.setFlapperPos(FLAPPER_SHOOT);
         break;
       case LOCKED:
-
+        this.setFlapperPos(FLAPPER_LOCKED);
         break;
     }
   }
@@ -104,7 +106,7 @@ public class Intake {
   }
 
   public double getTurretPosDegrees() {
-    return turret.getCurrentPosition() * 2.6701388889;
+    return turret.getCurrentPosition() / 2.6701388889;
   }
 
   public void cycle(int num) {

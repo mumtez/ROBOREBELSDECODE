@@ -67,8 +67,6 @@ public class BaseTeleop {
       // OUTTAKE
       if (this.opMode.gamepad2.triangle) {
         robot.intake.setCyclePosition(FlapperState.SHOOT);
-      } else if (this.opMode.gamepad2.squareWasPressed()) {
-        robot.intake.cycleIncrementByNum(1);
       } else if (robot.intake.isCycleFinished()) {
         robot.intake.setCyclePosition(FlapperState.LOCKED);
       }

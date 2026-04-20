@@ -15,10 +15,10 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 @Configurable
 public class Limelight {
 
-  public static double AIM_Kp = 0.016;
-  public static double AIM_Ki = 0.0;
-  public static double AIM_Kd = 0.0017;
-  public static double AIM_Ks = 0.06;
+  public static double AIM_Kp = 0;
+  public static double AIM_Ki = 0;
+  public static double AIM_Kd = 0;
+  public static double AIM_Ks = 0;
 
   public static double AIM_DEADBAND = .4;
 
@@ -39,12 +39,14 @@ public class Limelight {
   private double aimLastError = 0;
 
   private double vPerpendicular;
-  private double yVelocity;
+  private double vParallel;
 
   private double target = 0;
 
   public double distance;
   private double error;
+
+  private double turretPosition = 0;
 
   public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -64,11 +66,15 @@ public class Limelight {
     // Update Velocities and Angles
     double txRad = Math.toRadians(currentGoal.getTx());
 
-    this.vPerpendicular =
-        xVelocity * Math.cos(txRad)
-            - yVelocity * Math.sin(txRad); // applying rotation matrix to get velocities relative to the goal
+    double turretRad = Math.toRadians(turretPosition + 180);
+    // Total angle = turret heading + tx offset from turret center
+    double totalAngleRad = turretRad + txRad;
 
-    this.yVelocity = yVelocity;
+    this.vPerpendicular = xVelocity * Math.cos(totalAngleRad)
+        - yVelocity * Math.sin(totalAngleRad);
+
+    this.vParallel = xVelocity * Math.sin(totalAngleRad)
+        + yVelocity * Math.cos(totalAngleRad); // figure this out
 
     if (currentGoal != null && currentGoal.isValid()) {
       this.distance = (((41.275) / Math.tan((Math.toRadians(currentGoal.getTy() + 1.0)))) / 100.0);
@@ -87,7 +93,7 @@ public class Limelight {
 
       calculatedVel = (20.0 * (Math.round(
           (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
-              - yVelocity * 253)
+              - vParallel * 253)
               / 20.0))) - 100.0; // 140
 
       lastCalculatedVel = calculatedVel;
@@ -114,7 +120,9 @@ public class Limelight {
   }
 
   public void updateErrorAndTarget(double turretPos) {
-    target = turretPos + this.calculateError();
+
+    this.turretPosition = turretPos;
+    target = this.turretPosition + this.calculateError();
 
     // wrap
     target = ((target % 360) + 360) % 360;

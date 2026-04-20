@@ -43,6 +43,8 @@ public class SensorTest extends LinearOpMode {
           int id = fiducial.getFiducialId(); // The ID number of the fiducial
           telemetry.addData("Tag ", id);
         }
+
+        telemetry.addData("turretPosDegrees", robot.intake.getTurretPosDegrees());
       }
 
       telemetry.update();
