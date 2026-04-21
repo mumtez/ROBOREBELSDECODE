@@ -43,7 +43,7 @@ public class Constants {
       .strafePodX(-3)
       .leftEncoder_HardwareMapName("br")
       .rightEncoder_HardwareMapName("fl")
-      .strafeEncoder_HardwareMapName("intakealt")
+      .strafeEncoder_HardwareMapName("flywheel2")
       .leftEncoderDirection(Encoder.FORWARD)
       .rightEncoderDirection(Encoder.FORWARD)
       .strafeEncoderDirection(Encoder.FORWARD);

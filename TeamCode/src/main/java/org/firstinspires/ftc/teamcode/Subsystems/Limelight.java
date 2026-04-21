@@ -33,7 +33,6 @@ public class Limelight {
 
   private LLResult currentGoal;
 
-  private double lastAimPos = 0;
   private double lastCalculatedVel = Outtake.medSpeed;
   private double aimIntegral = 0;
   private double aimLastError = 0;
@@ -41,12 +40,12 @@ public class Limelight {
   private double vPerpendicular;
   private double vParallel;
 
-  private double target = 0;
+  public double target = 0;
 
   public double distance;
-  private double error;
+  public double error;
 
-  private double turretPosition = 0;
+  public double turretPosition = 0;
 
   public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -119,7 +118,7 @@ public class Limelight {
     return currentGoal != null && currentGoal.isValid();
   }
 
-  public void updateErrorAndTarget(double turretPos) {
+  public void updateTarget(double turretPos) {
 
     this.turretPosition = turretPos;
     target = this.turretPosition + this.calculateError();
@@ -178,10 +177,9 @@ public class Limelight {
 
       // Clamp for safety
       output = Range.clip(output, -1.0, 1.0);
-      lastAimPos = output;
       return output;   // return turn power
     }
-    return lastAimPos;
+    return 0;
   }
 
 

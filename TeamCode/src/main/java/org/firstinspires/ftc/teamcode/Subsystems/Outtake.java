@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -22,7 +23,9 @@ public class Outtake {
   public static double kV = 0.00036; //0.000353
 
 
-  public static Direction flywheelMotorDirection = Direction.FORWARD;
+  public static Direction flywheel1MotorDirection = Direction.FORWARD;
+  public static Direction flywheel2MotorDirection = Direction.REVERSE;
+
 
   // --- Variables ---
   private double targetVelocity = 0; // ticks/sec
@@ -31,6 +34,9 @@ public class Outtake {
   public DcMotorEx flywheel1;
   public DcMotorEx flywheel2;
 
+  public final DcMotor turret;
+
+
   private double currentVelocity;
 
   // --- Constructor ---
@@ -38,13 +44,19 @@ public class Outtake {
     HardwareMap hardwareMap = opMode.hardwareMap;
 
     flywheel2 = hardwareMap.get(DcMotorEx.class, "flywheel2");
-    flywheel2.setDirection(flywheelMotorDirection);
+    flywheel2.setDirection(flywheel2MotorDirection);
     flywheel2.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     flywheel2.setMode(RunMode.RUN_WITHOUT_ENCODER);
     flywheel1 = hardwareMap.get(DcMotorEx.class, "flywheel1");
-    flywheel1.setDirection(flywheelMotorDirection);
+    flywheel1.setDirection(flywheel1MotorDirection);
     flywheel1.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     flywheel1.setMode(RunMode.RUN_WITHOUT_ENCODER);
+
+    turret = hardwareMap.get(DcMotorEx.class, "turret");
+    turret.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
+    turret.setDirection(Direction.FORWARD);
+    turret.setMode(RunMode.RUN_WITHOUT_ENCODER);
+    turret.setMode(RunMode.STOP_AND_RESET_ENCODER);
   }
 
   public void setPower(double pow) {
@@ -86,6 +98,14 @@ public class Outtake {
 
   public double getTargetVelocity() {
     return this.targetVelocity;
+  }
+
+  public void setPowerTurret(double pow) {
+    turret.setPower(pow);
+  }
+
+  public double getTurretPosDegrees() {
+    return turret.getCurrentPosition() / 2.6701388889;
   }
 
   public void stop() {

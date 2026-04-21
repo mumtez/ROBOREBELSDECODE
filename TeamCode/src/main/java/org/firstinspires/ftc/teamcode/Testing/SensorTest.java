@@ -44,8 +44,8 @@ public class SensorTest extends LinearOpMode {
           telemetry.addData("Tag ", id);
         }
 
-        telemetry.addData("turretPosDegrees", robot.intake.getTurretPosDegrees());
       }
+      telemetry.addData("turretPosDegrees", robot.outtake.getTurretPosDegrees());
 
       telemetry.update();
     }

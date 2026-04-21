@@ -20,6 +20,7 @@ public class BaseTeleop {
   Vector botVelocity = new Vector();
 
   private boolean autoCalculateShootPower = true;
+  private double turPow;
 
   public BaseTeleop(LinearOpMode opMode, Robot robot, double headingOffset) {
     this.opMode = opMode;
@@ -48,20 +49,18 @@ public class BaseTeleop {
       double y = -this.opMode.gamepad1.left_stick_y;
       float rotStickAvg = this.opMode.gamepad1.right_stick_x + this.opMode.gamepad2.right_stick_x;
       double rx;
-      if (this.opMode.gamepad1.right_bumper) {
 
-        botVelocity = robot.follower.getVelocity();
-        botVelocity.rotateVector(-robot.follower.getHeading());
+      botVelocity = robot.follower.getVelocity();
+      botVelocity.rotateVector(-robot.follower.getHeading());
 
-        robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
-            (botVelocity.getXComponent() * 2.54)
-                / 100.0); // Getting velocities in inches / sec and converting to meters / sec
+      robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
+          (botVelocity.getXComponent() * 2.54)
+              / 100.0); // Getting velocities in inches / sec and converting to meters / sec
 
-        robot.limelight.updateErrorAndTarget(robot.intake.getTurretPosDegrees()); // update things
-        robot.intake.setPowerTurret(robot.limelight.updateAimPID()); // auto aim turret
+      robot.limelight.updateTarget(robot.outtake.getTurretPosDegrees()); // update things
+      turPow = robot.limelight.updateAimPID();
+      robot.outtake.setPowerTurret(turPow); // auto aim turret
 
-
-      }
       this.fieldCentricDrive(x, y, rotStickAvg);
 
       // OUTTAKE
@@ -148,6 +147,12 @@ public class BaseTeleop {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());
+
+    telemetry.addData("Turret Target", robot.limelight.target);
+    telemetry.addData("Turret Error", robot.limelight.error);
+    telemetry.addData("Turret pos", robot.limelight.turretPosition);
+
+    telemetry.addData("Turret pow", turPow);
 
     telemetry.update();
   }

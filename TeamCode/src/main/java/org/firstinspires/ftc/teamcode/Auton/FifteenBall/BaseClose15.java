@@ -163,7 +163,6 @@ public class BaseClose15 extends BaseAuton {
 
       case PGP:
         intakeThree(null, intakePGP, INTAKE_DRIVE_MAX_POWER, INTAKE_SPIKE_TIME);
-        robot.intake.setPowerInverse(1);
         robot.follower.followPath(openGatePGP, GATE_DRIVE_MAX_POWER, true);
         shootThree(shootGate, Intake.POWER_INTAKE, SHOOT_TIME_QUICK);
         setPathState(pathOrder.next());
@@ -171,7 +170,6 @@ public class BaseClose15 extends BaseAuton {
 
       case PPG:
         intakeThree(null, intakePPG, INTAKE_DRIVE_MAX_POWER, INTAKE_SPIKE_TIME);
-        robot.intake.setPowerInverse(1);
         robot.follower.followPath(openGatePPG, GATE_DRIVE_MAX_POWER, true);
         shootThree(shootGate, Intake.POWER_INTAKE, SHOOT_TIME_QUICK);
         setPathState(pathOrder.next());
@@ -180,7 +178,6 @@ public class BaseClose15 extends BaseAuton {
       case GATE:
         cycleCounter++;
         intakeGate(intakeClassifier, intakeClassifierTwo);
-        robot.intake.setPowerInverse(1);
         shootThree(shootGateIntake, Intake.POWER_INTAKE, SHOOT_TIME_QUICK);
         if (cycleCounter >= CYCLE_LIMIT) {
           setPathState(pathOrder.next());

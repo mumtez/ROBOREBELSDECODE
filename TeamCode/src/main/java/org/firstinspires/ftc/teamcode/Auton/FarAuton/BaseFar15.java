@@ -155,7 +155,6 @@ public class BaseFar15 extends BaseAuton {
       case CYCLE:
         cycleCounter++;
         intakeThree(preIntakeHP, intakeHP, INTAKE_DRIVE_MAX_POWER, INTAKE_TIME);
-        robot.intake.setPowerInverse(Intake.POWER_INTAKE);
         shootThree(shootHP, Intake.POWER_INTAKE, SHOOT_TIME_QUICK);
 
         if (cycleCounter >= CYCLE_LIMIT) {

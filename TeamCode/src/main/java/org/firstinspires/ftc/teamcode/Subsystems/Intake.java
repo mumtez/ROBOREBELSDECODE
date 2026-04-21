@@ -20,9 +20,7 @@ public class Intake {
   public static final double POWER_INTAKE = 1;
 
   public static Direction intakeMotorDirection = Direction.FORWARD;
-  public static Direction intakeMotorAltDirection = Direction.FORWARD;
   public final DcMotor intakeMotor;
-  public final DcMotor turret;
 
 
   private enum CycleState {PENDING, OPEN, CLOSE, CLOSE_DELAY}
@@ -33,9 +31,9 @@ public class Intake {
 
   public static double FLAPPER_SHOOT = 0;
 
-  public static double FLAPPER_LOCKED = 0;
+  public static double FLAPPER_LOCKED = .4;
 
-  public static double CYCLER_LOCKED = 0;
+  public static double CYCLER_LOCKED = .62;
 
 
   private CycleState cycleState = CycleState.PENDING;
@@ -55,18 +53,12 @@ public class Intake {
     HardwareMap hardwareMap = opMode.hardwareMap;
 
     intakeMotor = hardwareMap.get(DcMotorEx.class, "intake");
-    turret = hardwareMap.get(DcMotorEx.class, "turret");
 
     intakeMotor.setDirection(intakeMotorDirection);
-    turret.setDirection(intakeMotorAltDirection);
 
     intakeMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-    turret.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
 
     intakeMotor.setMode(RunMode.RUN_WITHOUT_ENCODER);
-    turret.setMode(RunMode.RUN_WITHOUT_ENCODER);
-
-    turret.setMode(RunMode.STOP_AND_RESET_ENCODER);
 
     gate = hardwareMap.get(ServoImplEx.class, "flapper");
     cycler = hardwareMap.get(ServoImplEx.class, "cycler");
@@ -101,13 +93,6 @@ public class Intake {
     intakeMotor.setPower(pow);
   }
 
-  public void setPowerTurret(double pow) {
-    turret.setPower(pow);
-  }
-
-  public double getTurretPosDegrees() {
-    return turret.getCurrentPosition() / 2.6701388889;
-  }
 
   public void cycle(int num) {
     remainingCycles = num;
