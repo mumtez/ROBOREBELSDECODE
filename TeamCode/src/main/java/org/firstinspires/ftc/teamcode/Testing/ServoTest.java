@@ -51,6 +51,12 @@ public class ServoTest extends LinearOpMode {
         robot.br.setPower(0);
       }
 
+      if (gamepad1.right_bumper) {
+        robot.outtake.setPowerTurret(1);
+      } else {
+        robot.outtake.setPowerTurret(0);
+      }
+
     }
   }
 }

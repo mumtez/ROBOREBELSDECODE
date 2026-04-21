@@ -19,7 +19,7 @@ public class Intake {
 
   public static final double POWER_INTAKE = 1;
 
-  public static Direction intakeMotorDirection = Direction.FORWARD;
+  public static Direction intakeMotorDirection = Direction.REVERSE;
   public final DcMotor intakeMotor;
 
 

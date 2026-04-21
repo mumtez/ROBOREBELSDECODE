@@ -15,10 +15,10 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 @Configurable
 public class Limelight {
 
-  public static double AIM_Kp = 0;
+  public static double AIM_Kp = 0.008;
   public static double AIM_Ki = 0;
   public static double AIM_Kd = 0;
-  public static double AIM_Ks = 0;
+  public static double AIM_Ks = 0.09;
 
   public static double AIM_DEADBAND = .4;
 
@@ -119,67 +119,55 @@ public class Limelight {
   }
 
   public void updateTarget(double turretPos) {
+    if (this.hasValidTarget()) {
+      this.turretPosition = turretPos;
 
-    this.turretPosition = turretPos;
-    target = this.turretPosition + this.calculateError();
+      target = this.turretPosition + this.calculateError();
 
-    // wrap
-    target = ((target % 360) + 360) % 360;
+      // wrap
+      target = ((target % 360) + 360) % 360;
 
-    // define no-go zone (350 -> 10 wrap zone)
-    boolean inNoGo =
-        (target >= 350 || target <= 10);
-
-    if (inNoGo) {
-
-      double distToSafeA = Math.abs(target - 10);
-      double distToSafeB = Math.abs(target - 350);
-
-      if (distToSafeA < distToSafeB) {
-        target = 10;
-      } else {
-        target = 350;
-      }
+      error = target - turretPos;
+    } else {
+      error = target - turretPos;
     }
-    error = target - turretPos;
+
   }
 
 
   public double updateAimPID() { // returns the turn power from pid for autoaiming
-    if (this.hasValidTarget()) {
-      double dt = aimTimer.seconds();
-      aimTimer.reset();
+    double dt = aimTimer.seconds();
+    aimTimer.reset();
 
-      // Integral
-      aimIntegral += error * dt;
+    // Integral
+    aimIntegral += error * dt;
 
-      // Derivative
-      double derivative = (error - aimLastError) / dt;
-      aimLastError = error;
+    // Derivative
+    double derivative = (error - aimLastError) / dt;
+    aimLastError = error;
 
-      // PID Output
+    // PID Output
 
-      if (Math.abs(error) < AIM_DEADBAND) {
-        aimIntegral = 0;
-        return 0;
-      }
-
-      if (Math.abs(error) < AIM_RGB_THRESHOLD) {
-        rgb.setPosition(.5);
-      } else {
-        rgb.setPosition(.277);
-      }
-
-      double output = AIM_Kp * error
-          + AIM_Ki * aimIntegral
-          + AIM_Kd * derivative
-          + AIM_Ks * Math.signum(error);
-
-      // Clamp for safety
-      output = Range.clip(output, -1.0, 1.0);
-      return output;   // return turn power
+    if (Math.abs(error) < AIM_DEADBAND) {
+      aimIntegral = 0;
+      return 0;
     }
-    return 0;
+
+    if (Math.abs(error) < AIM_RGB_THRESHOLD) {
+      rgb.setPosition(.5);
+    } else {
+      rgb.setPosition(.277);
+    }
+
+    double output = AIM_Kp * error
+        + AIM_Ki * aimIntegral
+        + AIM_Kd * derivative
+        + AIM_Ks * Math.signum(error);
+
+    // Clamp for safety
+    output = Range.clip(output, -.3, .3);
+    return output;   // return turn power
+
   }
 
 

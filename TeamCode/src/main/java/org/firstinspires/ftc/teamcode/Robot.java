@@ -81,8 +81,8 @@ public class Robot {
 
     imu = hardwareMap.get(IMU.class, "imu");
     IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-        LogoFacingDirection.UP,
-        UsbFacingDirection.BACKWARD));
+        LogoFacingDirection.BACKWARD,
+        UsbFacingDirection.RIGHT));
     imu.initialize(parameters);
     opMode.telemetry.addData("IMU Initialized", true);
     opMode.telemetry.update();

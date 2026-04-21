@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -23,8 +22,8 @@ public class Outtake {
   public static double kV = 0.00036; //0.000353
 
 
-  public static Direction flywheel1MotorDirection = Direction.FORWARD;
-  public static Direction flywheel2MotorDirection = Direction.REVERSE;
+  public static Direction flywheel1MotorDirection = Direction.REVERSE;
+  public static Direction flywheel2MotorDirection = Direction.FORWARD;
 
 
   // --- Variables ---
@@ -34,7 +33,7 @@ public class Outtake {
   public DcMotorEx flywheel1;
   public DcMotorEx flywheel2;
 
-  public final DcMotor turret;
+  public DcMotorEx turret;
 
 
   private double currentVelocity;
@@ -53,11 +52,14 @@ public class Outtake {
     flywheel1.setMode(RunMode.RUN_WITHOUT_ENCODER);
 
     turret = hardwareMap.get(DcMotorEx.class, "turret");
+    turret.setDirection(Direction.REVERSE);
     turret.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
-    turret.setDirection(Direction.FORWARD);
-    turret.setMode(RunMode.RUN_WITHOUT_ENCODER);
     turret.setMode(RunMode.STOP_AND_RESET_ENCODER);
+    turret.setMode(RunMode.RUN_WITHOUT_ENCODER);
+
+
   }
+
 
   public void setPower(double pow) {
     this.flywheel1.setPower(pow);

@@ -40,13 +40,13 @@ public class Constants {
       .turnTicksToInches(.001989436789)
       .leftPodY(7.5)
       .rightPodY(-7.5)
-      .strafePodX(-3)
+      .strafePodX(-2.5)
       .leftEncoder_HardwareMapName("br")
       .rightEncoder_HardwareMapName("fl")
       .strafeEncoder_HardwareMapName("flywheel2")
-      .leftEncoderDirection(Encoder.FORWARD)
-      .rightEncoderDirection(Encoder.FORWARD)
-      .strafeEncoderDirection(Encoder.FORWARD);
+      .leftEncoderDirection(Encoder.REVERSE)
+      .rightEncoderDirection(Encoder.REVERSE)
+      .strafeEncoderDirection(Encoder.REVERSE);
 
   public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
 
