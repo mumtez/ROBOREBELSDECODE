@@ -64,7 +64,7 @@ public class BaseTeleop {
       this.fieldCentricDrive(x, y, rotStickAvg);
 
       // OUTTAKE
-      if (this.opMode.gamepad2.triangle) {
+      if (this.opMode.gamepad2.triangle || this.opMode.gamepad1.triangle) {
         robot.intake.setCyclePosition(FlapperState.SHOOT);
       } else if (robot.intake.isCycleFinished()) {
         robot.intake.setCyclePosition(FlapperState.LOCKED);
@@ -147,12 +147,6 @@ public class BaseTeleop {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());
-
-    telemetry.addData("Turret Target", robot.limelight.target);
-    telemetry.addData("Turret Error", robot.limelight.error);
-    telemetry.addData("Turret pos", robot.limelight.turretPosition);
-
-    telemetry.addData("Turret pow", turPow);
 
     telemetry.update();
   }

@@ -29,11 +29,11 @@ public class Intake {
 
   public static int CLOSE_DELAY = 500;
 
-  public static double FLAPPER_SHOOT = 0;
+  public static double FLAPPER_SHOOT = 0.1;
 
   public static double FLAPPER_LOCKED = .4;
 
-  public static double CYCLER_LOCKED = .62;
+  public static double CYCLER_LOCKED = .63;
 
 
   private CycleState cycleState = CycleState.PENDING;
@@ -74,9 +74,11 @@ public class Intake {
         break;
       case SHOOT:
         this.setFlapperPos(FLAPPER_SHOOT);
+        this.setCyclerPos(CYCLER_LOCKED);
         break;
       case LOCKED:
         this.setFlapperPos(FLAPPER_LOCKED);
+        this.setCyclerPos(CYCLER_LOCKED);
         break;
     }
   }

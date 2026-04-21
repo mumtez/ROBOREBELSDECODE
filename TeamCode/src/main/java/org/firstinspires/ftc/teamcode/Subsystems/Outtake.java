@@ -19,11 +19,11 @@ public class Outtake {
 
   public static int cycleSpeed = 300;
   public static double kP = 0.002;
-  public static double kV = 0.00036; //0.000353
+  public static double kV = 0.00047;
 
 
-  public static Direction flywheel1MotorDirection = Direction.REVERSE;
-  public static Direction flywheel2MotorDirection = Direction.FORWARD;
+  public static Direction flywheel1MotorDirection = Direction.FORWARD;
+  public static Direction flywheel2MotorDirection = Direction.REVERSE;
 
 
   // --- Variables ---

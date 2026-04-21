@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.Iterator;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Auton.TwelveBall.BaseClose12Indexed;
+import org.firstinspires.ftc.teamcode.Auton.FifteenBall.BaseClose15;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.Intake.FlapperState;
@@ -36,7 +36,7 @@ public class BaseAuton {
   protected final double[] shootPos;
 
   protected PathState pathState = PathState.PRELOAD;
-  protected Iterator<BaseClose12Indexed.PathState> pathOrder;
+  protected Iterator<BaseClose15.PathState> pathOrder;
 
 
   public BaseAuton(LinearOpMode opMode, Robot robot, double[] shootPos) {

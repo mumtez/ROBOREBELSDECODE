@@ -15,10 +15,10 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 @Configurable
 public class Limelight {
 
-  public static double AIM_Kp = 0.008;
+  public static double AIM_Kp = 0.012;
   public static double AIM_Ki = 0;
-  public static double AIM_Kd = 0;
-  public static double AIM_Ks = 0.09;
+  public static double AIM_Kd = 0.001;
+  public static double AIM_Ks = 0.08;
 
   public static double AIM_DEADBAND = .4;
 
@@ -93,12 +93,12 @@ public class Limelight {
       calculatedVel = (20.0 * (Math.round(
           (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
               - vParallel * 253)
-              / 20.0))) - 100.0; // 140
+              / 20.0))) - 80;
 
       lastCalculatedVel = calculatedVel;
 
       if (distance > 2.5) {
-        return calculatedVel + 40;
+        return calculatedVel + 20;
 
       }
       return calculatedVel;
@@ -119,19 +119,24 @@ public class Limelight {
   }
 
   public void updateTarget(double turretPos) {
-    if (this.hasValidTarget()) {
-      this.turretPosition = turretPos;
+    this.turretPosition = turretPos;
 
+    if (this.hasValidTarget()) {
       target = this.turretPosition + this.calculateError();
 
       // wrap
       target = ((target % 360) + 360) % 360;
 
-      error = target - turretPos;
-    } else {
-      error = target - turretPos;
+      // no-go zone around 0/360 boundary
+      boolean inNoGo = (target >= 350 || target <= 10);
+      if (inNoGo) {
+        double distToSafeA = Math.abs(target - 10);
+        double distToSafeB = Math.abs(target - 350);
+        target = (distToSafeA < distToSafeB) ? 10 : 350;
+      }
     }
 
+    error = target - turretPos;
   }
 
 
@@ -144,6 +149,7 @@ public class Limelight {
 
     // Derivative
     double derivative = (error - aimLastError) / dt;
+    derivative = Range.clip(derivative, -50, 50); // prevent explosion on large error jumps
     aimLastError = error;
 
     // PID Output
@@ -165,7 +171,7 @@ public class Limelight {
         + AIM_Ks * Math.signum(error);
 
     // Clamp for safety
-    output = Range.clip(output, -.3, .3);
+    output = Range.clip(output, -1, 1);
     return output;   // return turn power
 
   }
