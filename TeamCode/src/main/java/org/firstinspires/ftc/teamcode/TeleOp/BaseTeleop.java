@@ -17,7 +17,7 @@ public class BaseTeleop {
   final Telemetry telemetry;
   double headingOffset;
 
-  Vector botVelocity = new Vector();
+  private Vector botVelocity = new Vector();
 
   private boolean autoCalculateShootPower = true;
   private double botHeading;
@@ -39,33 +39,31 @@ public class BaseTeleop {
     }
 
     // --- START ---
-    robot.setTiltFolded();
+    this.robot.setTiltFolded();
     while (opMode.opModeIsActive()) {
-      robot.intake.updateAutoCycle();
-      robot.follower.update();
+      this.robot.intake.updateAutoCycle();
+      this.robot.follower.update();
 
       // DRIVETRAIN
       double x = this.opMode.gamepad1.left_stick_x;
       double y = -this.opMode.gamepad1.left_stick_y;
       float rotStickAvg = this.opMode.gamepad1.right_stick_x + this.opMode.gamepad2.right_stick_x;
-      double rx;
 
       // If right bumper pressed update turret to aim
       if (this.opMode.gamepad1.right_bumper) {
-        botHeading = robot.follower.getHeading();
-        botVelocity = robot.follower.getVelocity();
-        botVelocity.rotateVector(-botHeading);
-
-        robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
-            (botVelocity.getXComponent() * 2.54)
+        this.botHeading = this.robot.follower.getHeading();
+        this.botVelocity = this.robot.follower.getVelocity();
+        this.botVelocity.rotateVector(-this.botHeading);
+        this.robot.limelight.updateAim(((-this.botVelocity.getYComponent() * 2.54) / 100.0),
+            (this.botVelocity.getXComponent() * 2.54)
                 / 100.0); // Getting velocities in inches / sec and converting to meters / sec
       }
 
       // Update PID while not auto aiming
-      robot.limelight.updateTarget(robot.outtake.getTurretPosDegrees(), this.opMode.gamepad1.right_bumper,
+      this.robot.limelight.updateTarget(this.robot.outtake.getTurretPosDegrees(), this.opMode.gamepad1.right_bumper,
           this.robot.getAllianceColor()); // update things
 
-      robot.outtake.setPowerTurret(robot.limelight.updateAimPID()); // auto aim turret
+      this.robot.outtake.setPowerTurret(this.robot.limelight.updateAimPID()); // auto aim turret
 
       this.fieldCentricDrive(x, y, rotStickAvg);
 
