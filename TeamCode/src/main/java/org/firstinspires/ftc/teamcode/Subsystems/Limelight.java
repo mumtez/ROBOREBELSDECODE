@@ -134,6 +134,7 @@ public class Limelight {
 
     } else if (shouldAim && !this.hasValidTarget()) {
       target = lastTarget;
+
     } else if (!shouldAim) {
       target = color.getSteadyState();
     }
