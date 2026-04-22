@@ -18,6 +18,13 @@ public enum AllianceColor {
     public int getAimPose() {
       return -5;
     } //-3
+
+    @Override
+    public double getSteadyState() {
+      return -90.0;
+    }
+
+    ;
   },
   BLUE {
     @Override
@@ -37,6 +44,13 @@ public enum AllianceColor {
     public int getAimPose() {
       return -1;
     } //-2
+
+    @Override
+    public double getSteadyState() {
+      return 90.0;
+    }
+
+    ;
   };
 
   public abstract Pose poseFromArray(double[] arr);
@@ -44,4 +58,6 @@ public enum AllianceColor {
   public abstract int getLLPipelineTeleOP();
 
   public abstract int getAimPose();
+
+  public abstract double getSteadyState();
 }
