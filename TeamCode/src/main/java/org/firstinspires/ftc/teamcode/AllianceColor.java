@@ -21,7 +21,7 @@ public enum AllianceColor {
 
     @Override
     public double getSteadyState() {
-      return -90.0;
+      return 270.0;
     }
 
     ;
