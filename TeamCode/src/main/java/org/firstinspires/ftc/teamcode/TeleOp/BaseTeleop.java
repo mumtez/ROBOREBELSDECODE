@@ -31,7 +31,7 @@ public class BaseTeleop {
 
   public void run() {
     // --- INIT ---
-
+    this.robot.limelight.initTurret(this.robot.getAllianceColor());
     // --- INIT LOOP ---
     while (this.opMode.opModeInInit()) {
       telemetry.addData("ALLIANCE COLOR", robot.getAllianceColor());

@@ -119,8 +119,12 @@ public class Limelight {
     return currentGoal != null && currentGoal.isValid();
   }
 
+  public void initTurret(AllianceColor color) {
+    this.turretPosition = color.getSteadyState();
+  }
+
   public void updateTarget(double turretPos, boolean shouldAim, AllianceColor color) {
-    this.turretPosition = turretPos;
+    this.turretPosition = turretPos + color.getSteadyState();
     if (this.hasValidTarget() && shouldAim) {
       target = this.turretPosition + this.calculateError();
 
