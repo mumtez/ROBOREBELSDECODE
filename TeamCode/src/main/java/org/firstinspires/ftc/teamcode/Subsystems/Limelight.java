@@ -93,7 +93,7 @@ public class Limelight {
 
       calculatedVel = (20.0 * (Math.round(
           (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
-              - vParallel * 253)
+              - vParallel * 93) // 253
               / 20.0))) - 80;
 
       lastCalculatedVel = calculatedVel;

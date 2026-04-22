@@ -20,7 +20,7 @@ public class BaseTeleop {
   Vector botVelocity = new Vector();
 
   private boolean autoCalculateShootPower = true;
-  private double turPow;
+  private double botHeading;
 
   public BaseTeleop(LinearOpMode opMode, Robot robot, double headingOffset) {
     this.opMode = opMode;
@@ -52,8 +52,9 @@ public class BaseTeleop {
 
       // If right bumper pressed update turret to aim
       if (this.opMode.gamepad1.right_bumper) {
+        botHeading = robot.follower.getHeading();
         botVelocity = robot.follower.getVelocity();
-        botVelocity.rotateVector(-robot.follower.getHeading());
+        botVelocity.rotateVector(-botHeading);
 
         robot.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
             (botVelocity.getXComponent() * 2.54)
