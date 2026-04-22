@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Auton;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Vector;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -24,6 +25,8 @@ public class BaseAuton {
   public static double INTAKE_DRIVE_MAX_POWER_SLOW = 0.8;
   public static double INTAKE_DRIVE_MAX_POWER = 1.0;
   public static double GATE_DRIVE_MAX_POWER = 0.8;
+  protected double botHeading;
+  protected Vector botVelocity;
 
   public enum PathState {
     PRELOAD, PPG, PGP, GPP, GATE, SPIKE, CYCLE, PARK, STOP,

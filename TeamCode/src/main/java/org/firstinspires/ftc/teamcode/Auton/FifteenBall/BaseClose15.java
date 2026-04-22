@@ -229,6 +229,7 @@ public class BaseClose15 extends BaseAuton {
     // INIT
     buildPaths();
     robot.initAuton();
+    robot.limelight.initTurret(robot.getAllianceColor());
 
     // INIT LOOP
     this.opMode.waitForStart();
@@ -244,6 +245,19 @@ public class BaseClose15 extends BaseAuton {
 
     // LOOP
     while (this.opMode.opModeIsActive()) {
+
+      this.botHeading = this.robot.follower.getHeading();
+      this.botVelocity = this.robot.follower.getVelocity();
+      this.botVelocity.rotateVector(-this.botHeading);
+      this.robot.limelight.updateAim(((-this.botVelocity.getYComponent() * 2.54) / 100.0),
+          (this.botVelocity.getXComponent() * 2.54)
+              / 100.0); // Getting velocities in inches / sec and converting to meters / sec
+      // Update PID while not auto aiming
+      this.robot.limelight.updateTarget(this.robot.outtake.getTurretPosDegrees(), this.opMode.gamepad1.right_bumper,
+          this.robot.getAllianceColor()); // update things
+      this.robot.outtake.setPowerTurret(this.robot.limelight.updateAimPID());
+      this.robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
+
       robot.updateAutoControls();
       autonomousPathUpdate();
 
