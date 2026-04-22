@@ -46,7 +46,7 @@ public class Limelight {
   public double error;
 
   public double turretPosition = 0;
-  private double lastTarget;
+  private double lastTarget = 0;
 
   public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -125,12 +125,16 @@ public class Limelight {
 
   public void updateTarget(double turretPos, boolean shouldAim, AllianceColor color) {
     this.turretPosition = turretPos + color.getSteadyState();
-    if (this.hasValidTarget() && shouldAim) {
-      target = this.turretPosition + this.calculateError();
 
+    if (this.hasValidTarget() && shouldAim) {
+      double rawTarget = this.turretPosition + this.calculateError();
       // wrap
-      target = ((target % 360) + 360) % 360;
-      lastTarget = target;
+      rawTarget = ((rawTarget % 360) + 360) % 360;
+
+      if (Math.abs(error) < 15) {
+        target = rawTarget;
+        lastTarget = target;
+      }
 
     } else if (shouldAim && !this.hasValidTarget()) {
       target = lastTarget;
@@ -139,7 +143,7 @@ public class Limelight {
       target = color.getSteadyState();
     }
 
-    error = target - turretPos;
+    error = target - this.turretPosition;
   }
 
 
