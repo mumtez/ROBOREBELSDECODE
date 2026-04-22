@@ -151,6 +151,7 @@ public class BaseTeleop {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());
+    telemetry.addData("Bot Heading", this.botHeading);
 
     telemetry.update();
   }
