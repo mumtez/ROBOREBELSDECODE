@@ -49,21 +49,7 @@ public class BaseTeleop {
       double y = -this.opMode.gamepad1.left_stick_y;
       float rotStickAvg = this.opMode.gamepad1.right_stick_x + this.opMode.gamepad2.right_stick_x;
 
-      // If right bumper pressed update turret to aim
-      if (this.opMode.gamepad1.right_bumper) {
-        this.botHeading = this.robot.follower.getHeading();
-        this.botVelocity = this.robot.follower.getVelocity();
-        this.botVelocity.rotateVector(-this.botHeading);
-        this.robot.limelight.updateAim(((-this.botVelocity.getYComponent() * 2.54) / 100.0),
-            (this.botVelocity.getXComponent() * 2.54)
-                / 100.0); // Getting velocities in inches / sec and converting to meters / sec
-      }
-
-      // Update PID while not auto aiming
-      this.robot.limelight.updateTarget(this.robot.outtake.getTurretPosDegrees(), this.opMode.gamepad1.right_bumper,
-          this.robot.getAllianceColor()); // update things
-
-      this.robot.outtake.setPowerTurret(this.robot.limelight.updateAimPID()); // auto aim turret
+      this.robot.updateAimingSystem(this.opMode.gamepad1.right_bumper);
 
       this.fieldCentricDrive(x, y, rotStickAvg);
 

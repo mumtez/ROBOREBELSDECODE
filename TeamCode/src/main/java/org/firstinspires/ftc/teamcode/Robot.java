@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
+import com.pedropathing.math.Vector;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot.LogoFacingDirection;
@@ -40,6 +41,8 @@ public class Robot {
 
 
   private final AllianceColor allianceColor;
+  private double botHeading;
+  private Vector botVelocity;
 
   public Robot(LinearOpMode opMode) {
     this(opMode, AllianceColor.RED);
@@ -123,9 +126,27 @@ public class Robot {
     return this.allianceColor;
   }
 
+  public void updateAimingSystem(boolean shouldAim) {
+    // AUTOAIM STUFF
+    if (shouldAim) {
+      this.botHeading = this.follower.getHeading();
+      this.botVelocity = this.follower.getVelocity();
+      this.botVelocity.rotateVector(-this.botHeading);
+      this.limelight.updateAim(((-this.botVelocity.getYComponent() * 2.54) / 100.0),
+          (this.botVelocity.getXComponent() * 2.54)
+              / 100.0); // Getting velocities in inches / sec and converting to meters / sec
+    }
+    // Update PID while not auto aiming
+    this.limelight.updateTarget(this.outtake.getTurretPosDegrees(), shouldAim,
+        this.getAllianceColor()); // update things
+    this.outtake.setPowerTurret(this.limelight.updateAimPID());
+  }
+
   public void updateAutoControls() {
     this.follower.update();
     this.intake.updateAutoCycle();
     this.outtake.updatePIDControl();
+
+
   }
 }
