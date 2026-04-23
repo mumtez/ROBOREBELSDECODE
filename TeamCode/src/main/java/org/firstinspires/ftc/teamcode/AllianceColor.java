@@ -16,12 +16,12 @@ public enum AllianceColor {
 
     @Override
     public int getAimPose() {
-      return -5;
+      return -3;
     } //-3
 
     @Override
     public double getSteadyState() {
-      return 270.0;
+      return 90.0;
     }
 
     ;
@@ -47,7 +47,7 @@ public enum AllianceColor {
 
     @Override
     public double getSteadyState() {
-      return 90.0;
+      return -90;
     }
 
     ;

@@ -18,9 +18,9 @@ public class Limelight {
   public static double AIM_Kp = 0.012;
   public static double AIM_Ki = 0;
   public static double AIM_Kd = 0.001;
-  public static double AIM_Ks = 0.08;
+  public static double AIM_Ks = 0.06;
 
-  public static double AIM_DEADBAND = .4;
+  public static double AIM_DEADBAND = .3;
 
   public static double AIM_RGB_THRESHOLD = 4;
 
