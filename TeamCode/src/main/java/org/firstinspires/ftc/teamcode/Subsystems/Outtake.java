@@ -54,7 +54,7 @@ public class Outtake {
 
     turret = hardwareMap.get(DcMotorEx.class, "turret");
     turret.setDirection(Direction.REVERSE);
-    turret.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
+    turret.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
     turret.setMode(RunMode.STOP_AND_RESET_ENCODER);
     turret.setMode(RunMode.RUN_WITHOUT_ENCODER);
   }

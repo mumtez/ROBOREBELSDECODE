@@ -135,7 +135,7 @@ public class Limelight {
       // wrap
       rawTarget = ((rawTarget % 360) + 360) % 360;
 
-      if (Math.abs(error) < 15) {
+      if (Math.abs(error) < 45) {
         target = rawTarget;
         lastTarget = target;
       }
