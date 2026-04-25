@@ -95,7 +95,7 @@ public class Limelight {
       calculatedVel = (20.0 * (Math.round(
           (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
               - vParallel * 93) // 253
-              / 20.0))) - 80;
+              / 20.0))) - 70;
 
       lastCalculatedVel = calculatedVel;
 
@@ -111,7 +111,7 @@ public class Limelight {
   private double calculateLeadAngleDegrees() {
     return Math.toDegrees(Math.atan(
         (vPerpendicular * Math.sqrt((2 * ((1.192 * distance) - .85)) / 9.46))
-            
+
             / distance
 
     ));
