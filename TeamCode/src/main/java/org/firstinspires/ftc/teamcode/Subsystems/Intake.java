@@ -29,9 +29,9 @@ public class Intake {
 
   public static int CLOSE_DELAY = 500;
 
-  public static double FLAPPER_SHOOT = 0.6;
+  public static double FLAPPER_SHOOT = 0.06;
 
-  public static double FLAPPER_LOCKED = .05;
+  public static double FLAPPER_LOCKED = 0.3;
 
   public static double CYCLER_LOCKED = .63;
 

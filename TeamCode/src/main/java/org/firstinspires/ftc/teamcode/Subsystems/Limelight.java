@@ -46,7 +46,7 @@ public class Limelight {
   public double error;
 
   public double turretPosition = 0;
-  private double lastTarget = 0;
+  private double lastTarget;
 
   public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
     HardwareMap hardwareMap = opMode.hardwareMap;
@@ -54,6 +54,7 @@ public class Limelight {
     this.limelight = hardwareMap.get(Limelight3A.class, "limelight");
     this.limelight.start();
 
+    lastTarget = this.currentColor.getSteadyState();
     this.rgb = hardwareMap.servo.get("rgb");
     this.rgb.setPosition(.5);
   }
@@ -108,7 +109,12 @@ public class Limelight {
   }
 
   private double calculateLeadAngleDegrees() {
-    return Math.toDegrees(Math.atan((vPerpendicular * Math.sqrt((2 * ((1.192 * distance) - .85)) / 9.46)) / distance));
+    return Math.toDegrees(Math.atan(
+        (vPerpendicular * Math.sqrt((2 * ((1.192 * distance) - .85)) / 9.46))
+            
+            / distance
+
+    ));
   }
 
   public double calculateError() {
