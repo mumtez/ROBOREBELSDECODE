@@ -23,6 +23,7 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 public class Robot {
 
+  private final List<LynxModule> hubs;
   public Follower follower;
   public DcMotor fr, fl, br, bl;
   public IMU imu;
@@ -41,8 +42,6 @@ public class Robot {
 
 
   private final AllianceColor allianceColor;
-  private double botHeading;
-  private Vector botVelocity;
 
   public Robot(LinearOpMode opMode) {
     this(opMode, AllianceColor.RED);
@@ -52,14 +51,15 @@ public class Robot {
     this.allianceColor = allianceColor;
 
     HardwareMap hardwareMap = opMode.hardwareMap;
-    follower = Constants.createFollower(hardwareMap);
+    this.follower = Constants.createFollower(hardwareMap);
 
     // From https://gm0.org/en/latest/docs/software/tutorials/bulk-reads.html
-    List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
-    for (LynxModule hub : allHubs) {
+    this.hubs = hardwareMap.getAll(LynxModule.class);
+    for (LynxModule hub : this.hubs) {
       hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
     }
 
+    // TODO: what is this
     opMode.telemetry.setMsTransmissionInterval(11);
 
     bl = hardwareMap.dcMotor.get("bl");
@@ -126,14 +126,26 @@ public class Robot {
     return this.allianceColor;
   }
 
+  public void setBulkCachingMode(LynxModule.BulkCachingMode mode) {
+    for (LynxModule hub : this.hubs) {
+      hub.setBulkCachingMode(mode);
+    }
+  }
+
+  public void clearBulkCache() {
+    for (LynxModule hub : this.hubs) {
+      hub.clearBulkCache();
+    }
+  }
+
   public void updateAimingSystem(boolean shouldAim) {
     // AUTOAIM STUFF
     if (shouldAim) {
-      this.botHeading = this.follower.getHeading();
-      this.botVelocity = this.follower.getVelocity();
-      this.botVelocity.rotateVector(-this.botHeading);
-      this.limelight.updateAim(((-this.botVelocity.getYComponent() * 2.54) / 100.0),
-          (this.botVelocity.getXComponent() * 2.54)
+      double botHeading = this.follower.getHeading();
+      Vector botVelocity = this.follower.getVelocity();
+      botVelocity.rotateVector(-botHeading);
+      this.limelight.updateAim(((-botVelocity.getYComponent() * 2.54) / 100.0),
+          (botVelocity.getXComponent() * 2.54)
               / 100.0); // Getting velocities in inches / sec and converting to meters / sec
     }
     // Update PID while not auto aiming

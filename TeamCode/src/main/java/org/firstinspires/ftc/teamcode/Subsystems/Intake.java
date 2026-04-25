@@ -46,7 +46,6 @@ public class Intake {
   public ServoImplEx gate;
   public ServoImplEx cycler;
 
-
   public enum FlapperState {CYCLE, SHOOT, LOCKED}
 
   public Intake(LinearOpMode opMode) {
@@ -62,10 +61,7 @@ public class Intake {
 
     gate = hardwareMap.get(ServoImplEx.class, "flapper");
     cycler = hardwareMap.get(ServoImplEx.class, "cycler");
-
-
   }
-
 
   public void setCyclePosition(FlapperState state) {
     switch (state) {
@@ -94,7 +90,6 @@ public class Intake {
   public void setIntakePower(double pow) {
     intakeMotor.setPower(pow);
   }
-
 
   public void cycle(int num) {
     remainingCycles = num;
@@ -148,6 +143,5 @@ public class Intake {
     this.cycleState = CycleState.PENDING;
     setCyclePosition(FlapperState.LOCKED);
   }
-
 
 }

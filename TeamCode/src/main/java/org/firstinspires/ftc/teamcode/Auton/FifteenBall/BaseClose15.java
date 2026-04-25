@@ -229,7 +229,6 @@ public class BaseClose15 extends BaseAuton {
     // INIT
     buildPaths();
     robot.initAuton();
-    robot.limelight.initTurret(robot.getAllianceColor());
 
     // INIT LOOP
     this.opMode.waitForStart();

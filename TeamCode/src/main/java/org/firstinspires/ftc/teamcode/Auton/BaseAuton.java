@@ -91,8 +91,7 @@ public class BaseAuton {
     }
 
     // Stop the intake and close the shooting gate
-    robot.intake.setIntakePower(
-        0); // TODO: added this to try to save some power. Remove or add fix outside this method if breaks something.
+    robot.intake.setIntakePower(0);
     robot.intake.setCyclePosition(FlapperState.LOCKED);
   }
 

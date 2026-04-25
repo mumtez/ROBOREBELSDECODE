@@ -46,6 +46,7 @@ public class Outtake {
     flywheel2.setDirection(flywheel2MotorDirection);
     flywheel2.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     flywheel2.setMode(RunMode.RUN_WITHOUT_ENCODER);
+
     flywheel1 = hardwareMap.get(DcMotorEx.class, "flywheel1");
     flywheel1.setDirection(flywheel1MotorDirection);
     flywheel1.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
@@ -56,8 +57,6 @@ public class Outtake {
     turret.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
     turret.setMode(RunMode.STOP_AND_RESET_ENCODER);
     turret.setMode(RunMode.RUN_WITHOUT_ENCODER);
-
-
   }
 
 

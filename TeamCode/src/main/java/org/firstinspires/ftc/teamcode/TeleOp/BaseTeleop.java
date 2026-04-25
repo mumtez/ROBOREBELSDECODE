@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.math.Vector;
+import com.qualcomm.hardware.lynx.LynxModule.BulkCachingMode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -17,21 +17,18 @@ public class BaseTeleop {
   final Telemetry telemetry;
   double headingOffset;
 
-  private Vector botVelocity = new Vector();
-
   private boolean autoCalculateShootPower = true;
-  private double botHeading;
 
   public BaseTeleop(LinearOpMode opMode, Robot robot, double headingOffset) {
     this.opMode = opMode;
     this.telemetry = opMode.telemetry;
     this.robot = robot;
+    this.robot.setBulkCachingMode(BulkCachingMode.MANUAL);
     this.headingOffset = Math.toRadians(headingOffset);
   }
 
   public void run() {
     // --- INIT ---
-    this.robot.limelight.initTurret(this.robot.getAllianceColor());
     // --- INIT LOOP ---
     while (this.opMode.opModeInInit()) {
       telemetry.addData("ALLIANCE COLOR", robot.getAllianceColor());
@@ -41,6 +38,7 @@ public class BaseTeleop {
     // --- START ---
     this.robot.setTiltFolded();
     while (opMode.opModeIsActive()) {
+      this.robot.clearBulkCache();
       this.robot.intake.updateAutoCycle();
       this.robot.follower.update();
 
@@ -137,7 +135,6 @@ public class BaseTeleop {
     telemetry.addData("Vel Current", robot.outtake.getCurrentVelocity());
     telemetry.addData("Vel Target", robot.outtake.getTargetVelocity());
     telemetry.addData("At Target", robot.outtake.atTarget());
-    telemetry.addData("Bot Heading", this.botHeading);
 
     telemetry.update();
   }

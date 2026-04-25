@@ -45,7 +45,7 @@ public class Limelight {
   public double distance;
   public double error;
 
-  public double turretPosition = 0;
+  public double turretPosition;
   private double lastTarget;
 
   public Limelight(LinearOpMode opMode, AllianceColor color) { // Constructor
@@ -53,15 +53,17 @@ public class Limelight {
     this.currentColor = color;
     this.limelight = hardwareMap.get(Limelight3A.class, "limelight");
     this.limelight.start();
+    this.limelight.pipelineSwitch(this.currentColor.getLLPipelineTeleOP());
 
-    lastTarget = this.currentColor.getSteadyState();
+    this.lastTarget = this.currentColor.getSteadyState();
+    this.turretPosition = color.getSteadyState();
+
     this.rgb = hardwareMap.servo.get("rgb");
     this.rgb.setPosition(.5);
   }
 
   public void updateAim(double xVelocity, double yVelocity) {
     // Update goal
-    this.limelight.pipelineSwitch(this.currentColor.getLLPipelineTeleOP());
     this.currentGoal = this.limelight.getLatestResult();
 
     // Update Velocities and Angles
@@ -125,10 +127,6 @@ public class Limelight {
     return currentGoal != null && currentGoal.isValid();
   }
 
-  public void initTurret(AllianceColor color) {
-    this.turretPosition = color.getSteadyState();
-  }
-
   public void updateTarget(double turretPos, boolean shouldAim, AllianceColor color) {
     this.turretPosition = turretPos + color.getSteadyState();
 
@@ -186,7 +184,6 @@ public class Limelight {
     // Clamp for safety
     output = Range.clip(output, -1, 1);
     return output;   // return turn power
-
   }
 
 
