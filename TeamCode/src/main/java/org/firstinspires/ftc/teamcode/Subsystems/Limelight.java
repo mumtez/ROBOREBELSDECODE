@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.AllianceColor;
 @Configurable
 public class Limelight {
 
-  public static double AIM_Kp = 0.012;
+  public static double AIM_Kp = 0.02;
   public static double AIM_Ki = 0;
   public static double AIM_Kd = 0.001;
   public static double AIM_Ks = 0.06;
@@ -40,7 +40,7 @@ public class Limelight {
   private double vPerpendicular;
   private double vParallel;
 
-  public double target = 0;
+  public double target;
 
   public double distance;
   public double error;
@@ -56,11 +56,16 @@ public class Limelight {
     this.limelight.pipelineSwitch(this.currentColor.getLLPipelineTeleOP());
 
     this.lastTarget = this.currentColor.getSteadyState();
-    this.turretPosition = color.getSteadyState();
+    this.turretPosition = this.currentColor.getSteadyState();
 
     this.rgb = hardwareMap.servo.get("rgb");
     this.rgb.setPosition(.5);
   }
+
+  public void setTarget(double pos) {
+    this.lastTarget = pos;
+  }
+
 
   public void updateAim(double xVelocity, double yVelocity) {
     // Update goal
@@ -96,7 +101,7 @@ public class Limelight {
 
       calculatedVel = (20.0 * (Math.round(
           (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
-              - vParallel * 93) // 253
+              - (vParallel * 93 * Math.cos(Math.toRadians(50)))) // 253
               / 20.0))) - 70;
 
       lastCalculatedVel = calculatedVel;

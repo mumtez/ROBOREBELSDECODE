@@ -19,9 +19,12 @@ public class BaseClose15 extends BaseAuton {
 
   public static double INTAKE_TIMER_GATE = 1200;
   public static double INTAKE_TIMER_MOVE = 200;
-  public static int CYCLE_LIMIT = 2;
+  public static int CYCLE_LIMIT = 4;
 
   public static double[] START_RED = {114, 130, 39}; // 114.25, 130, 180
+
+  public static double[] SHOOT_AFTER = {87, 80, 0}; // 114.25, 130, 180
+
 
   public static double[] INTAKE_PPG_START_RED = {89, 86, 0};
   public static double[] INTAKE_PPG_END_RED = {122, 86, 0};
@@ -57,10 +60,8 @@ public class BaseClose15 extends BaseAuton {
   void buildPaths() {
     shootPreLoad = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(START_RED), poseFromArrNonMirror(shootPos)))
-        .setLinearHeadingInterpolation(
-            poseFromArr(START_RED).getHeading(),
-            poseFromArrNonMirror(shootPos).getHeading()
-        )
+        .setTangentHeadingInterpolation()
+        .setReversed()
         .setTimeoutConstraint(300)
         .build();
 
@@ -136,20 +137,15 @@ public class BaseClose15 extends BaseAuton {
         .build();
 
     shootGate = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArrNonMirror(shootPos)))
-        .setLinearHeadingInterpolation(
-            poseFromArr(OPEN_GATE_END).getHeading(),
-            poseFromArrNonMirror(shootPos).getHeading()
-        )
+        .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArr(SHOOT_AFTER)))
+        .setTangentHeadingInterpolation()
+        .setReversed()
         .setTimeoutConstraint(300)
         .build();
 
     shootGateIntake = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArr(INTAKE_CLASSIFIER_TWO), poseFromArrNonMirror(shootPos)))
-        .setLinearHeadingInterpolation(
-            poseFromArr(INTAKE_CLASSIFIER_TWO).getHeading(),
-            poseFromArrNonMirror(shootPos).getHeading()
-        )
+        .addPath(new BezierLine(poseFromArr(INTAKE_CLASSIFIER_TWO), poseFromArr(SHOOT_AFTER)))
+        .setTangentHeadingInterpolation()
         .setTimeoutConstraint(300)
         .build();
   }
@@ -239,6 +235,7 @@ public class BaseClose15 extends BaseAuton {
     robot.follower.setStartingPose(poseFromArr(START_RED));
     robot.outtake.setTargetVelocity(Outtake.medSpeed);
     robot.intake.setIntakePower(1);
+    robot.limelight.setTarget(180.0);
 
     pathOrder = List.of(PathState.PPG, PathState.PGP, PathState.GATE, PathState.PARK, PathState.STOP).iterator();
 
@@ -246,7 +243,6 @@ public class BaseClose15 extends BaseAuton {
     while (this.opMode.opModeIsActive()) {
 
       this.robot.updateAutoControls();
-      this.robot.updateAimingSystem(true);
       autonomousPathUpdate();
 
       telemetry.addData("Path State", pathState);

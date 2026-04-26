@@ -16,12 +16,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.Intake.FlapperState;
 @Configurable
 public class BaseAuton {
 
-  public static int SHOOT_TIME_QUICK = 1100;
-  public static int SHOOT_TIME_SLOW = 2200;
+  public static int SHOOT_TIME_QUICK = 700;
   public static int INTAKE_SPIKE_TIME = 300;
   public static int INTAKE_TIME = 200;
 
-  public static double INTAKE_DRIVE_MAX_POWER_SLOW = 0.8;
   public static double INTAKE_DRIVE_MAX_POWER = 1.0;
   public static double GATE_DRIVE_MAX_POWER = 0.8;
 

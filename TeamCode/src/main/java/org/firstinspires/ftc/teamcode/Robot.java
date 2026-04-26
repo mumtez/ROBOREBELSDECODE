@@ -158,6 +158,7 @@ public class Robot {
     this.follower.update();
     this.intake.updateAutoCycle();
     this.outtake.updatePIDControl();
+    this.updateAimingSystem(true);
 
 
   }
