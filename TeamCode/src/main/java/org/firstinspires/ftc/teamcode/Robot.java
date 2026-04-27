@@ -159,7 +159,6 @@ public class Robot {
     this.intake.updateAutoCycle();
     this.outtake.updatePIDControl();
     this.updateAimingSystem(true);
-
-
+    
   }
 }

@@ -20,7 +20,7 @@ public class BaseFar15 extends BaseAuton {
 
 
   public static int CYCLE_LIMIT = 5;
-  public static double PRELOAD_SHOOT_TIME = 1100;
+  public static double PRELOAD_SHOOT_TIME = 800;
 
   public static double[] START_RED = {88, 8, 90};
   public static double[] INTAKE_HP_START_RED = {118, 9, 0};
@@ -207,6 +207,7 @@ public class BaseFar15 extends BaseAuton {
     robot.follower.setStartingPose(poseFromArr(START_RED));
     robot.outtake.setTargetVelocity(Outtake.farSpeed);
     robot.intake.setIntakePower(Intake.POWER_INTAKE);
+    robot.limelight.setTarget(180.0);
 
     List<PathState> paths = new ArrayList<>(List.of(PathState.CYCLE, PathState.PARK, PathState.STOP));
 

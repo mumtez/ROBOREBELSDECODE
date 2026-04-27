@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.Subsystems.Outtake;
 @Configurable
 public class BaseClose15 extends BaseAuton {
 
-  public static double INTAKE_TIMER_GATE = 1200;
-  public static double INTAKE_TIMER_MOVE = 200;
+  public static double INTAKE_TIMER_GATE = 800;
+  public static double INTAKE_TIMER_MOVE = 150;
   public static int CYCLE_LIMIT = 4;
 
   public static double[] START_RED = {114, 130, 39}; // 114.25, 130, 180
@@ -88,9 +88,9 @@ public class BaseClose15 extends BaseAuton {
         .build();
 
     intakePGP = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_PGP_START_RED)))
+        .addPath(new BezierLine(poseFromArr(shootPos), poseFromArr(INTAKE_PGP_START_RED)))
         .setLinearHeadingInterpolation(
-            poseFromArrNonMirror(shootPos).getHeading(),
+            poseFromArr(SHOOT_AFTER).getHeading(),
             poseFromArr(INTAKE_PGP_START_RED).getHeading()
         )
         .addPath(new BezierLine(poseFromArr(INTAKE_PGP_START_RED), poseFromArr(INTAKE_PGP_END_RED)))
@@ -138,14 +138,13 @@ public class BaseClose15 extends BaseAuton {
 
     shootGate = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArr(SHOOT_AFTER)))
-        .setTangentHeadingInterpolation()
-        .setReversed()
+        .setConstantHeadingInterpolation(poseFromArr(OPEN_GATE_END).getHeading())
         .setTimeoutConstraint(300)
         .build();
 
     shootGateIntake = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_CLASSIFIER_TWO), poseFromArr(SHOOT_AFTER)))
-        .setTangentHeadingInterpolation()
+        .setConstantHeadingInterpolation(poseFromArr(INTAKE_CLASSIFIER_TWO).getHeading())
         .setTimeoutConstraint(300)
         .build();
   }

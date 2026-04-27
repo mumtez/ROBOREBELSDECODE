@@ -17,8 +17,8 @@ public class Limelight {
 
   public static double AIM_Kp = 0.02;
   public static double AIM_Ki = 0;
-  public static double AIM_Kd = 0.001;
-  public static double AIM_Ks = 0.06;
+  public static double AIM_Kd = 0.002;
+  public static double AIM_Ks = 0.04;
 
   public static double AIM_DEADBAND = .3;
 
@@ -106,10 +106,10 @@ public class Limelight {
 
       lastCalculatedVel = calculatedVel;
 
-      if (distance > 2.5) {
+      /*if (distance > 2.5) {
         return calculatedVel + 20;
 
-      }
+      }*/
       return calculatedVel;
     }
     return lastCalculatedVel;
