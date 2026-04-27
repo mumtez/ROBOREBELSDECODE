@@ -31,7 +31,7 @@ public class Intake {
 
   public static double FLAPPER_SHOOT = 0.1;
 
-  public static double FLAPPER_LOCKED = 0.45;
+  public static double FLAPPER_LOCKED = 0.35; //.45
 
   public static double CYCLER_LOCKED = .63;
 

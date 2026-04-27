@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Auton.FifteenBall;
 
 
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -32,14 +31,12 @@ public class BaseClose15 extends BaseAuton {
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
   public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
 
-  public static double[] OPEN_GATE_START = {118, 74, 0};
+  public static double[] OPEN_GATE_START = {120, 74, 0};
   public static double[] OPEN_GATE_END = {123.75, 74, 0};
 
-  public static double[] OPEN_GATE_CONTROL_PPG = {105, 72, 0};
-  public static double[] OPEN_GATE_CONTROL_PGP = {105, 62, 0};
 
   public static double[] INTAKE_CLASSIFIER = {126.5, 60.5, 25};
-  public static double[] INTAKE_CLASSIFIER_TWO = {128.5, 52.5, 35}; //130.5
+  public static double[] INTAKE_CLASSIFIER_TWO = {128.5, 54.5, 35}; //130.5
 
   public static double[] PARK_POS = {94, 65, 0};
 
@@ -77,9 +74,8 @@ public class BaseClose15 extends BaseAuton {
         .build();
 
     openGatePPG = robot.follower.pathBuilder()
-        .addPath(new BezierCurve(
+        .addPath(new BezierLine(
             poseFromArr(INTAKE_PPG_END_RED),
-            poseFromArr(OPEN_GATE_CONTROL_PPG),
             poseFromArr(OPEN_GATE_START))
         )
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PPG_END_RED).getHeading())
@@ -99,9 +95,8 @@ public class BaseClose15 extends BaseAuton {
         .build();
 
     openGatePGP = robot.follower.pathBuilder()
-        .addPath(new BezierCurve(
+        .addPath(new BezierLine(
             poseFromArr(INTAKE_PGP_END_RED),
-            poseFromArr(OPEN_GATE_CONTROL_PGP),
             poseFromArr(OPEN_GATE_START))
         )
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PGP_END_RED).getHeading())
@@ -138,13 +133,17 @@ public class BaseClose15 extends BaseAuton {
 
     shootGate = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(OPEN_GATE_END), poseFromArr(SHOOT_AFTER)))
-        .setConstantHeadingInterpolation(poseFromArr(OPEN_GATE_END).getHeading())
+        /*.setConstantHeadingInterpolation(poseFromArr(OPEN_GATE_END).getHeading())*/
+        .setTangentHeadingInterpolation()
+        .setReversed()
         .setTimeoutConstraint(300)
         .build();
 
     shootGateIntake = robot.follower.pathBuilder()
         .addPath(new BezierLine(poseFromArr(INTAKE_CLASSIFIER_TWO), poseFromArr(SHOOT_AFTER)))
-        .setConstantHeadingInterpolation(poseFromArr(INTAKE_CLASSIFIER_TWO).getHeading())
+        /*.setConstantHeadingInterpolation(poseFromArr(INTAKE_CLASSIFIER_TWO).getHeading())*/
+        .setTangentHeadingInterpolation()
+        .setReversed()
         .setTimeoutConstraint(300)
         .build();
   }

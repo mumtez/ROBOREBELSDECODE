@@ -102,14 +102,14 @@ public class Limelight {
       calculatedVel = (20.0 * (Math.round(
           (((distance * Math.pow(0.243301244553 * distance - 0.173469387755, -0.5)) / 0.0025344670037)
               - (vParallel * 93 * Math.cos(Math.toRadians(50)))) // 253
-              / 20.0))) - 70;
+              / 20.0))) - 100; //80
 
       lastCalculatedVel = calculatedVel;
 
-      /*if (distance > 2.5) {
-        return calculatedVel + 20;
+      if (distance > 2.5) {
+        return calculatedVel + 40;
 
-      }*/
+      }
       return calculatedVel;
     }
     return lastCalculatedVel;
@@ -175,10 +175,16 @@ public class Limelight {
       return 0;
     }
 
-    if (Math.abs(error) < AIM_RGB_THRESHOLD) {
-      rgb.setPosition(.5);
-    } else {
+    if (target == this.currentColor.getSteadyState()) {
       rgb.setPosition(.277);
+    } else if (Math.abs(error) < AIM_RGB_THRESHOLD && this.hasValidTarget()) {
+      rgb.setPosition(.5);
+    } else if (Math.abs(error) > AIM_RGB_THRESHOLD && this.hasValidTarget()) {
+      rgb.setPosition(0.277);
+    } else if (Math.abs(error) < AIM_RGB_THRESHOLD && !this.hasValidTarget()) {
+      rgb.setPosition(.611);
+    } else {
+      rgb.setPosition(0);
     }
 
     double output = AIM_Kp * error
