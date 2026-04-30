@@ -23,6 +23,9 @@ public class BaseFar15 extends BaseAuton {
   public static double PRELOAD_SHOOT_TIME = 800;
 
   public static double[] START_RED = {88, 8, 90};
+
+  public static double[] SHOOT_RED_AFTER = {90, 15, 0};
+
   public static double[] INTAKE_HP_START_RED = {118, 9, 0};
   public static double[] INTAKE_HP_MIDDLE_RED = {131, 9, 0};
   public static double[] INTAKE_HP_CONTROL_RED = {100, 16, 0};
@@ -79,11 +82,13 @@ public class BaseFar15 extends BaseAuton {
         .build();
 
     shootSpike = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArr(INTAKE_SPIKE_END_RED), poseFromArrNonMirror(shootPos)))
-        .setLinearHeadingInterpolation(
+        .addPath(new BezierLine(poseFromArr(INTAKE_SPIKE_END_RED), poseFromArr(SHOOT_RED_AFTER)))
+        /*.setLinearHeadingInterpolation(
             poseFromArr(INTAKE_SPIKE_END_RED).getHeading(),
-            poseFromArrNonMirror(shootPos).getHeading()
-        )
+            poseFromArr(SHOOT_RED_AFTER).getHeading()
+        )*/
+        .setTangentHeadingInterpolation()
+        .setReversed()
         .setTimeoutConstraint(50)
         .build();
 
@@ -100,18 +105,20 @@ public class BaseFar15 extends BaseAuton {
         .build();
 
     shootHP = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArr(INTAKE_HP_END_RED), poseFromArrNonMirror(shootPos)))
-        .setLinearHeadingInterpolation(
+        .addPath(new BezierLine(poseFromArr(INTAKE_HP_END_RED), poseFromArr(SHOOT_RED_AFTER)))
+        /*.setLinearHeadingInterpolation(
             poseFromArr(INTAKE_HP_END_RED).getHeading(),
-            poseFromArrNonMirror(shootPos).getHeading()
-        )
+            poseFromArr(SHOOT_RED_AFTER).getHeading()
+        )*/
+        .setTangentHeadingInterpolation()
+        .setReversed()
         .setTimeoutConstraint(300)
         .build();
 
     parkPath = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(PARK_POS_RED)))
+        .addPath(new BezierLine(poseFromArr(SHOOT_RED_AFTER), poseFromArr(PARK_POS_RED)))
         .setLinearHeadingInterpolation(
-            poseFromArrNonMirror(shootPos).getHeading(),
+            poseFromArr(shootPos).getHeading(),
             poseFromArr(PARK_POS_RED).getHeading()
         )
         .setTimeoutConstraint(50)

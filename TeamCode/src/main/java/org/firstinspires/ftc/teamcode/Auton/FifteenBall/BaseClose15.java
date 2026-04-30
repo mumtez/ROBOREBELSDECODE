@@ -22,7 +22,7 @@ public class BaseClose15 extends BaseAuton {
 
   public static double[] START_RED = {114, 130, 39}; // 114.25, 130, 180
 
-  public static double[] SHOOT_AFTER = {87, 80, 0}; // 114.25, 130, 180
+  public static double[] SHOOT_AFTER = {87, 82, 0}; // 114.25, 130, 180
 
 
   public static double[] INTAKE_PPG_START_RED = {89, 86, 0};
@@ -31,11 +31,14 @@ public class BaseClose15 extends BaseAuton {
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
   public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
 
-  public static double[] OPEN_GATE_START = {120, 74, 0};
-  public static double[] OPEN_GATE_END = {123.75, 74, 0};
+  public static double[] INTAKE_PGP_MIDDLE_RED = {120, 60, 0};
 
 
-  public static double[] INTAKE_CLASSIFIER = {126.5, 60.5, 25};
+  public static double[] OPEN_GATE_START = {119, 76, 0};
+  public static double[] OPEN_GATE_END = {123.25, 74, 0};
+
+
+  public static double[] INTAKE_CLASSIFIER = {126.5, 63.5, 25};
   public static double[] INTAKE_CLASSIFIER_TWO = {128.5, 54.5, 35}; //130.5
 
   public static double[] PARK_POS = {94, 65, 0};
@@ -91,12 +94,14 @@ public class BaseClose15 extends BaseAuton {
         )
         .addPath(new BezierLine(poseFromArr(INTAKE_PGP_START_RED), poseFromArr(INTAKE_PGP_END_RED)))
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PGP_START_RED).getHeading())
+        .addPath((new BezierLine(poseFromArr(INTAKE_PGP_END_RED), poseFromArr(INTAKE_PGP_MIDDLE_RED))))
+        .setConstantHeadingInterpolation(poseFromArr(INTAKE_PGP_START_RED).getHeading())
         .setTimeoutConstraint(50)
         .build();
 
     openGatePGP = robot.follower.pathBuilder()
         .addPath(new BezierLine(
-            poseFromArr(INTAKE_PGP_END_RED),
+            poseFromArr(INTAKE_PGP_MIDDLE_RED),
             poseFromArr(OPEN_GATE_START))
         )
         .setConstantHeadingInterpolation(poseFromArr(INTAKE_PGP_END_RED).getHeading())
@@ -105,9 +110,9 @@ public class BaseClose15 extends BaseAuton {
         .build();
 
     intakeClassifier = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(INTAKE_CLASSIFIER)))
+        .addPath(new BezierLine(poseFromArr(SHOOT_AFTER), poseFromArr(INTAKE_CLASSIFIER)))
         .setLinearHeadingInterpolation(
-            poseFromArrNonMirror(shootPos).getHeading(), // TODO TEST FOR BLUE
+            poseFromArr(SHOOT_AFTER).getHeading(), // TODO TEST FOR BLUE
             poseFromArr(INTAKE_CLASSIFIER).getHeading()
         )
         .setTimeoutConstraint(50)
@@ -123,11 +128,9 @@ public class BaseClose15 extends BaseAuton {
         .build();
 
     parkPath = robot.follower.pathBuilder()
-        .addPath(new BezierLine(poseFromArrNonMirror(shootPos), poseFromArr(PARK_POS)))
-        .setLinearHeadingInterpolation(
-            poseFromArrNonMirror(shootPos).getHeading(),
-            poseFromArr(PARK_POS).getHeading()
-        )
+        .addPath(new BezierLine(poseFromArr(SHOOT_AFTER), poseFromArr(PARK_POS)))
+        .setTangentHeadingInterpolation()
+        .setReversed()
         .setTimeoutConstraint(50)
         .build();
 

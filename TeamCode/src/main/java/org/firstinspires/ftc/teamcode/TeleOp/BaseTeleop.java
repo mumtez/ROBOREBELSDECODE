@@ -47,7 +47,8 @@ public class BaseTeleop {
       double y = -this.opMode.gamepad1.left_stick_y;
       float rotStickAvg = this.opMode.gamepad1.right_stick_x + this.opMode.gamepad2.right_stick_x;
 
-      this.robot.updateAimingSystem(this.opMode.gamepad1.right_bumper);
+      this.robot.updateAimingSystem(this.opMode.gamepad1.right_bumper || this.opMode.gamepad2.right_bumper,
+          this.opMode.gamepad1.square);
 
       this.fieldCentricDrive(x, y, rotStickAvg);
 
@@ -81,6 +82,8 @@ public class BaseTeleop {
           robot.outtake.setTargetVelocity(Outtake.medSpeed);
         } else if (this.opMode.gamepad2.dpad_right) {
           robot.outtake.setTargetVelocity(Outtake.cycleSpeed);
+        } else if (this.opMode.gamepad2.leftBumperWasPressed()) {
+          robot.outtake.setTargetVelocity(robot.limelight.calculateTargetVelocity());
         }
       }
       robot.outtake.updatePIDControl();
@@ -98,6 +101,9 @@ public class BaseTeleop {
         robot.setTiltDeployed();
       } else if (this.opMode.gamepad1.dpadLeftWasPressed()) {
         robot.setTiltFolded();
+      }
+      if (this.opMode.gamepad1.dpad_up) {
+// implement
       }
 
       // TELEMETRY

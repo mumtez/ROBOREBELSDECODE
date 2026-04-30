@@ -107,9 +107,12 @@ public class Limelight {
       lastCalculatedVel = calculatedVel;
 
       if (distance > 2.5) {
-        return calculatedVel + 40;
-
+        if (this.currentColor == AllianceColor.BLUE) {
+          return calculatedVel - 20;
+        }
+        return calculatedVel + 20;
       }
+
       return calculatedVel;
     }
     return lastCalculatedVel;

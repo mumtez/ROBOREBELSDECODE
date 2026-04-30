@@ -138,7 +138,7 @@ public class Robot {
     }
   }
 
-  public void updateAimingSystem(boolean shouldAim) {
+  public void updateAimingSystem(boolean shouldAim, boolean shouldReset) {
     // AUTOAIM STUFF
     if (shouldAim) {
       double botHeading = this.follower.getHeading();
@@ -149,7 +149,12 @@ public class Robot {
               / 100.0); // Getting velocities in inches / sec and converting to meters / sec
     }
     // Update PID while not auto aiming
-    this.limelight.updateTarget(this.outtake.getTurretPosDegrees(), shouldAim,
+    double turretPosition = this.outtake.getTurretPosDegrees();
+    if (shouldReset) {
+      turretPosition = 180;
+    }
+
+    this.limelight.updateTarget(turretPosition, shouldAim,
         this.getAllianceColor()); // update things
     this.outtake.setPowerTurret(this.limelight.updateAimPID());
   }
@@ -158,7 +163,7 @@ public class Robot {
     this.follower.update();
     this.intake.updateAutoCycle();
     this.outtake.updatePIDControl();
-    this.updateAimingSystem(true);
-    
+    this.updateAimingSystem(true, false);
+
   }
 }
