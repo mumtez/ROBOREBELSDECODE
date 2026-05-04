@@ -31,14 +31,14 @@ public class BaseClose15 extends BaseAuton {
   public static double[] INTAKE_PGP_START_RED = {89, 60, 0};
   public static double[] INTAKE_PGP_END_RED = {125, 60, 0};
 
-  public static double[] INTAKE_PGP_MIDDLE_RED = {120, 60, 0};
+  public static double[] INTAKE_PGP_MIDDLE_RED = {119, 60, 0};
 
 
-  public static double[] OPEN_GATE_START = {119, 76, 0};
-  public static double[] OPEN_GATE_END = {123.25, 74, 0};
+  public static double[] OPEN_GATE_START = {116, 76, 0};
+  public static double[] OPEN_GATE_END = {121, 74, 0};
 
 
-  public static double[] INTAKE_CLASSIFIER = {126.5, 63.5, 25};
+  public static double[] INTAKE_CLASSIFIER = {126, 62.5, 25};
   public static double[] INTAKE_CLASSIFIER_TWO = {128.5, 54.5, 35}; //130.5
 
   public static double[] PARK_POS = {94, 65, 0};

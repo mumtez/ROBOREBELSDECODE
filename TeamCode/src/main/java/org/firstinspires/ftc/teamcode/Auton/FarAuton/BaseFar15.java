@@ -189,7 +189,6 @@ public class BaseFar15 extends BaseAuton {
     // INIT
     buildPaths();
     robot.initAuton();
-    robot.limelight.setPipeline(robot.getAllianceColor());
 
     // INIT LOOP
     while (this.opMode.opModeInInit() && !(opMode.gamepad1.start && opMode.gamepad2.start)) {
